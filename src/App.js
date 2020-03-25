@@ -12,10 +12,10 @@ import {
   DollarOutlined
 } from "@ant-design/icons";
 import Registracija from "./components/Registracija";
-import Uredjivanje from "./components/UredjivanjeProfila";
 import PregledRacuna from "./components/PregledRacuna";
 import DodavanjeRacuna from "./components/DodavanjeRacuna";
 import BrisanjeRacuna from "./components/BrisanjeRacuna";
+import PromjenaLozinke from "./components/PromjenaLozinke";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -27,8 +27,8 @@ function App() {
     switch (key) {
       case "pregledProfila":
         return <h1>Profil</h1>;
-      case "uredjivanjeProfila":
-        return <Uredjivanje></Uredjivanje>;
+      case "promjenaLozinke":
+        return <PromjenaLozinke></PromjenaLozinke>;
       case "dodaniRacuni":
         return <PregledRacuna></PregledRacuna>;
       case "dodavanjeRacuna":
@@ -88,28 +88,15 @@ function App() {
               }
             >
               <Menu.Item key="pregledProfila">Pregled profila</Menu.Item>
-              <Menu.Item key="uredjivanjeProfila">Uređivanje profila</Menu.Item>
+              <Menu.Item key="promjenaLozinke">Promjena lozinke</Menu.Item>
             </SubMenu>
 
-            <SubMenu
-              key="sub2"
-              title={
-                <span>
-                  <CreditCardOutlined />
-                  Bankovni računi
-                </span>
-              }
-            >
-              <Menu.Item key="dodaniRacuni">Pregled dodanih računa</Menu.Item>
-              <Menu.Item key="dodavanjeRacuna">Dodavanje računa</Menu.Item>
-              <Menu.Item key="brisanjeRacuna">Brisanje računa</Menu.Item>
-            </SubMenu>
             <SubMenu
               key="sub3"
               title={
                 <span>
                   <DollarOutlined />
-                  Troškovi
+                  Transakcije
                 </span>
               }
             >
@@ -120,6 +107,23 @@ function App() {
               <Menu.Item key="transakcijeMerchant">Po merchantima</Menu.Item>
               <Menu.Item key="transakcijeProizvod">Po proizvodima</Menu.Item>
             </SubMenu>
+            <SubMenu
+              key="sub2"
+              title={
+                <span>
+                  <CreditCardOutlined />
+                  Moji računi
+                </span>
+              }
+            >
+              <Menu.Item key="dodaniRacuni">Pregled dodanih računa</Menu.Item>
+              <Menu.Item key="dodavanjeRacuna">Dodavanje računa</Menu.Item>
+              <Menu.Item key="brisanjeRacuna">Brisanje računa</Menu.Item>
+            </SubMenu>
+            <Menu.Item>
+              <LogoutOutlined></LogoutOutlined>
+              Odjava
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout style={{ padding: "0px 24px" }}>
