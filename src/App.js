@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+
 import "antd/dist/antd.css";
 
+import HomePage from "./components/HomePage";
+import Prijava from "./components/Prijava";
 import { Layout, Menu, Button, Tooltip } from "antd";
 import {
   UserOutlined,
@@ -8,8 +11,11 @@ import {
   LogoutOutlined,
   DollarOutlined
 } from "@ant-design/icons";
-
-import HomePage from "./components/HomePage";
+import Registracija from "./components/Registracija";
+import Uredjivanje from "./components/UredjivanjeProfila";
+import PregledRacuna from "./components/PregledRacuna";
+import DodavanjeRacuna from "./components/DodavanjeRacuna";
+import BrisanjeRacuna from "./components/BrisanjeRacuna";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -22,13 +28,13 @@ function App() {
       case "pregledProfila":
         return <h1>Profil</h1>;
       case "uredjivanjeProfila":
-        return <h1>Uređivanje profila</h1>;
+        return <Uredjivanje></Uredjivanje>;
       case "dodaniRacuni":
-        return <h1>Pregled bankovnih racuna</h1>;
+        return <PregledRacuna></PregledRacuna>;
       case "dodavanjeRacuna":
-        return <h1>Dodavanje bankovnih racuna</h1>;
+        return <DodavanjeRacuna></DodavanjeRacuna>;
       case "brisanjeRacuna":
-        return <h1>Brisanje bankovnih racuna</h1>;
+        return <BrisanjeRacuna></BrisanjeRacuna>;
       case "transakcije24":
         return <h1>Pregled transakcija u posljednja 24h</h1>;
       case "transakcijeMjesec":
@@ -39,6 +45,10 @@ function App() {
         return <h1>Pregled transakcija po proizvodima</h1>;
       case "pocetna":
         return <HomePage></HomePage>;
+      case "prijava":
+        return <Prijava></Prijava>;
+      case "registracija":
+        return <Registracija></Registracija>;
     }
   };
 
@@ -56,7 +66,7 @@ function App() {
           />
         </Tooltip>
       </Header>
-      <Layout height="100vh">
+      <Layout>
         <Sider width={200} className="site-layout-background">
           <Menu
             selectedKeys={selectedMenuItem}
@@ -65,6 +75,8 @@ function App() {
             style={{ height: "100%", borderRight: 0 }}
           >
             <Menu.Item key="pocetna">Početna stranica</Menu.Item>
+            <Menu.Item key="prijava">Prijavi se</Menu.Item>
+            <Menu.Item key="registracija">Registruj se</Menu.Item>
 
             <SubMenu
               key="sub1"
@@ -110,7 +122,7 @@ function App() {
             </SubMenu>
           </Menu>
         </Sider>
-        <Layout style={{ padding: "0 24px 24px" }}>
+        <Layout style={{ padding: "0px 24px" }}>
           <Content
             className="site-layout-background"
             style={{
