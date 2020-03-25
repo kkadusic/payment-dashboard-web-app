@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+.header {
+  background: rgb(66, 133, 211);
+}
+
+.logo {
+  /* width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 28px 16px 0; */
+  float: left;
+}
+
+.logo p {
+  color: #fff;
+  font-size: 20px;
+}
+
+.logoutBtn {
+  margin: 16px 0px 16px 0;
+  float: right;
+}
+
+img {
+  height: 25vh;
+}
