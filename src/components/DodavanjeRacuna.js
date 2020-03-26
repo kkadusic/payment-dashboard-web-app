@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Select, Tooltip, Button } from "antd";
+import { Form, Input, Button } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";
 import "../css/DodavanjeRacuna.css";
@@ -7,8 +7,10 @@ import kartice from "../creditcards1.png";
 
 function DodavanjeRacuna() {
   const onFinish = values => {
-    console.log("Received values of form: ", values);
+    if (values.brojKartice) console.log("Received values of form: ", values);
   };
+
+  function isCardValid() {}
 
   return (
     <div>
@@ -18,7 +20,10 @@ function DodavanjeRacuna() {
           <Form.Item label="Broj kartice" colon="false">
             <Form.Item
               name="brojKartice"
-              rules={[{ required: true, message: "Broj kartice je neophodan" }]}
+              rules={[
+                { required: true, message: "Broj kartice je neophodan" },
+                { isCardValid }
+              ]}
             >
               <Input style={{ width: 300 }} placeholder="Unesi broj kartice" />
             </Form.Item>
