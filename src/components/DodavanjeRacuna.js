@@ -20,7 +20,11 @@ function DodavanjeRacuna() {
           <Form.Item label="Card number" colon="false">
             <Form.Item
               name="brojKartice"
-              rules={[{ required: true, message: "Card number is required" }]}
+              rules={[
+                { required: true, message: "Card number is required" },
+                { len: 16, message: "Card number must have 16 digits" },
+                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ }
+              ]}
             >
               <Input style={{ width: 300 }} placeholder="Enter card number" />
             </Form.Item>
