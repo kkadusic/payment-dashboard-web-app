@@ -12,7 +12,7 @@ import {
   DollarOutlined
 } from "@ant-design/icons";
 import Registracija from "./components/Registracija";
-import PregledRacuna from "./components/PregledRacuna";
+import ReceiptsReview from "./components/ReceiptsReview";
 import DodavanjeRacuna from "./components/DodavanjeRacuna";
 import BrisanjeRacuna from "./components/BrisanjeRacuna";
 import PromjenaLozinke from "./components/PromjenaLozinke";
@@ -30,7 +30,7 @@ function App() {
       case "promjenaLozinke":
         return <PromjenaLozinke></PromjenaLozinke>;
       case "dodaniRacuni":
-        return <PregledRacuna></PregledRacuna>;
+        return <ReceiptsReview></ReceiptsReview>;
       case "dodavanjeRacuna":
         return <DodavanjeRacuna></DodavanjeRacuna>;
       case "brisanjeRacuna":
@@ -49,6 +49,8 @@ function App() {
         return <Prijava></Prijava>;
       case "registracija":
         return <Registracija></Registracija>;
+      default:
+        return <HomePage></HomePage>
     }
   };
 
@@ -116,7 +118,7 @@ function App() {
                 </span>
               }
             >
-              <Menu.Item key="dodaniRacuni">Pregled dodanih računa</Menu.Item>
+              <Menu.Item key="dodaniRacuni" >Review of added receipts</Menu.Item>
               <Menu.Item key="dodavanjeRacuna">Dodavanje računa</Menu.Item>
               <Menu.Item key="brisanjeRacuna">Brisanje računa</Menu.Item>
             </SubMenu>
