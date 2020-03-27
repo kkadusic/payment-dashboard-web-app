@@ -14,7 +14,7 @@ import HomePage from "./components/HomePage";
 import Prijava from "./components/Prijava";
 import PregledProfila from "./components/PregledProfila";
 import Registracija from "./components/Registracija";
-import ReceiptsReview from "./components/ReceiptsReview";
+import DodaniRacuni from "./components/DodaniRacuni";
 import DodavanjeRacuna from "./components/DodavanjeRacuna";
 import BrisanjeRacuna from "./components/BrisanjeRacuna";
 import PromjenaLozinke from "./components/PromjenaLozinke";
@@ -179,7 +179,7 @@ function App() {
                   component={PromjenaLozinke}
                 ></Route>
 
-                <Route path="/dodaniRacuni" component={ReceiptsReview}></Route>
+                <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
 
                 <Route
                   path="/dodavanjeRacuna"

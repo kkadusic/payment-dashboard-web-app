@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Card, Button, Modal} from "antd";
-import "./receiptComponent.css";
+import { Button, Modal, Card} from "antd";
+import "./accountComponent.css";
 
-function ReceiptComponent(props) {
+function AccountComponent(props) {
 
     const [state, setState] = useState({ visible: false });
 
@@ -11,7 +11,7 @@ function ReceiptComponent(props) {
     };
 
     const handleOk = e => {
-        //props.deleteReceipt(props.receipt.id);
+        props.deleteAccount(props.account.id);
         hideModal();
     };
 
@@ -19,12 +19,14 @@ function ReceiptComponent(props) {
         // do nothing
         console.log(e);
         setState({ visible: false });
-    }
+    };
 
     return (
         <Card>
             <div>
-                <p>{props.receipt.description}</p>
+                <p>account Owner: {props.account.accountOwner}</p>
+                <p>Expiration date: {props.account.expiryDate.substr(0, 10).replace(/-/g, "/")}</p>
+                <p>Card number: {props.account.cardNumber}</p>
                 <Button style={{ "float": "right"}} type="link" onClick={showModal} danger>Delete</Button>
             </div>
             <Modal
@@ -37,4 +39,4 @@ function ReceiptComponent(props) {
     );
 }
 
-export default ReceiptComponent;
+export default AccountComponent;
