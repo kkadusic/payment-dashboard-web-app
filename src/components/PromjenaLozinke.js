@@ -1,40 +1,36 @@
 import React from "react";
+import "../css/PromjenaLozinke.css";
 
 
 function PromjenaLozinke() {
   return (
-    <div>
+    <React.Fragment>
       <header style = {headerStyle}>Change password</header>
-      <form style={formStyle}>
-        <label style={column}>
+      <form>
+        <label>
           Input current password:
           <input type="password" name="currPass" />
         </label>
-        <label style={column}>
+        <label>
           New password:
           <input type="password" name="newPass" />
         </label>
-        <label style={column}>
+        <br></br>
+        <label>
           Retype new password:
           <input type="password" name="retypePass" />
         </label>
+        <br></br>
         <input type="submit" value="Submit" />
       </form>
-    </div>
+    </React.Fragment>
   );
 }
 
 const headerStyle = {
   fontSize: 'large',
-  fontWeight: 'bold' 
-}
-
-const formStyle = {
-  display: 'flex',
-}
-
-const column = {
-  flex: '50%'
+  fontWeight: 'bold',
+  padding: '15px' 
 }
 
 export default PromjenaLozinke;
