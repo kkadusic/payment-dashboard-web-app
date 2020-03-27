@@ -25,7 +25,7 @@ function AccountComponent(props) {
         <Card>
             <div>
                 <p>account Owner: {props.account.accountOwner}</p>
-                <p>Expiration date: {props.account.expiryDate.substr(0, 10).replace(/-/g, "/")}</p>
+                <p>Expiration date: {props.account.expiryDate.substr(0, 7).replace(/-/g, "/")}</p>
                 <p>Card number: {props.account.cardNumber}</p>
                 <Button style={{ "float": "right"}} type="link" onClick={showModal} danger>Delete</Button>
             </div>
