@@ -27,7 +27,7 @@ const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
 function App() {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
+  //const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
 
   // const componentsSwitch = key => {
   //   switch (key) {
@@ -78,8 +78,8 @@ function App() {
         <Layout>
           <Sider width={200} className="site-layout-background">
             <Menu
-              selectedKeys={selectedMenuItem}
-              onClick={e => setSelectedMenuItem(e.key)}
+              //  selectedKeys={selectedMenuItem}
+              //     onClick={e => setSelectedMenuItem(e.key)}
               mode="inline"
               style={{ height: "100%", borderRight: 0 }}
             >
