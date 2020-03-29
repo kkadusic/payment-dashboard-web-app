@@ -9,9 +9,11 @@ import axios from 'axios';
 
 function PromjenaLozinke() {
 
+  // State
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
 
+  // when the form is sumbitted, sends post request wih given values
   const onFinish = values => {
 
     const config = {
