@@ -1,13 +1,48 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../css/Prijava.css'
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Registracija from "./Registracija";
+import { loginUser } from '../utilities/Common';
+import axios from 'axios';;
 
-const Prijava = () => {
+const Prijava = (props) => {
+
   const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
+    console.log('Received values of form: ', values)
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/auth/signin", 
+        {
+          usernameOrEmail: values.email,
+          password: values.password
+        },
+        config
+      )
+      .then((response) => {
+        if (response.data.length === 0) {
+          console.log("missing response")
+        }
+        console.log("Login successful")
+        loginUser(response.data.accessToken, response.data.tokenType, values.username)
+      })
+      .catch(error => {
+        if (error.response == null) {
+          console.log("No internet")
+          return;
+        }
+        if (error.response.status === 401)
+          console.log("Wrong username or password")
+        else
+          console.log(error.response.data.message)
+      });
+   };
 
   return (
     <Form
