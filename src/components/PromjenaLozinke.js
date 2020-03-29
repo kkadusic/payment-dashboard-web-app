@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Tooltip } from 'antd';
+import { Form, Input, Button, Tooltip, message } from 'antd';
 import { LockOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Label } from 'semantic-ui-react';
 import "../css/PromjenaLozinke.css";
 import { getToken } from '../utilities/Common';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
 
 function PromjenaLozinke() {
@@ -12,6 +13,9 @@ function PromjenaLozinke() {
   // State
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
+
+  // history
+  const history = useHistory();
 
   // when the form is sumbitted, sends post request wih given values
   const onFinish = values => {
@@ -30,7 +34,13 @@ function PromjenaLozinke() {
       },
       config)
       .then(res => {
-        // alert
+        if (res.data.success === true) history.push("/newPasswordAlert");
+      })
+      .catch(err => {
+        console.log(err.response);
+        console.log(err.request);
+        if (err.response.data.status === 404)
+          message.error(err.response.data.message);
       });
   };
 
