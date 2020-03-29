@@ -22,6 +22,7 @@ import Transakcije24 from "./components/Transakcije24";
 import TransakcijeMjesec from "./components/TransakcijeMjesec";
 import TransakcijeMerchant from "./components/TransakcijeMerchant";
 import TransakcijeProizvod from "./components/TransakcijeProizvod";
+import RacunUspjeh from "./components/RacunUspjeh";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -218,6 +219,8 @@ function App() {
                 <Route path="/prijava" component={Prijava}></Route>
 
                 <Route path="/registracija" component={Registracija}></Route>
+
+                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
               </Switch>
               {/* {componentsSwitch(selectedMenuItem)} */}
             </Content>

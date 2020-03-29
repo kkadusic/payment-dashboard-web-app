@@ -1,38 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button } from "antd";
-import { DatePicker } from "antd";
+import { Form, Input, Button, DatePicker, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import "../css/DodavanjeRacuna.css";
 import kartice from "../creditcards1.png";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 function DodavanjeRacuna() {
-  const [accOwner, setAccOwner] = useState({ value: "space" });
+  const [accOwner, setAccOwner] = useState({ value: "" });
+  const history = useHistory();
 
-  // useEffect(() => {
-  //   axios
-  //     .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
-  //       headers: {
-  //         Authorization:
-  //           "Bearer " +
-  //           "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
-  //       }
-  //     })
-  //     .then(res => {
-  //       console.log(res.data);
-  //       console.log(accOwner.value);
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // }, []);
+  useEffect(() => {
+    let mounted = true;
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
+        headers: {
+          Authorization:
+            "Bearer " +
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+        }
+      })
+      .then(res => {
+        console.log(res.data);
+        if (mounted)
+          setAccOwner({ value: res.data.firstName + " " + res.data.lastName });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    return () => (mounted = false);
+  }, []);
 
   const onFinish = values => {
     console.log("Received values of form: ", values);
 
+    const data = {
+      accountOwner: accOwner.value,
+      bankName: values.bankName,
+      expiryDate:
+        "01." +
+        ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
+        "." +
+        values.expiryDate._d.getFullYear(),
+      cvc: values.cvc,
+      cardNumber: values.cardNumber
+    };
+
+    history.push("/racunUspjeh");
+
     // axios
     //   .post(
     //     "https://payment-server-si.herokuapp.com/api/accounts/add",
-    //     values,
+    //     data,
     //     {
     //       headers: {
     //         Authorization:
@@ -56,7 +75,7 @@ function DodavanjeRacuna() {
         <Form name="add-account" className="accForm" onFinish={onFinish}>
           <Form.Item label="Card number" colon="false">
             <Form.Item
-              name="brojKartice"
+              name="cardNumber"
               rules={[
                 { required: true, message: "Card number is required" },
                 { len: 16, message: "Card number must have 16 digits" },
@@ -69,7 +88,7 @@ function DodavanjeRacuna() {
 
           <Form.Item colon="false" label="Expiration date">
             <Form.Item
-              name="datumIsteka"
+              name="expiryDate"
               rules={[{ required: true, message: "Date is required" }]}
             >
               <DatePicker
@@ -112,19 +131,24 @@ function DodavanjeRacuna() {
           <Form.Item colon="false" label="Cardholder name: ">
             <Form.Item
               name="imeVlasnika"
-              rules={[
-                { required: true, message: "Cardholder name is required" },
-                {
-                  message: "Only letters can be entered",
-                  pattern: /^[a-zšđčćž ]+$/gi
-                }
-              ]}
+              // rules={[
+              //   { required: true, message: "Cardholder name is required" },
+              //   {
+              //     message: "Only letters can be entered",
+              //     pattern: /^[a-zšđčćž ]+$/gi
+              //   }
+              // ]}
             >
               <Input
                 readOnly
                 style={{ width: 200 }}
-                value={accOwner.value}
+                defaultValue={accOwner.value}
                 placeholder={accOwner.value}
+                suffix={
+                  <Tooltip title="You must be account owner">
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                }
               ></Input>
             </Form.Item>
           </Form.Item>
