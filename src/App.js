@@ -22,6 +22,7 @@ import Transakcije24 from "./components/Transakcije24";
 import TransakcijeMjesec from "./components/TransakcijeMjesec";
 import TransakcijeMerchant from "./components/TransakcijeMerchant";
 import TransakcijeProizvod from "./components/TransakcijeProizvod";
+import Logout from "./components/Logout";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -68,11 +69,12 @@ function App() {
             <p>Payment Dashboard</p>
           </div>
           <Tooltip title="Odjava">
-            <Button
+            {/* <Button
               className="logoutBtn"
               shape="circle"
               icon={<LogoutOutlined />}
-            />
+            /> */}
+           <Logout></Logout>
           </Tooltip>
         </Header>
         <Layout>
