@@ -55,8 +55,6 @@ function DodaniRacuni() {
   // componentDidMount
   useEffect(loadData, []);
 
-  let index = 1;
-
   return (
     <div>
       { (accounts.loading || !accounts.data) ? (
