@@ -12,14 +12,14 @@ function DodavanjeRacuna() {
     axios
       .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
         headers: {
-          Authorization:
-            "Bearer " +
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+          Authorization: "Bearer " + "token"
         }
       })
       .then(res => {
         console.log(res.data);
-        setAccOwner(Object.assign({}, { value: res.data.firstName }));
+        setAccOwner((state, props) => ({
+          value: res.data.userName
+        }));
         console.log(accOwner.value);
       })
       .catch(err => {
@@ -36,9 +36,7 @@ function DodavanjeRacuna() {
         values,
         {
           headers: {
-            Authorization:
-              "Bearer " +
-              "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+            Authorization: "Bearer " + "token"
           }
         }
       )
