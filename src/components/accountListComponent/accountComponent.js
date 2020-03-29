@@ -16,15 +16,13 @@ function AccountComponent(props) {
     };
 
     const hideModal = e => {
-        // do nothing
-        console.log(e);
         setState({ visible: false });
     };
 
     return (
         <Card>
             <div>
-                <p>account Owner: {props.account.accountOwner}</p>
+                <p>Account owner: {props.account.accountOwner}</p>
                 <p>Expiration date: {props.account.expiryDate.substr(0, 7).replace(/-/g, "/")}</p>
                 <p>Card number: {props.account.cardNumber}</p>
                 <Button style={{ "float": "right"}} type="link" onClick={showModal} danger>Delete</Button>

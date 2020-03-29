@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Spin, Collapse,  } from "antd";
 import AccountComponent from "./accountListComponent/accountComponent"
 import {CaretRightOutlined} from "@ant-design/icons";
+import axios from "axios"
 
 import "./accountListComponent/accountComponent.css"
+import {getToken} from "../utilities/Common";
 
 const { Panel } = Collapse;
 
@@ -13,71 +15,41 @@ function DodaniRacuni() {
       loading: true
   });
 
-  const data = [
-      {
-          id: 1,
-          accountOwner: "Nermin",
-          bankName: "Ziraat",
-          expiryDate: "2020-03-27T13:26:44.000+0000",
-          cardNumber: "000000000000000000"
-      },
-      {
-          id: 2,
-          accountOwner: "Nermin",
-          bankName: "Ziraat",
-          expiryDate: "2020-03-27T13:26:44.000+0000",
-          cardNumber: "000000000000000000"
-      },
-      {
-          id: 3,
-          accountOwner: "Nermin",
-          bankName: "Ziraat",
-          expiryDate: "2020-03-27T13:26:44.000+0000",
-          cardNumber: "000000000000000000"
-      },
-      {
-          id: 4,
-          accountOwner: "Nermin",
-          bankName: "Ziraat",
-          expiryDate: "2020-03-27T13:26:44.000+0000",
-          cardNumber: "000000000000000000"
-      }
-  ];
-
   const loadData = () => {
-      // tryout url
-      // const url = "http://dummy.restapiexample.com/api/v1/employees";
-      // fetch(url)
-      //     .then(res => res.json())
-      //     .then(posts => {
-      //         console.log(posts);
-      //         (posts.status === "ok" ||  posts.status === "success") ? setAccounts({
-      //             data: posts.data,
-      //             loading: false
-      //         }) : setAccounts({
-      //             data: [],
-      //             loading: true
-      //         });
-      //     })
-      //     .catch(e => {
-      //         console.log(e);
-      //     });
-
-      setAccounts({
-          data: data,
-          loading: false
-      })
+      axios.get(
+          "https://payment-server-si.herokuapp.com/api/accounts/all", {
+              headers: {
+                  Authorization: "Bearer " + getToken()
+              }
+          }
+      ).then(res => {
+          setAccounts({
+              data: res.data,
+              loading: false
+          });
+      }).catch(err => {
+          console.log(err);
+      });
 
   };
 
   const deleteAccount = (id) => {
-    // delete receipt
 
-    setAccounts({
-        data: [],
-        loading: true
+    axios.delete(
+        "https://payment-server-si.herokuapp.com/api/accounts/delete/" + id, {
+            headers: {
+                Authorization: "Bearer " + getToken()
+            }
+        }
+    ).then(() => {
+        setAccounts({
+            data: [],
+            loading: true
+        });
+        loadData();
+    }).catch(err => {
+        console.log(err);
     });
-    loadData();
   };
 
   // componentDidMount
