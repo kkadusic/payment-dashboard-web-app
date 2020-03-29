@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../css/Prijava.css'
 import { Form, Input, Button, Checkbox, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
 import { saveUserToken, saveUserData } from '../utilities/Common';
 import axios from 'axios';
 
@@ -107,7 +108,7 @@ const Prijava = (props) => {
         <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox className="login-remember-checkbox">Remember me</Checkbox>
         </Form.Item>
-        <a className="login-forgot-password-link" href="" >
+        <a className="login-forgot-password-link" href="/oporavkaLozinke" >
           Forgot password?
         </a>
       </Form.Item>

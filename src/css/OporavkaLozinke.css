@@ -1,0 +1,48 @@
+.recoveryForm {
+    margin: auto;
+    max-width: 350px;
+}
+
+#recoveryTitle{
+    margin:auto;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+#passwordBlock div{
+    display:inline;
+}
+
+#passwordBlock{
+    margin-bottom: 1em;
+    margin-top:3em;
+    text-align: center;
+}
+
+
+#recoverySubTitle{
+    margin:auto;
+    text-align: center;
+    margin-bottom: 1em;
+    font-size: small;
+    margin-bottom: 2em;
+    font-style: italic;
+}
+
+#passwordText{
+    text-align: center;
+    font-size:large;
+    font-weight: 600;
+}
+
+#passwordd{
+    font-weight: bold;
+    font-size: x-large;
+}
+
+#loginPageLink{
+    text-align: center;
+    font-size: medium;
+}
+
+
