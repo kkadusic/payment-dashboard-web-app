@@ -8,44 +8,45 @@ import axios from "axios";
 function DodavanjeRacuna() {
   const [accOwner, setAccOwner] = useState({ value: "space" });
 
-  useEffect(() => {
-    axios
-      .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
-        headers: {
-          Authorization: "Bearer " + "token"
-        }
-      })
-      .then(res => {
-        console.log(res.data);
-        setAccOwner((state, props) => ({
-          value: res.data.userName
-        }));
-        console.log(accOwner.value);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
+  //       headers: {
+  //         Authorization:
+  //           "Bearer " +
+  //           "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+  //       }
+  //     })
+  //     .then(res => {
+  //       console.log(res.data);
+  //       console.log(accOwner.value);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
   const onFinish = values => {
-    // console.log("Received values of form: ", values);
+    console.log("Received values of form: ", values);
 
-    axios
-      .post(
-        "https://payment-server-si.herokuapp.com/api/accounts/add",
-        values,
-        {
-          headers: {
-            Authorization: "Bearer " + "token"
-          }
-        }
-      )
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    // axios
+    //   .post(
+    //     "https://payment-server-si.herokuapp.com/api/accounts/add",
+    //     values,
+    //     {
+    //       headers: {
+    //         Authorization:
+    //           "Bearer " +
+    //           "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+    //       }
+    //     }
+    //   )
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   };
 
   return (
@@ -122,9 +123,9 @@ function DodavanjeRacuna() {
               <Input
                 readOnly
                 style={{ width: 200 }}
-                value={accOwner.firstLastName}
+                value={accOwner.value}
+                placeholder={accOwner.value}
               ></Input>
-              {/* placeholder="Enter your name" /> */}
             </Form.Item>
           </Form.Item>
 
