@@ -5,19 +5,19 @@ import "../css/DodavanjeRacuna.css";
 import kartice from "../creditcards1.png";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { getToken } from "../utilities/Common";
 
 function DodavanjeRacuna() {
   const [accOwner, setAccOwner] = useState({ value: "" });
   const history = useHistory();
 
   useEffect(() => {
+    console.log();
     let mounted = true;
     axios
       .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
         headers: {
-          Authorization:
-            "Bearer " +
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+          Authorization: "Bearer " + getToken()
         }
       })
       .then(res => {
@@ -46,26 +46,19 @@ function DodavanjeRacuna() {
       cardNumber: values.cardNumber
     };
 
-    history.push("/racunUspjeh");
-
-    // axios
-    //   .post(
-    //     "https://payment-server-si.herokuapp.com/api/accounts/add",
-    //     data,
-    //     {
-    //       headers: {
-    //         Authorization:
-    //           "Bearer " +
-    //           "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
-    //       }
-    //     }
-    //   )
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
+    axios
+      .post("https://payment-server-si.herokuapp.com/api/accounts/add", data, {
+        headers: {
+          Authorization: "Bearer " + getToken()
+        }
+      })
+      .then(res => {
+        if (res.success == true) history.push("/racunUspjeh");
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
