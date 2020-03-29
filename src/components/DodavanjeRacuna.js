@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, DatePicker, Tooltip } from "antd";
+import { Form, Input, Button, DatePicker, Tooltip, message } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import "../css/DodavanjeRacuna.css";
 import kartice from "../creditcards1.png";
@@ -12,7 +12,6 @@ function DodavanjeRacuna() {
   const history = useHistory();
 
   useEffect(() => {
-    console.log();
     let mounted = true;
     axios
       .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
@@ -21,7 +20,6 @@ function DodavanjeRacuna() {
         }
       })
       .then(res => {
-        console.log(res.data);
         if (mounted)
           setAccOwner({ value: res.data.firstName + " " + res.data.lastName });
       })
@@ -53,11 +51,13 @@ function DodavanjeRacuna() {
         }
       })
       .then(res => {
-        if (res.success == true) history.push("/racunUspjeh");
-        console.log(res);
+        if (res.data.success === true) history.push("/racunUspjeh");
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response);
+        console.log(err.request);
+        if (err.response.data.status === 404)
+          message.error(err.response.data.message);
       });
   };
 
@@ -122,16 +122,7 @@ function DodavanjeRacuna() {
           </Form.Item>
 
           <Form.Item colon="false" label="Cardholder name: ">
-            <Form.Item
-              name="imeVlasnika"
-              // rules={[
-              //   { required: true, message: "Cardholder name is required" },
-              //   {
-              //     message: "Only letters can be entered",
-              //     pattern: /^[a-zšđčćž ]+$/gi
-              //   }
-              // ]}
-            >
+            <Form.Item name="imeVlasnika">
               <Input
                 readOnly
                 style={{ width: 200 }}

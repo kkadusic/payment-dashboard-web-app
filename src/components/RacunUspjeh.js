@@ -3,20 +3,26 @@ import { useHistory } from "react-router-dom";
 import { Result, Button } from "antd";
 
 const RacunUspjeh = () => {
-  //const history = useHistory();
+  const history = useHistory();
   return (
     <Result
       status="success"
       title="Successfully Added New Bank Account"
       extra={[
-        <Button type="primary" key="homepage">
+        <Button
+          type="primary"
+          key="homepage"
+          onClick={() => {
+            history.push("/pocetna");
+          }}
+        >
           Go to HomePage
         </Button>,
         <Button
           key="accounts"
-          // onClick={() => {
-          //   history.goBack();
-          // }}
+          onClick={() => {
+            history.push("/dodaniRacuni");
+          }}
         >
           View your accounts
         </Button>
