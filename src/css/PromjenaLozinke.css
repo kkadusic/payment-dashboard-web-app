@@ -1,9 +1,3 @@
-.title {
-  background: #adc6ff;
-  padding: 15px;
-}
-
-.title h1 {
-  font-style: bold;
-  font-size: 20px;
+label {
+  font-style: italic;
 }
