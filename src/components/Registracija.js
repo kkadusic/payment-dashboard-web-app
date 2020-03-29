@@ -14,16 +14,22 @@ import {
 } from 'antd';
 import {QuestionCircleOutlined} from '@ant-design/icons';
 
-//const {Option} = Select;
-//const AutoCompleteOption = AutoComplete.Option;
 
 const Registracija = () => {
     const [form] = Form.useForm();
 
     const onFinish = values => {
-        console.log('Received values of form: ', values);
+        let questionId = 1;
 
-        let userInfo = {
+        console.log('Received values of form: ', values);
+        for (var i = 0; i < questions.length; i++) {
+            if (values.questions.toString() === questions[i].value){
+                questionId = questions[i].id;
+                break;
+            }
+        }
+
+        axios.post('https://payment-server-si.herokuapp.com/api/auth/signup/' + questionId, {
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
@@ -32,35 +38,13 @@ const Registracija = () => {
             answer: {
                 text: values.answer
             }
-        };
-
-        axios.post('https://jsonplaceholder.typicode.com/users', { a: "da" })
+        })
             .then(res => {
                 console.log(res);
                 console.log(res.data);
-            })
+            });
     };
 
-    // https://payment-server-si.herokuapp.com/questions
-
-
-    //const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-
-    /*
-    const onWebsiteChange = value => {
-        if (!value) {
-            setAutoCompleteResult([]);
-        } else {
-            setAutoCompleteResult(['.com', '.org', '.net'].map(domain => `${value}${domain}`));
-        }
-    };
-
-    const websiteOptions = autoCompleteResult.map(website => ({
-        label: website,
-        value: website,
-    }));
-
-     */
 
     const questions = [];
 
@@ -70,7 +54,8 @@ const Registracija = () => {
                 let q = {
                     id: value.id,
                     value: value.title,
-                    label: value.title
+                    label: value.title,
+                    description: value.description
                 };
                 questions.push(q);
             }
@@ -103,6 +88,7 @@ const Registracija = () => {
         },
     };
 
+
     return (
         <Form
             {...formItemLayout}
@@ -113,7 +99,11 @@ const Registracija = () => {
         >
 
             <div>
-                <h1>User registration </h1>
+                <h1>Sign Up </h1>
+            </div>
+
+            <div>
+                <h3>Personal data </h3>
             </div>
 
             <Form.Item
@@ -258,12 +248,12 @@ const Registracija = () => {
                 <h3>Sequrity question </h3>
             </div>
 
+
             <Form.Item
                 name="questions"
                 label="Question:"
                 rules={[
                     {
-                        type: 'array',
                         required: true,
                         message: 'Please select your prefered question!'
                     }
