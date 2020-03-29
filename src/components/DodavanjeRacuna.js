@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Button } from "antd";
 import { DatePicker } from "antd";
 import "../css/DodavanjeRacuna.css";
@@ -6,11 +6,42 @@ import kartice from "../creditcards1.png";
 import axios from "axios";
 
 function DodavanjeRacuna() {
+  const [accOwner, setAccOwner] = useState({ value: "space" });
+
+  useEffect(() => {
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
+        headers: {
+          Authorization:
+            "Bearer " +
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+        }
+      })
+      .then(res => {
+        console.log(res.data);
+        setAccOwner(Object.assign({}, { value: res.data.firstName }));
+        console.log(accOwner.value);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
+
   const onFinish = values => {
     // console.log("Received values of form: ", values);
 
     axios
-      .post("https://jsonplaceholder.typicode.com/posts", values)
+      .post(
+        "https://payment-server-si.herokuapp.com/api/accounts/add",
+        values,
+        {
+          headers: {
+            Authorization:
+              "Bearer " +
+              "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTg1NDg2MDA0LCJleHAiOjE1ODYzNTAwMDR9.v-0WREeA9bq6n5_Tof8cV7ONh3gJsz8376aQD7ccwH3olO0rlOaUvEIrzAhD6IvZo2a8rcg-8S4M6OznweNjlA"
+          }
+        }
+      )
       .then(res => {
         console.log(res);
       })
@@ -90,7 +121,12 @@ function DodavanjeRacuna() {
                 }
               ]}
             >
-              <Input style={{ width: 200 }} placeholder="Enter your name" />
+              <Input
+                readOnly
+                style={{ width: 200 }}
+                value={accOwner.firstLastName}
+              ></Input>
+              {/* placeholder="Enter your name" /> */}
             </Form.Item>
           </Form.Item>
 
