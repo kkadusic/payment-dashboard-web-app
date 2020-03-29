@@ -31,6 +31,7 @@ const Prijava = (props) => {
         }
         console.log("Login successful")
         loginUser(response.data.accessToken, response.data.tokenType, values.username)
+        props.history.push('/pocetna');
       })
       .catch(error => {
         if (error.response == null) {
