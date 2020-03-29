@@ -1,4 +1,5 @@
 import React from "react";
+import "../css/DodavanjeRacuna.css";
 import { useHistory } from "react-router-dom";
 import { Result, Button } from "antd";
 
@@ -12,6 +13,7 @@ const RacunUspjeh = () => {
         <Button
           type="primary"
           key="homepage"
+          className="backHome"
           onClick={() => {
             history.push("/pocetna");
           }}
