@@ -22,12 +22,13 @@ import Transakcije24 from "./components/Transakcije24";
 import TransakcijeMjesec from "./components/TransakcijeMjesec";
 import TransakcijeMerchant from "./components/TransakcijeMerchant";
 import TransakcijeProizvod from "./components/TransakcijeProizvod";
+import RacunUspjeh from "./components/RacunUspjeh";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
 function App() {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
+  //const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
 
   // const componentsSwitch = key => {
   //   switch (key) {
@@ -78,8 +79,8 @@ function App() {
         <Layout>
           <Sider width={200} className="site-layout-background">
             <Menu
-              selectedKeys={selectedMenuItem}
-              onClick={e => setSelectedMenuItem(e.key)}
+              //  selectedKeys={selectedMenuItem}
+              //     onClick={e => setSelectedMenuItem(e.key)}
               mode="inline"
               style={{ height: "100%", borderRight: 0 }}
             >
@@ -218,6 +219,8 @@ function App() {
                 <Route path="/prijava" component={Prijava}></Route>
 
                 <Route path="/registracija" component={Registracija}></Route>
+
+                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
               </Switch>
               {/* {componentsSwitch(selectedMenuItem)} */}
             </Content>

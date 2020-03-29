@@ -1,0 +1,29 @@
+.login-form {
+    margin: auto;
+    max-width: 350px;
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #030852;
+  border-color: #030852;
+}
+.login-button {
+    background-color: #030852;
+    border-style: none;
+    width: 100%;
+}
+.login-button:hover {
+    background-color: #597ef7;
+}
+
+.login-forgot-password-link {
+    float: right;
+    color: #597ef7;
+    white-space: nowrap;
+}
+.login-register-link {
+    color: #597ef7;
+}
+
+.login-remember-checkbox {
+    display: inline;
+}
