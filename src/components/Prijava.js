@@ -61,13 +61,17 @@ function Prijava() {
 			lastName: response.data.lastName,
 			username: response.data.userName,
 			email: response.data.email
-		};
+    };
+
+    console.log(response)
+    
 		// Save user object to storage
 		saveUserData(user);
 		// setUser(user)
 		console.log("Login successful");
   })
   .then(() => {
+    
     history.push("/pocetna");
   })
 	.catch(error => {
@@ -151,11 +155,11 @@ function Prijava() {
                 /> : null
             }
             <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
+              {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox className="login-remember-checkbox">
                   Remember me
                 </Checkbox>
-              </Form.Item>
+              </Form.Item> */}
               <a className="login-forgot-password-link" href="/oporavkaLozinke">
                 Forgot password?
               </a>
