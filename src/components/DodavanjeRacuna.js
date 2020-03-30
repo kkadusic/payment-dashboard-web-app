@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, DatePicker, Tooltip, message } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import "../css/DodavanjeRacuna.css";
-import kartice from "../creditcards1.png";
+import kartice from "../img/creditcards1.png";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { getToken } from "../utilities/Common";
