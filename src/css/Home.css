@@ -42,6 +42,8 @@
   background: #030852;
 }
 .homeContainer img {
-  margin: 0 auto;
-  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  transform: scale(1.3);
 }
