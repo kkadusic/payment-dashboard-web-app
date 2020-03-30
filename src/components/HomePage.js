@@ -29,6 +29,7 @@ import PrikazNoveSifre from "./PrikazNoveSifre";
 import AccountComponent from "./accountListComponent/accountComponent";
 import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
+import NewPasswordAlert from "./NewPasswordAlert";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -197,6 +198,11 @@ function HomePage() {
                 <Route
                   path="/sigurnosnoPitanje"
                   component={SigurnosnoPitanje}
+                ></Route>
+
+                <Route
+                  path="/newPasswordAlert"
+                  component={NewPasswordAlert}
                 ></Route>
 
                 <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
