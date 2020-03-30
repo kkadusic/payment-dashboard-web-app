@@ -12,22 +12,10 @@ function DodavanjeRacuna() {
   const history = useHistory();
 
   useEffect(() => {
-    console.log(getUser());
-    let mounted = true;
-    axios
-      .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
-        headers: {
-          Authorization: "Bearer " + getToken()
-        }
-      })
-      .then(res => {
-        if (mounted)
-          setAccOwner({ value: res.data.firstName + " " + res.data.lastName });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    return () => (mounted = false);
+    setAccOwner({
+      value:
+        JSON.parse(getUser()).firstName + " " + JSON.parse(getUser()).lastName
+    });
   }, []);
 
   const onFinish = values => {
