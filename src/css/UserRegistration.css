@@ -1,0 +1,10 @@
+.registration-form {
+    margin: auto;
+    max-width: 500px;
+}
+
+.registration-button {
+    background-color: #030852;
+    border-style: none;
+    width: 100%;
+}

@@ -1,29 +1,25 @@
-import React, {useState} from 'react';
+import React from 'react';
 import axios from 'axios';
+import '../../css/UserRegistration.css'
 import {
     Form,
     Input,
     Tooltip,
     Cascader,
-    Select,
-    Row,
-    Col,
-    Checkbox,
     Button,
-    AutoComplete,
+    message
 } from 'antd';
 import {QuestionCircleOutlined} from '@ant-design/icons';
 
 
-const Registracija = () => {
-    const [form] = Form.useForm();
+const RegistrationForm = (props) => {
 
     const onFinish = values => {
         let questionId = 1;
 
         console.log('Received values of form: ', values);
         for (var i = 0; i < questions.length; i++) {
-            if (values.questions.toString() === questions[i].value){
+            if (values.questions.toString() === questions[i].value) {
                 questionId = questions[i].id;
                 break;
             }
@@ -38,11 +34,13 @@ const Registracija = () => {
             answer: {
                 text: values.answer
             }
-        })
-            .then(res => {
-                console.log(res);
-                console.log(res.data);
-            });
+        }).then(res => {
+            console.log(res.data.message);
+            props.history.push('/racunUspjeh');
+        }).catch(error => {
+            console.log(error);
+        });
+
     };
 
 
@@ -64,42 +62,17 @@ const Registracija = () => {
             console.log(error);
         });
 
-    const formItemLayout = {
-        labelCol: {
-            xs: {span: 24},
-            sm: {span: 8},
-        },
-        wrapperCol: {
-            xs: {span: 24},
-            sm: {span: 16},
-        },
-    };
-
-    const tailFormItemLayout = {
-        wrapperCol: {
-            xs: {
-                span: 24,
-                offset: 0,
-            },
-            sm: {
-                span: 16,
-                offset: 8,
-            },
-        },
-    };
-
 
     return (
         <Form
-            {...formItemLayout}
-            form={form}
             name="register"
             onFinish={onFinish}
             scrollToFirstError
+            className="registration-form"
         >
 
-            <div>
-                <h1>Sign Up </h1>
+            <div style={{textAlign: "center"}}>
+                <h1 style={{fontSize: "30px"}}>Sign Up </h1>
             </div>
 
             <div>
@@ -161,7 +134,21 @@ const Registracija = () => {
                     {
                         required: true,
                         message: 'Please input your E-mail!',
-                    }
+                    },
+                    ({getFieldValue}) => ({
+                        validator() {
+                            axios.get('https://payment-server-si.herokuapp.com/api/auth/user/checkEmailAvailability?email=' + getFieldValue('email'))
+                                .then(response => {
+                                    if (response.data.available === false) {
+                                        message.error("Email already exists!");
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log(error);
+                                });
+                            return Promise.resolve();
+                        }
+                    })
                 ]}
             >
                 <Input/>
@@ -187,6 +174,15 @@ const Registracija = () => {
                     ({getFieldValue}) => ({
                         validator() {
                             if (getFieldValue('username').length >= 3 && getFieldValue('username').length <= 15) {
+                                axios.get('https://payment-server-si.herokuapp.com/api/auth/user/checkUsernameAvailability?username=' + getFieldValue('username'))
+                                    .then(response => {
+                                        if (response.data.available === false) {
+                                            message.error("Username already taken!");
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                    });
                                 return Promise.resolve();
                             }
                             return Promise.reject('Username should contain between 3 and 15 characters!');
@@ -285,8 +281,8 @@ const Registracija = () => {
             </Form.Item>
 
 
-            <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit">
+            <Form.Item>
+                <Button type="primary" htmlType="submit" className="registration-button">
                     Register
                 </Button>
             </Form.Item>
@@ -296,4 +292,4 @@ const Registracija = () => {
     );
 };
 
-export default Registracija;
+export default RegistrationForm;
