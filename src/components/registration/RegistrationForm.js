@@ -247,7 +247,7 @@ const RegistrationForm = (props) => {
 
 
             <div>
-                <h3>Sequrity question </h3>
+                <h3>Security question </h3>
             </div>
 
 
