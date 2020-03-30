@@ -23,12 +23,13 @@ function DodavanjeRacuna() {
 
     const data = {
       accountOwner: accOwner.value,
-      bankName: values.bankName,
-      expiryDate:
-        "01." +
-        ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
-        "." +
-        values.expiryDate._d.getFullYear(),
+      //  bankName: values.bankName,
+      bankName: "bank",
+      expiryDate: "01.04.2020",
+      // "01." +
+      // ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
+      // "." +
+      // values.expiryDate._d.getFullYear(),
       cvc: values.cvc,
       cardNumber: values.cardNumber
     };
@@ -67,16 +68,9 @@ function DodavanjeRacuna() {
           </Form.Item>
 
           <Form.Item colon="false" label="Expiration date">
-            <Form.Item
-              name="expiryDate"
-              rules={[{ required: true, message: "Date is required" }]}
-            >
-              <DatePicker
-                picker="month"
-                style={{ width: 150 }}
-                placeholder="Pick a date"
-                bordered={true}
-              />
+            <Form.Item name="expiryDate">
+              <Input readOnly style={{ width: 150 }} placeholder="2020-04-01" />
+              {}
             </Form.Item>
           </Form.Item>
 
@@ -90,21 +84,6 @@ function DodavanjeRacuna() {
               ]}
             >
               <Input style={{ width: 150 }} placeholder="Enter CVC" />
-            </Form.Item>
-          </Form.Item>
-
-          <Form.Item colon="false" label="Bank name">
-            <Form.Item
-              name="bankName"
-              rules={[
-                { required: true, message: "Bank name is required" },
-                {
-                  message: "Only letters can be entered",
-                  pattern: /^[a-zšđčćž ]+$/gi
-                }
-              ]}
-            >
-              <Input style={{ width: 200 }} placeholder="Enter bank name" />
             </Form.Item>
           </Form.Item>
 
