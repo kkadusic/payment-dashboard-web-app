@@ -15,9 +15,9 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 const RegistrationForm = (props) => {
 
     const onFinish = values => {
-        let questionId = 1;
+        // console.log('Received values of form: ', values);
 
-        console.log('Received values of form: ', values);
+        let questionId = 1;
         for (var i = 0; i < questions.length; i++) {
             if (values.questions.toString() === questions[i].value) {
                 questionId = questions[i].id;
@@ -25,6 +25,7 @@ const RegistrationForm = (props) => {
             }
         }
 
+        // Sending user data, form fields are valid
         axios.post('https://payment-server-si.herokuapp.com/api/auth/signup/' + questionId, {
             firstName: values.firstName,
             lastName: values.lastName,
@@ -46,9 +47,10 @@ const RegistrationForm = (props) => {
 
     const questions = [];
 
+    // Get all available questions from server
     axios.get('https://payment-server-si.herokuapp.com/questions')
         .then(response => {
-            for (const [index, value] of response.data.entries()) {
+            for (const [, value] of response.data.entries()) {
                 let q = {
                     id: value.id,
                     value: value.title,
@@ -70,14 +72,15 @@ const RegistrationForm = (props) => {
             scrollToFirstError
             className="registration-form"
         >
-
             <div style={{textAlign: "center"}}>
                 <h1 style={{fontSize: "30px"}}>Sign Up </h1>
             </div>
 
+
             <div>
                 <h3>Personal data </h3>
             </div>
+
 
             <Form.Item
                 name="firstName"
@@ -137,6 +140,7 @@ const RegistrationForm = (props) => {
                     },
                     ({getFieldValue}) => ({
                         validator() {
+                            // Check if there is same email on server
                             axios.get('https://payment-server-si.herokuapp.com/api/auth/user/checkEmailAvailability?email=' + getFieldValue('email'))
                                 .then(response => {
                                     if (response.data.available === false) {
@@ -174,6 +178,7 @@ const RegistrationForm = (props) => {
                     ({getFieldValue}) => ({
                         validator() {
                             if (getFieldValue('username').length >= 3 && getFieldValue('username').length <= 15) {
+                                // Check if there is same username on server
                                 axios.get('https://payment-server-si.herokuapp.com/api/auth/user/checkUsernameAvailability?username=' + getFieldValue('username'))
                                     .then(response => {
                                         if (response.data.available === false) {
@@ -240,6 +245,7 @@ const RegistrationForm = (props) => {
                 <Input.Password/>
             </Form.Item>
 
+
             <div>
                 <h3>Sequrity question </h3>
             </div>
@@ -286,8 +292,6 @@ const RegistrationForm = (props) => {
                     Register
                 </Button>
             </Form.Item>
-
-
         </Form>
     );
 };

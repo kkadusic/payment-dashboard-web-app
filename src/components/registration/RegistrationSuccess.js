@@ -1,7 +1,7 @@
 import React from "react";
 import "../../css/RegistrationSuccess.css";
-import { useHistory } from "react-router-dom";
-import { Result, Button } from "antd";
+import {useHistory} from "react-router-dom";
+import {Result, Button} from "antd";
 
 const RegistrationSuccess = () => {
     const history = useHistory();
