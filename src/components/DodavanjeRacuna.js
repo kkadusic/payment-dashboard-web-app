@@ -25,7 +25,7 @@ function DodavanjeRacuna() {
       accountOwner: accOwner.value,
       //  bankName: values.bankName,
       bankName: "bank",
-      expiryDate: "01.04.2020",
+      expiryDate: "25.03.2023",
       // "01." +
       // ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
       // "." +
@@ -69,7 +69,7 @@ function DodavanjeRacuna() {
 
           <Form.Item colon="false" label="Expiration date">
             <Form.Item name="expiryDate">
-              <Input readOnly style={{ width: 150 }} placeholder="2020-04-01" />
+              <Input readOnly style={{ width: 150 }} placeholder="2023-03-25" />
               {}
             </Form.Item>
           </Form.Item>
