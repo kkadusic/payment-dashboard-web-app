@@ -1,0 +1,15 @@
+label {
+    width:150px;
+    display: inline-block;
+}
+
+.registration-form {
+    margin: auto;
+    max-width: 400px;
+}
+
+.registration-button {
+    background-color: #030852;
+    border-style: none;
+    width: 100%;
+}
