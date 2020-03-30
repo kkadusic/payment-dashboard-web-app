@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import '../../css/UserRegistration.css'
+import '../../css/UserRegistration.css';
 import {
     Form,
     Input,
@@ -36,7 +36,7 @@ const RegistrationForm = (props) => {
             }
         }).then(res => {
             console.log(res.data.message);
-            props.history.push('/racunUspjeh');
+            props.history.push('/registracijaUspjeh');
         }).catch(error => {
             console.log(error);
         });
@@ -219,7 +219,7 @@ const RegistrationForm = (props) => {
 
             <Form.Item
                 name="confirm"
-                label="Confirm Pass."
+                label="Confirm Password"
                 dependencies={['password']}
                 hasFeedback
                 rules={[

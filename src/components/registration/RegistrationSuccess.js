@@ -14,19 +14,10 @@ const RegistrationSuccess = () => {
                     type="primary"
                     key="login"
                     onClick={() => {
-                        history.push("/prijava");
+                        history.push("/");
                     }}
                 >
                     Log Into Your Account
-                </Button>,
-                <Button
-                    key="homepage"
-                    className="backHome"
-                    onClick={() => {
-                        history.push("/pocetna");
-                    }}
-                >
-                    Go to Homepage
                 </Button>
             ]}
         />

@@ -9,6 +9,7 @@ import OporavkaLozinke from "./components/OporavkaLozinke";
 import SigurnosnoPitanje from "./components/SigurnosnoPitanje";
 import PrikazNoveSifre from "./components/PrikazNoveSifre";
 import RecoveryProvider from "./context/PasswordRecovery/Provider";
+import RegistrationSuccess from "./components/registration/RegistrationSuccess";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/prijava" component={Prijava}></Route>
 
             <Route path="/registracija" component={Registracija}></Route>
+            <Route path="/registracijaUspjeh" component={RegistrationSuccess}></Route>
           </Switch>
         </Router>
       </RecoveryProvider>
