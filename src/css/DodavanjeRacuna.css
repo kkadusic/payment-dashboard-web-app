@@ -34,3 +34,8 @@ h1 {
 .imgContainer img {
   transform: scale(1.5);
 }
+
+.backHome {
+  background-color: #030852;
+  border-style: none;
+}
