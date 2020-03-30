@@ -28,6 +28,7 @@ import RecoveryProvider from "./context/PasswordRecovery/Provider";
 import PrikazNoveSifre from "./components/PrikazNoveSifre";
 
 import RacunUspjeh from "./components/RacunUspjeh";
+import Logout from "./components/Logout";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -293,11 +294,12 @@ function App() {
             <p>Payment Dashboard</p>
           </div>
           <Tooltip title="Odjava">
-            <Button
+            {/* <Button
               className="logoutBtn"
               shape="circle"
               icon={<LogoutOutlined />}
-            />
+            /> */}
+            <Logout></Logout>
           </Tooltip>
         </Header>
         <Layout>
