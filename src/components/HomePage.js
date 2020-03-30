@@ -204,6 +204,7 @@ function HomePage() {
                 ></Route>
 
                 <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
+                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
 
                 <Route path="/pocetna" component={Home}></Route>
                 {/* 
