@@ -5,13 +5,14 @@ import "../css/DodavanjeRacuna.css";
 import kartice from "../img/creditcards1.png";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { getToken } from "../utilities/Common";
+import { getToken, getUser } from "../utilities/Common";
 
 function DodavanjeRacuna() {
   const [accOwner, setAccOwner] = useState({ value: "" });
   const history = useHistory();
 
   useEffect(() => {
+    console.log(getUser());
     let mounted = true;
     axios
       .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {

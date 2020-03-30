@@ -11,9 +11,13 @@ export const logoutUser = () => {
 
 // Set user data to local storage
 export const saveUserData = user => {
-  localStorage.setItem("userData", user);
+  localStorage.setItem("userData", JSON.stringify(user));
 };
 // Returns token - without Bearer prefix
 export const getToken = () => {
   return localStorage.getItem("token") || null;
+};
+
+export const getUser = () => {
+  return localStorage.getItem("userData");
 };
