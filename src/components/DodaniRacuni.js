@@ -34,7 +34,6 @@ function DodaniRacuni() {
   };
 
   const deleteAccount = (id) => {
-
     axios.delete(
         "https://payment-server-si.herokuapp.com/api/accounts/delete/" + id, {
             headers: {

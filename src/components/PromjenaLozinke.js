@@ -10,12 +10,12 @@ import { useHistory } from "react-router-dom";
 
 function PromjenaLozinke() {
 
-  // State
-  const [question, setQuestion] = useState("");
-  const [description, setDescription] = useState("");
+    // State
+    const [question, setQuestion] = useState("");
+    const [description, setDescription] = useState("");
 
-  // history
-  const history = useHistory();
+    // history
+    const history = useHistory();
 
   // config variables for requests
   const config = {
@@ -172,18 +172,18 @@ function PromjenaLozinke() {
 // style variables
 
 const styles = {
-  titleStyle: {
-    background: "#adc6ff",
-    padding: "15px"
-  },
-  titleHeader: {
-    fontStyle: "bold",
-    fontSize: "20px"
-  },
-  descriptionStyle: {
-    fontSize: "12px",
-    fontWeight: "normal"
-  }
+    titleStyle: {
+        background: "#adc6ff",
+        padding: "15px"
+    },
+    titleHeader: {
+        fontStyle: "bold",
+        fontSize: "20px"
+    },
+    descriptionStyle: {
+        fontSize: "12px",
+        fontWeight: "normal"
+    }
 };
 
 export default PromjenaLozinke;

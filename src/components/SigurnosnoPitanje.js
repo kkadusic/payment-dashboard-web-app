@@ -44,7 +44,7 @@ function OporavkaLozinke() {
 				console.log("Counter: " + counter);
 				if (!response.data.success) {
 					setInput({
-						errorMsg: "Invalid answer",
+						errorMsg: "Invalid answer!",
 						status: "error"
                     });
                     if(counter==3){

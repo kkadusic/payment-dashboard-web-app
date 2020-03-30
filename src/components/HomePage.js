@@ -13,7 +13,6 @@ import {
 import Home from "./Home";
 import Prijava from "./Prijava";
 import PregledProfila from "./PregledProfila";
-import Registracija from "./Registracija";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
 import BrisanjeRacuna from "./BrisanjeRacuna";
@@ -129,9 +128,9 @@ function HomePage() {
                   <Link to="/brisanjeRacuna"> Delete account</Link>
                 </Menu.Item> */}
               </SubMenu>
-              <Menu.Item>
+              <Menu.Item key="logout">
                 <LogoutOutlined></LogoutOutlined>
-                Log out
+                <Link to="/logout">Log out</Link>
               </Menu.Item>
             </Menu>
           </Sider>
@@ -208,8 +207,9 @@ function HomePage() {
                 <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
 
                 <Route path="/pocetna" component={Home}></Route>
-                {/* 
+                <Route path="/logout" component={Logout}></Route>
                 <Route path="/prijava" component={Prijava}></Route>
+                {/* 
 
                 <Route path="/registracija" component={Registracija}></Route> */}
               </Switch>
