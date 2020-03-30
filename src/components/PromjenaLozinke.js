@@ -45,15 +45,22 @@ function PromjenaLozinke() {
       });
   };
 
+  const config = {
+    headers: { Authorization: `Bearer ` + getToken() }
+  };
+
+  const bodyParameters = {
+    key: "value"
+  };
+
   // Sending GET request to get security question
   axios.post("https://payment-server-si.herokuapp.com/api/change/securityquestion",
-    {
-      headers: {
-        Authorization: "Bearer " + getToken()
-      }
-    })
+    bodyParameters,
+    config)
     .then(res => {
+      console.log("Response: " + res.data.title);
       setQuestion(res.data.title);
+      console.log("Question: " + question);
       setDescription(res.data.description);
     });
 
@@ -164,11 +171,11 @@ function PromjenaLozinke() {
             </span>
           </Label>
           <Form.Item
-          style = {
-            {
-              display: "inlineBlock"
+            style={
+              {
+                display: "inlineBlock"
+              }
             }
-          }
             name="answer"
             rules={[
               {
