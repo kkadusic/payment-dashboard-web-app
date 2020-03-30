@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Button, Tooltip } from "antd";
+import { Layout, Menu, Avatar, Tooltip } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
@@ -41,15 +42,18 @@ function HomePage() {
       <Layout height="100vh">
         <Header className="header">
           <div className="logo">
-            <p>Payment Dashboard</p>
+            <p style={{ color: "white" }}>Payment </p>
+            <p style={{ color: "#597ef7" }}> Dashboard</p>
           </div>
-          <Tooltip title="Odjava">
-            <Button
-              className="logoutBtn"
-              shape="circle"
-              icon={<LogoutOutlined />}
-            />
-          </Tooltip>
+          <Avatar
+            style={{
+              color: "white",
+              backgroundColor: "#597ef7"
+            }}
+            className="avatar"
+          >
+            {JSON.parse(getUser()).firstName.charAt(0)}
+          </Avatar>
         </Header>
         <Layout>
           <Sider width={200} className="site-layout-background">
@@ -205,6 +209,7 @@ function HomePage() {
                 ></Route>
 
                 <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
+                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
 
                 <Route path="/pocetna" component={Home}></Route>
                 <Route path="/logout" component={Logout}></Route>

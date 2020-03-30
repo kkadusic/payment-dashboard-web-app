@@ -5,28 +5,17 @@ import "../css/DodavanjeRacuna.css";
 import kartice from "../img/creditcards1.png";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { getToken } from "../utilities/Common";
+import { getToken, getUser } from "../utilities/Common";
 
 function DodavanjeRacuna() {
   const [accOwner, setAccOwner] = useState({ value: "" });
   const history = useHistory();
 
   useEffect(() => {
-    let mounted = true;
-    axios
-      .get("https://payment-server-si.herokuapp.com/api/auth/user/me", {
-        headers: {
-          Authorization: "Bearer " + getToken()
-        }
-      })
-      .then(res => {
-        if (mounted)
-          setAccOwner({ value: res.data.firstName + " " + res.data.lastName });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    return () => (mounted = false);
+    setAccOwner({
+      value:
+        JSON.parse(getUser()).firstName + " " + JSON.parse(getUser()).lastName
+    });
   }, []);
 
   const onFinish = values => {
@@ -34,12 +23,13 @@ function DodavanjeRacuna() {
 
     const data = {
       accountOwner: accOwner.value,
-      bankName: values.bankName,
-      expiryDate:
-        "01." +
-        ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
-        "." +
-        values.expiryDate._d.getFullYear(),
+      //  bankName: values.bankName,
+      bankName: "bank",
+      expiryDate: "25.03.2023",
+      // "01." +
+      // ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
+      // "." +
+      // values.expiryDate._d.getFullYear(),
       cvc: values.cvc,
       cardNumber: values.cardNumber
     };
@@ -78,16 +68,9 @@ function DodavanjeRacuna() {
           </Form.Item>
 
           <Form.Item colon="false" label="Expiration date">
-            <Form.Item
-              name="expiryDate"
-              rules={[{ required: true, message: "Date is required" }]}
-            >
-              <DatePicker
-                picker="month"
-                style={{ width: 150 }}
-                placeholder="Pick a date"
-                bordered={true}
-              />
+            <Form.Item name="expiryDate">
+              <Input readOnly style={{ width: 150 }} placeholder="2023-03-25" />
+              {}
             </Form.Item>
           </Form.Item>
 
@@ -101,21 +84,6 @@ function DodavanjeRacuna() {
               ]}
             >
               <Input style={{ width: 150 }} placeholder="Enter CVC" />
-            </Form.Item>
-          </Form.Item>
-
-          <Form.Item colon="false" label="Bank name">
-            <Form.Item
-              name="bankName"
-              rules={[
-                { required: true, message: "Bank name is required" },
-                {
-                  message: "Only letters can be entered",
-                  pattern: /^[a-zšđčćž ]+$/gi
-                }
-              ]}
-            >
-              <Input style={{ width: 200 }} placeholder="Enter bank name" />
             </Form.Item>
           </Form.Item>
 
