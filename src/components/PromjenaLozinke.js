@@ -22,7 +22,8 @@ function PromjenaLozinke() {
 
     const config = {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + getToken()
       }
     }
     console.log('Received values of form: ', values);
