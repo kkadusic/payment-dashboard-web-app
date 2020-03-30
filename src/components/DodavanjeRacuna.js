@@ -54,8 +54,6 @@ function DodavanjeRacuna() {
         if (res.data.success === true) history.push("/racunUspjeh");
       })
       .catch(err => {
-        console.log(err.response);
-        console.log(err.request);
         if (err.response.data.status === 404)
           message.error(err.response.data.message);
       });
