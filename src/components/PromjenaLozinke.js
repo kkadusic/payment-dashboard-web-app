@@ -199,12 +199,13 @@ function PromjenaLozinke() {
 
 const styles = {
   titleStyle: {
-    background: "#adc6ff",
+    background: "#030852",
     padding: "15px"
   },
   titleHeader: {
     fontStyle: "bold",
-    fontSize: "20px"
+    fontSize: "20px",
+    color: "#FFFFFF"
   },
   descriptionStyle: {
     fontSize: "12px",

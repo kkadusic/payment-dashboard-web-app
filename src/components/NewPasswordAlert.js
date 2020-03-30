@@ -12,6 +12,12 @@ const NewPasswordAlert = () => {
         <Button
           type="primary"
           key="homepage"
+          style= {
+            {
+              backgroundColor: "#030852",
+              color: "#FFFFFF"
+            }
+          }
           onClick={() => {
             history.push("/pocetna");
           }}
