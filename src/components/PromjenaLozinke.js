@@ -17,13 +17,21 @@ function PromjenaLozinke() {
   // history
   const history = useHistory();
 
+  const config = {
+    headers: { Authorization: `Bearer ` + getToken() }
+  };
+
+  const bodyParameters = {
+    key: "value"
+  };
+
   // when the form is sumbitted, sends post request wih given values
   const onFinish = values => {
 
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + getToken()
+        'Authorization': `Bearer ` + getToken()
       }
     }
     console.log('Received values of form: ', values);
@@ -35,7 +43,7 @@ function PromjenaLozinke() {
       },
       config)
       .then(res => {
-        if (res.data.success === true) history.push("/newPasswordAlert");
+        if(res.data.success === true) history.push("/newPasswordAlert");
       })
       .catch(err => {
         console.log(err.response);
@@ -45,22 +53,13 @@ function PromjenaLozinke() {
       });
   };
 
-  const config = {
-    headers: { Authorization: `Bearer ` + getToken() }
-  };
 
-  const bodyParameters = {
-    key: "value"
-  };
-
-  // Sending GET request to get security question
+  // Sending POST request to get security question
   axios.post("https://payment-server-si.herokuapp.com/api/change/securityquestion",
     bodyParameters,
     config)
     .then(res => {
-      console.log("Response: " + res.data.title);
       setQuestion(res.data.title);
-      console.log("Question: " + question);
       setDescription(res.data.description);
     });
 
