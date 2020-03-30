@@ -25,7 +25,7 @@ function OporavkaLozinke() {
 
 
 	useEffect(() => {
-		if (counter == 0) return;  //do not enter the first time
+		if (counter == 0 || recoveryUser.success) return;  //do not enter the first time
 		const config = {
 			headers: {
 				"Content-Type": "application/json"
@@ -62,7 +62,7 @@ function OporavkaLozinke() {
 				alert("Doslo je do greske!");
 				console.log(error);
 			});
-	}, [counter, username, values]);
+	}, [counter]);
 
 	return (
 		<div>
