@@ -16,7 +16,6 @@ import Prijava from "./Prijava";
 import PregledProfila from "./PregledProfila";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
-import BrisanjeRacuna from "./BrisanjeRacuna";
 import PromjenaLozinke from "./PromjenaLozinke";
 import Transakcije24 from "./Transakcije24";
 import TransakcijeMjesec from "./TransakcijeMjesec";
@@ -24,9 +23,7 @@ import TransakcijeMerchant from "./TransakcijeMerchant";
 import TransakcijeProizvod from "./TransakcijeProizvod";
 import OporavkaLozinke from "./OporavkaLozinke";
 import SigurnosnoPitanje from "./SigurnosnoPitanje";
-import RecoveryProvider from "../context/PasswordRecovery/Provider";
 import PrikazNoveSifre from "./PrikazNoveSifre";
-import AccountComponent from "./accountListComponent/accountComponent";
 import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
 import NewPasswordAlert from "./NewPasswordAlert";
@@ -66,12 +63,6 @@ function HomePage() {
               <Menu.Item key="pocetna">
                 <Link to="/pocetna"> Home</Link>
               </Menu.Item>
-              {/* <Menu.Item key="prijava">
-                <Link to="/prijava"> Log in</Link>
-              </Menu.Item>
-              <Menu.Item key="registracija">
-                <Link to="/registracija"> Register</Link>
-              </Menu.Item> */}
 
               <SubMenu
                 key="sub1"
@@ -128,9 +119,6 @@ function HomePage() {
                 <Menu.Item key="dodavanjeRacuna">
                   <Link to="/dodavanjeRacuna"> Add new account</Link>
                 </Menu.Item>
-                {/* <Menu.Item key="brisanjeRacuna">
-                  <Link to="/brisanjeRacuna"> Delete account</Link>
-                </Menu.Item> */}
               </SubMenu>
               <Menu.Item key="logout">
                 <LogoutOutlined></LogoutOutlined>
@@ -165,11 +153,6 @@ function HomePage() {
                   path="/dodavanjeRacuna"
                   component={DodavanjeRacuna}
                 ></Route>
-
-                {/* <Route
-                  path="/brisanjeRacuna"
-                  component={BrisanjeRacuna}
-                ></Route> */}
 
                 <Route
                   exact
@@ -214,9 +197,6 @@ function HomePage() {
                 <Route path="/pocetna" component={Home}></Route>
                 <Route path="/logout" component={Logout}></Route>
                 <Route path="/prijava" component={Prijava}></Route>
-                {/* 
-
-                <Route path="/registracija" component={Registracija}></Route> */}
               </Switch>
             </Content>
           </Layout>
