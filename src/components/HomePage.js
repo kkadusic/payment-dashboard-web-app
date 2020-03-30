@@ -202,8 +202,8 @@ function HomePage() {
 
                 <Route path="/pocetna" component={Home}></Route>
                 <Route path="/logout" component={Logout}></Route>
-                {/* 
                 <Route path="/prijava" component={Prijava}></Route>
+                {/* 
 
                 <Route path="/registracija" component={Registracija}></Route> */}
               </Switch>
