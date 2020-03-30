@@ -26,7 +26,7 @@ import OporavkaLozinke from "./components/OporavkaLozinke";
 import SigurnosnoPitanje from "./components/SigurnosnoPitanje";
 import RecoveryProvider from "./context/PasswordRecovery/Provider";
 import PrikazNoveSifre from "./components/PrikazNoveSifre";
-
+import AccountComponent from "./components/accountListComponent/accountComponent";
 import RacunUspjeh from "./components/RacunUspjeh";
 import Logout from "./components/Logout";
 
@@ -43,7 +43,7 @@ function App() {
   //     case "promjenaLozinke":
   //       return <PromjenaLozinke></PromjenaLozinke>;
   //     case "dodaniRacuni":
-  //       return <ReceiptsReview></ReceiptsReview>;
+  //       return <AccountComponent></AccountComponent>;
   //     case "dodavanjeRacuna":
   //       return <DodavanjeRacuna></DodavanjeRacuna>;
   //     case "brisanjeRacuna":
@@ -187,10 +187,7 @@ function App() {
                     component={PromjenaLozinke}
                   ></Route>
 
-                  <Route
-                    path="/dodaniRacuni"
-                    component={ReceiptsReview}
-                  ></Route>
+                  <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
 
                   <Route
                     path="/dodavanjeRacuna"
@@ -262,7 +259,7 @@ function App() {
   //     case "promjenaLozinke":
   //       return <PromjenaLozinke></PromjenaLozinke>;
   //     case "dodaniRacuni":
-  //       return <ReceiptsReview></ReceiptsReview>;
+  //       return <AccountComponent></AccountComponent>;
   //     case "dodavanjeRacuna":
   //       return <DodavanjeRacuna></DodavanjeRacuna>;
   //     case "brisanjeRacuna":
