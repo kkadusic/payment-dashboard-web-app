@@ -13,7 +13,6 @@ import {
 import Home from "./Home";
 import Prijava from "./Prijava";
 import PregledProfila from "./PregledProfila";
-import Registracija from "./Registracija";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
 import BrisanjeRacuna from "./BrisanjeRacuna";
