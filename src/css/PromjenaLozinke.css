@@ -1,3 +1,15 @@
 label {
-  font-style: italic;
+  width:150px;
+  display: inline-block;
+}
+
+.change-password-form {
+  margin: auto;
+  max-width: 500px;
+}
+
+.change-password-button {
+  background-color: #030852;
+  border-style: none;
+  width: 100%;
 }

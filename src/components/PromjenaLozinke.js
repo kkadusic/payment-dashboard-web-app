@@ -17,6 +17,7 @@ function PromjenaLozinke() {
   // history
   const history = useHistory();
 
+  // config variables for requests
   const config = {
     headers: { Authorization: `Bearer ` + getToken() }
   };
@@ -43,7 +44,7 @@ function PromjenaLozinke() {
       },
       config)
       .then(res => {
-        if(res.data.success === true) history.push("/newPasswordAlert");
+        if (res.data.success === true) history.push("/newPasswordAlert");
       })
       .catch(err => {
         console.log(err.response);
@@ -53,8 +54,7 @@ function PromjenaLozinke() {
       });
   };
 
-
-  // Sending POST request to get security question
+  // Sending GET request to get security question
   axios.post("https://payment-server-si.herokuapp.com/api/change/securityquestion",
     bodyParameters,
     config)
@@ -63,142 +63,109 @@ function PromjenaLozinke() {
       setDescription(res.data.description);
     });
 
-  // form parameters
-  const [form] = Form.useForm();
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 30 },
-      sm: { span: 24 },
-    },
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
 
   return (
-    <React.Fragment>
-      <div style={styles.titleStyle}>
-        <h1 style={styles.titleHeader}>Change password</h1>
+    <Form
+      name="register"
+      onFinish={onFinish}
+      scrollToFirstError
+      className="change-password-form"
+    >
+      <div style={{ textAlign: "center" }}>
+        <h1 style={{ fontSize: "30px" }}>Change Password </h1>
       </div>
-      <br></br>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="register"
-        onFinish={onFinish}
-        scrollToFirstError
+
+      <Form.Item
+        name="oldPassword"
+        label="Old password:"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your old password!',
+          },
+        ]}
       >
-
-        <Form.Item
-          name="oldPassword"
-          label="Old password:"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your old password!',
-            },
-          ]}
-        >
-          <Input prefix={<LockOutlined />}
-            type="password"
-            placeholder="Old password"
-          />
-        </Form.Item>
+        <Input prefix={<LockOutlined />}
+          type="password"
+        />
+      </Form.Item>
 
 
-        <Form.Item
-          name="newPassword"
-          label={
-            <span>
-              New password:&nbsp;
+      <Form.Item
+        name="newPassword"
+        label={
+          <span>
+            New password:&nbsp;
                         <Tooltip title="Your password should contain between 6 and 20 characters.">
-                <QuestionCircleOutlined />
-              </Tooltip>
-            </span>
-          }
-          rules={[
-            {
-              required: true,
-              message: 'Please input your new password!',
-            },
-            ({ getFieldValue }) => ({
-              validator() {
-                if (getFieldValue('newPassword').length >= 6 && getFieldValue('newPassword').length <= 20) {
-                  return Promise.resolve();
-                }
-                return Promise.reject('Password should contain between 6 and 20 characters!');
+              <QuestionCircleOutlined />
+            </Tooltip>
+          </span>
+        }
+        rules={[
+          {
+            required: true,
+            message: 'Please input your new password!',
+          },
+          ({ getFieldValue }) => ({
+            validator() {
+              if (getFieldValue('newPassword').length >= 6 && getFieldValue('newPassword').length <= 20) {
+                return Promise.resolve();
               }
-            })
-          ]}
-        >
-          <Input prefix={<LockOutlined />}
-            type="password"
-            placeholder="New password"
-          />
-        </Form.Item>
+              return Promise.reject('Password should contain between 6 and 20 characters!');
+            }
+          })
+        ]}
+      >
+        <Input prefix={<LockOutlined />}
+          type="password"
+        />
+      </Form.Item>
 
+      <Form.Item
+        style={
+          {
+            textAlign: "center",
+          }
+        }>
+        <Label style={
+          {
+            fontStyle: "italic",
+            fontWeight: "bold"
+          }
+        }>
+          <span>
+            Answer your security question: {question}
+            <p style={styles.descriptionStyle}>{description}</p>
+          </span>
+        </Label>
         <Form.Item
           style={
             {
-              textAlign: "center",
+              display: "inlineBlock"
             }
-          }>
-          <Label style={
+          }
+          name="answer"
+          rules={[
             {
-              fontStyle: "italic",
-              fontWeight: "bold"
-            }
-          }>
-            <span>
-              Answer your security question: {question}
-              <p style={styles.descriptionStyle}>{description}</p>
-            </span>
-          </Label>
-          <Form.Item
-            style={
-              {
-                display: "inlineBlock"
-              }
-            }
-            name="answer"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the answer to your security question!',
-              },
-            ]}>
+              required: true,
+              message: 'Please input the answer to your security question!',
+            },
+          ]}>
 
-            <Input prefix={<QuestionCircleOutlined />}
-              type="text"
-              placeholder="Answer"
-            />
-          </Form.Item>
+          <Input prefix={<QuestionCircleOutlined />}
+            type="text"
+            placeholder="Answer"
+          />
         </Form.Item>
+      </Form.Item>
 
 
-
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit" className="submit-button">
-            Submit
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className="change-password-button">
+          Submit
                 </Button>
-        </Form.Item>
-      </Form>
-    </React.Fragment>
+      </Form.Item>
+    </Form>
   );
 }
 
@@ -206,13 +173,12 @@ function PromjenaLozinke() {
 
 const styles = {
   titleStyle: {
-    background: "#030852",
+    background: "#adc6ff",
     padding: "15px"
   },
   titleHeader: {
     fontStyle: "bold",
-    fontSize: "20px",
-    color: "#FFFFFF"
+    fontSize: "20px"
   },
   descriptionStyle: {
     fontSize: "12px",
