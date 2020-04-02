@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Button, Tooltip } from "antd";
+import { Layout, Menu, Avatar, Tooltip } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
@@ -15,19 +16,17 @@ import Prijava from "./Prijava";
 import PregledProfila from "./PregledProfila";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
-import BrisanjeRacuna from "./BrisanjeRacuna";
 import PromjenaLozinke from "./PromjenaLozinke";
-import Transakcije24 from "./Transakcije24";
-import TransakcijeMjesec from "./TransakcijeMjesec";
-import TransakcijeMerchant from "./TransakcijeMerchant";
-import TransakcijeProizvod from "./TransakcijeProizvod";
+import Transakcije24 from "./transactions/Transakcije24";
+import TransakcijeMjesec from "./transactions/TransakcijeMjesec";
+import TransakcijeMerchant from "./transactions/TransakcijeMerchant";
+import TransakcijeProizvod from "./transactions/TransakcijeProizvod";
 import OporavkaLozinke from "./OporavkaLozinke";
 import SigurnosnoPitanje from "./SigurnosnoPitanje";
-import RecoveryProvider from "../context/PasswordRecovery/Provider";
 import PrikazNoveSifre from "./PrikazNoveSifre";
-import AccountComponent from "./accountListComponent/accountComponent";
 import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
+import NewPasswordAlert from "./NewPasswordAlert";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -40,15 +39,18 @@ function HomePage() {
       <Layout height="100vh">
         <Header className="header">
           <div className="logo">
-            <p>Payment Dashboard</p>
+            <p style={{ color: "white" }}>Payment </p>
+            <p style={{ color: "#597ef7" }}> Dashboard</p>
           </div>
-          <Tooltip title="Odjava">
-            <Button
-              className="logoutBtn"
-              shape="circle"
-              icon={<LogoutOutlined />}
-            />
-          </Tooltip>
+          <Avatar
+            style={{
+              color: "white",
+              backgroundColor: "#597ef7"
+            }}
+            className="avatar"
+          >
+            {JSON.parse(getUser()).firstName.charAt(0)}
+          </Avatar>
         </Header>
         <Layout>
           <Sider width={200} className="site-layout-background">
@@ -61,12 +63,6 @@ function HomePage() {
               <Menu.Item key="pocetna">
                 <Link to="/pocetna"> Home</Link>
               </Menu.Item>
-              {/* <Menu.Item key="prijava">
-                <Link to="/prijava"> Log in</Link>
-              </Menu.Item>
-              <Menu.Item key="registracija">
-                <Link to="/registracija"> Register</Link>
-              </Menu.Item> */}
 
               <SubMenu
                 key="sub1"
@@ -123,9 +119,6 @@ function HomePage() {
                 <Menu.Item key="dodavanjeRacuna">
                   <Link to="/dodavanjeRacuna"> Add new account</Link>
                 </Menu.Item>
-                {/* <Menu.Item key="brisanjeRacuna">
-                  <Link to="/brisanjeRacuna"> Delete account</Link>
-                </Menu.Item> */}
               </SubMenu>
               <Menu.Item key="logout">
                 <LogoutOutlined></LogoutOutlined>
@@ -161,11 +154,6 @@ function HomePage() {
                   component={DodavanjeRacuna}
                 ></Route>
 
-                {/* <Route
-                  path="/brisanjeRacuna"
-                  component={BrisanjeRacuna}
-                ></Route> */}
-
                 <Route
                   exact
                   path="/transakcije24"
@@ -198,14 +186,17 @@ function HomePage() {
                   component={SigurnosnoPitanje}
                 ></Route>
 
+                <Route
+                  path="/newPasswordAlert"
+                  component={NewPasswordAlert}
+                ></Route>
+
                 <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
+                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
 
                 <Route path="/pocetna" component={Home}></Route>
                 <Route path="/logout" component={Logout}></Route>
                 <Route path="/prijava" component={Prijava}></Route>
-                {/* 
-
-                <Route path="/registracija" component={Registracija}></Route> */}
               </Switch>
             </Content>
           </Layout>

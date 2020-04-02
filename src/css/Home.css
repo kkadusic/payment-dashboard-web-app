@@ -1,4 +1,4 @@
-.container {
+/* .container {
   padding: 20px;
 }
 
@@ -10,4 +10,40 @@
 .title h1 {
   font-style: bold;
   font-size: 20px;
+} */
+
+.homeContainer {
+  text-align: center;
+}
+
+.homeContainer h1 {
+  font-size: x-large;
+}
+
+.ant-carousel .slick-slide {
+  text-align: center;
+  height: 70vh;
+  background: white;
+  overflow: hidden;
+}
+
+.ant-carousel .slick-slide h3 {
+  color: #597ef7;
+}
+.slick-dots-bottom li {
+  background-color: #030852;
+  color: #030852;
+}
+
+.ant-carousel .slick-dots li {
+  height: 10px;
+  width: 40px;
+  margin: 0 5px;
+  background: #030852;
+}
+.homeContainer img {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  transform: scale(1.3);
 }
