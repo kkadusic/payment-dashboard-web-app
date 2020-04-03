@@ -1,7 +1,7 @@
 import React from "react";
 import "../App.css";
 import "../css/Home.css";
-import { Row, Col, Carousel } from "antd";
+import { Carousel } from "antd";
 import slika1 from "../img/cards.png";
 import slika2 from "../img/expenses.jpg";
 import slika3 from "../img/analytics.jpg";
