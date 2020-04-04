@@ -34,6 +34,7 @@ class PregledTransakcija extends Component {
             merchantName: transaction.merchantName,
             totalPrice: transaction.totalPrice,
             date: transaction.date.substr(0, 10),
+            service: transaction.service,
           });
         });
         this.setState({ data: transactions }, () => {
@@ -140,6 +141,11 @@ class PregledTransakcija extends Component {
         width: "20%",
         sorter: (a, b) => a.merchantName < b.merchantName,
         ...this.getColumnSearchProps("merchantName"),
+      },
+      {
+        title: "Service",
+        dataIndex: "service",
+        key: "service",
       },
       {
         title: "Date",
