@@ -265,8 +265,8 @@ class PregledTransakcija extends Component {
               return true;
           }
         },
-        sorter: (a, b) => a.price - b.price,
-        ...this.getColumnSearchProps("price")
+        sorter: (a, b) => a.price - b.price
+        //...this.getColumnSearchProps("price")
       }
     ];
     return <Table columns={columns} dataSource={data} />;
