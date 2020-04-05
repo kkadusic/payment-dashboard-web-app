@@ -164,7 +164,7 @@ class PregledTransakcija extends Component {
         dataIndex: "merchant",
         key: "merchant",
         width: "20%",
-        sorter: (a, b) => a.merchant < b.merchant,
+        sorter: (a, b) => { return a.merchant.localeCompare(b.merchant)},
         ...this.getColumnSearchProps("merchant")
       },
       {
