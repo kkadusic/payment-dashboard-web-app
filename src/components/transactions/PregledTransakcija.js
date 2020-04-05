@@ -223,6 +223,47 @@ class PregledTransakcija extends Component {
         title: "Price",
         dataIndex: "price",
         key: "price",
+        // Filters into categories of prices: low, lower medium, medium, upper medium, high
+        filters: [
+          {
+            text: "Low (0-5 BAM)",
+            value: "low"
+          },
+          {
+            text: "Lower medium (5-20 BAM)",
+            value: "lowMedium"
+          },
+          {
+            text: "Medium (20-50 BAM)",
+            value: "medium"
+          },
+          {
+            text: "Upper medium (50-100 BAM)",
+            value: "upMedium"
+          },
+          {
+            text: "High (100+ BAM)",
+            value: "high"
+          }
+        ],
+        onFilter: (value, record) => {
+          const price = record.price;
+          const lowStart = 0, lowMediumStart = 5, mediumStart = 20, upMediumStart = 50, highStart = 100;
+          switch(value) {
+            case "low" :
+              return (price >= lowStart && price < lowMediumStart);
+            case "lowMedium":
+              return (price >=lowMediumStart && price < mediumStart);
+            case "medium":
+              return (price >= mediumStart && price < upMediumStart);
+            case "upMedium":
+              return (price >= upMediumStart && price < highStart);
+            case "high":
+              return (price >= highStart);
+            default:
+              return true;
+          }
+        },
         sorter: (a, b) => a.price - b.price,
         ...this.getColumnSearchProps("price")
       }
