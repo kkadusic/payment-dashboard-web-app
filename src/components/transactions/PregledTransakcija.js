@@ -124,6 +124,26 @@ class PregledTransakcija extends Component {
     this.setState({ searchText: "" });
   };
 
+  expandedRowRender = (service) => {
+    const columns = [
+      { title: 'Item', dataIndex: 'item', key: 'item' },
+      { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },        
+    ];
+  
+    const items = service.split(",")
+    const collapsedData = []
+  
+    for (let i = 0; i < items.length; ++i) {
+      let item = items[i]
+      collapsedData.push({
+        key: i,
+        item: item.substr(0, item.length - 5),
+        quantity: item.substr(items[i].length -4, 3)
+      });
+    }
+    return <Table columns={columns} dataSource={collapsedData} pagination={false} />;
+  };
+
   render() {
     const columns = [
       {
@@ -146,6 +166,7 @@ class PregledTransakcija extends Component {
         title: "Service",
         dataIndex: "service",
         key: "service",
+        ellipsis: true,
       },
       {
         title: "Date",
@@ -207,7 +228,7 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("totalPrice"),
       },
     ];
-    return <Table columns={columns} dataSource={this.state.data} />;
+    return <Table columns={columns} dataSource={this.state.data} expandable={{ expandedRowRender: record => this.expandedRowRender(record.service) }}  />;
   }
 }
 
