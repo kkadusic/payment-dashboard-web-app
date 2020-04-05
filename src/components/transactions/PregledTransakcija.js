@@ -14,6 +14,7 @@ class PregledTransakcija extends Component {
     searchedColumn: "",
     data: [],
     key: 0,
+    expandedKeys: [],
   };
 
   componentWillMount() {
@@ -124,7 +125,18 @@ class PregledTransakcija extends Component {
     this.setState({ searchText: "" });
   };
 
-  expandedRowRender = (service) => {
+  onTableRowExpand(expanded, record){
+    var keys = [];
+    if(expanded){
+        keys.push(record.key); 
+    }
+
+     this.setState({expandedKeys: keys});
+}
+
+  expandedRowRender = (rowData) => {
+   
+    const service = rowData.service
     const columns = [
       { title: 'Item', dataIndex: 'item', key: 'item' },
       { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },        
@@ -134,11 +146,12 @@ class PregledTransakcija extends Component {
     const collapsedData = []
   
     for (let i = 0; i < items.length; ++i) {
-      let item = items[i]
+      let itemData = items[i].split('(')
+
       collapsedData.push({
         key: i,
-        item: item.substr(0, item.length - 5),
-        quantity: item.substr(items[i].length -4, 3)
+        item: itemData[0],
+        quantity: itemData[1].substr(0, itemData[1].length - 1)
       });
     }
     return <Table columns={columns} dataSource={collapsedData} pagination={false} />;
@@ -228,7 +241,7 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("totalPrice"),
       },
     ];
-    return <Table columns={columns} dataSource={this.state.data} expandable={{ expandedRowRender: record => this.expandedRowRender(record.service) }}  />;
+    return <Table columns={columns} dataSource={this.state.data} onExpand={(expanded, render) => this.onTableRowExpand(expanded, render)} expandable={{ expandedRowRender: record => this.expandedRowRender(record) }} expandedRowKeys={this.state.expandedKeys} />;
   }
 }
 
