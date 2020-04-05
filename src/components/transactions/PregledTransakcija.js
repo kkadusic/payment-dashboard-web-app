@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import { Table, Input, Button } from "antd";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, SortAscendingOutlined } from "@ant-design/icons";
 
 const data = [
   {
@@ -157,6 +157,7 @@ class PregledTransakcija extends Component {
         key: "cardNumber",
         width: "30%",
         sorter: (a, b) => a.cardNumber - b.cardNumber,
+        defaultSortOrder: "ascend",
         ...this.getColumnSearchProps("cardNumber")
       },
       {
