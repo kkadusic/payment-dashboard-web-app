@@ -52,7 +52,7 @@ function Prijava() {
         let user = {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
-          username: response.data.userName,
+          username: response.data.username,
           email: response.data.email
         };
 
