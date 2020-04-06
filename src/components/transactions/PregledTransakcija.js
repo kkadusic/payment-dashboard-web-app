@@ -20,6 +20,23 @@ class PregledTransakcija extends Component {
     expandedKeys: [],
   };
 
+  load = (response) => {
+    const transactions = [];
+    response.data.forEach((transaction) => {
+      transactions.push({
+        key: ++this.state.key,
+        cardNumber: transaction.cardNumber,
+        merchantName: transaction.merchantName,
+        totalPrice: transaction.totalPrice,
+        date: transaction.date.substr(0, 10),
+        service: transaction.service,
+      });
+    });
+    this.setState({ data: transactions }, () => {
+      console.log(this.state.data);
+    });
+  };
+
   componentWillMount() {
     this.getTransactions();
   }
@@ -29,28 +46,21 @@ class PregledTransakcija extends Component {
       .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
-      .then((response) => {
-        const transactions = [];
-        response.data.forEach((transaction) => {
-          transactions.push({
-            key: ++this.state.key,
-            cardNumber: transaction.cardNumber,
-            merchantName: transaction.merchantName,
-            totalPrice: transaction.totalPrice,
-            date: transaction.date.substr(0, 10),
-            service: transaction.service,
-          });
-        });
-        this.setState({ data: transactions }, () => {
-          //   this.state.data.forEach((element) => {
-          //     //   element["key"] = uuid();
-          //     element["key"] = ++this.state.key;
-          //   });
-          console.log(this.state.data);
-        });
-      })
+      .then(this.load)
       .catch((err) => console.log(err));
   }
+  getTransactionsByService = (selectedKeys) => {
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/transactions/service/" +
+          selectedKeys,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then(this.load)
+      .catch((err) => console.log(err));
+  };
 
   getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
@@ -76,7 +86,11 @@ class PregledTransakcija extends Component {
         />
         <Button
           type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => {
+            dataIndex !== "service"
+              ? this.handleSearch(selectedKeys, confirm, dataIndex)
+              : this.getTransactionsByService(selectedKeys);
+          }}
           icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -84,7 +98,11 @@ class PregledTransakcija extends Component {
           Search
         </Button>
         <Button
-          onClick={() => this.handleReset(clearFilters)}
+          onClick={() => {
+            dataIndex !== "service"
+              ? this.handleReset(clearFilters)
+              : this.getTransactions();
+          }}
           size="small"
           style={{ width: 90 }}
         >
@@ -125,7 +143,9 @@ class PregledTransakcija extends Component {
 
   handleReset = (clearFilters) => {
     clearFilters();
-    this.setState({ searchText: "" });
+    this.setState({
+      searchText: "",
+    });
   };
 
   onTableRowExpand(expanded, record) {
@@ -180,13 +200,14 @@ class PregledTransakcija extends Component {
         sorter: (a, b) => {
           return a.merchantName.localeCompare(b.merchantName);
         },
-        ...this.getColumnSearchProps("merchant"),
+        ...this.getColumnSearchProps("merchantName"),
       },
       {
         title: "Service",
         dataIndex: "service",
         key: "service",
         ellipsis: true,
+        ...this.getColumnSearchProps("service"),
       },
       {
         title: "Date",
@@ -314,6 +335,7 @@ class PregledTransakcija extends Component {
           return (
             <>
               <tr>
+                <td></td>
                 <th>Total</th>
                 <td></td>
                 <td></td>
