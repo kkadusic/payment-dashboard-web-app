@@ -170,7 +170,6 @@ class PregledTransakcija extends Component {
 
     for (let i = 0; i < items.length; ++i) {
       let itemData = items[i].split("(");
-
       collapsedData.push({
         key: i,
         item: itemData[0],
