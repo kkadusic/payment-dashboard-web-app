@@ -20,6 +20,23 @@ class PregledTransakcija extends Component {
     expandedKeys: [],
   };
 
+  load = (response) => {
+    const transactions = [];
+    response.data.forEach((transaction) => {
+      transactions.push({
+        key: ++this.state.key,
+        cardNumber: transaction.cardNumber,
+        merchantName: transaction.merchantName,
+        totalPrice: transaction.totalPrice,
+        date: transaction.date.substr(0, 10),
+        service: transaction.service,
+      });
+    });
+    this.setState({ data: transactions }, () => {
+      console.log(this.state.data);
+    });
+  };
+
   componentWillMount() {
     this.getTransactions();
   }
@@ -29,28 +46,22 @@ class PregledTransakcija extends Component {
       .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
-      .then((response) => {
-        const transactions = [];
-        response.data.forEach((transaction) => {
-          transactions.push({
-            key: ++this.state.key,
-            cardNumber: transaction.cardNumber,
-            merchantName: transaction.merchantName,
-            totalPrice: transaction.totalPrice,
-            date: transaction.date.substr(0, 10),
-            service: transaction.service,
-          });
-        });
-        this.setState({ data: transactions }, () => {
-          //   this.state.data.forEach((element) => {
-          //     //   element["key"] = uuid();
-          //     element["key"] = ++this.state.key;
-          //   });
-          console.log(this.state.data);
-        });
-      })
+      .then(this.load)
       .catch((err) => console.log(err));
   }
+
+  getTransactionsByService = (selectedKeys) => {
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/transactions/service/" +
+          selectedKeys,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then(this.load)
+      .catch((err) => console.log(err));
+  };
 
   getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
@@ -76,7 +87,11 @@ class PregledTransakcija extends Component {
         />
         <Button
           type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => {
+            dataIndex !== "service"
+              ? this.handleSearch(selectedKeys, confirm, dataIndex)
+              : this.getTransactionsByService(selectedKeys);
+          }}
           icon={<SearchOutlined />}
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -84,7 +99,11 @@ class PregledTransakcija extends Component {
           Search
         </Button>
         <Button
-          onClick={() => this.handleReset(clearFilters)}
+          onClick={() => {
+            dataIndex !== "service"
+              ? this.handleReset(clearFilters)
+              : this.getTransactions();
+          }}
           size="small"
           style={{ width: 90 }}
         >
@@ -125,7 +144,9 @@ class PregledTransakcija extends Component {
 
   handleReset = (clearFilters) => {
     clearFilters();
-    this.setState({ searchText: "" });
+    this.setState({
+      searchText: "",
+    });
   };
 
   onTableRowExpand(expanded, record) {
@@ -149,7 +170,6 @@ class PregledTransakcija extends Component {
 
     for (let i = 0; i < items.length; ++i) {
       let itemData = items[i].split("(");
-
       collapsedData.push({
         key: i,
         item: itemData[0],
@@ -162,6 +182,23 @@ class PregledTransakcija extends Component {
   };
 
   render() {
+    let things = {};
+    things.thing = [];
+
+    for (let i = 0; i < this.state.data.length; i++) {
+      things.thing.push({
+        text: this.state.data[i].cardNumber,
+        value: this.state.data[i].cardNumber,
+      });
+    }
+
+    // Remove duplicate card numbers
+    things.thing = things.thing.filter(
+      (thing, index, self) =>
+        index ===
+        self.findIndex((t) => t.text === thing.text && t.value === thing.value)
+    );
+
     const columns = [
       {
         title: "Card number",
@@ -170,7 +207,8 @@ class PregledTransakcija extends Component {
         width: "30%",
         sorter: (a, b) => a.cardNumber - b.cardNumber,
         defaultSortOrder: "ascend",
-        ...this.getColumnSearchProps("cardNumber"),
+        filters: things.thing,
+        onFilter: (value, record) => record.cardNumber.indexOf(value) === 0,
       },
       {
         title: "Merchant",
@@ -180,13 +218,14 @@ class PregledTransakcija extends Component {
         sorter: (a, b) => {
           return a.merchantName.localeCompare(b.merchantName);
         },
-        ...this.getColumnSearchProps("merchant"),
+        ...this.getColumnSearchProps("merchantName"),
       },
       {
         title: "Service",
         dataIndex: "service",
         key: "service",
         ellipsis: true,
+        ...this.getColumnSearchProps("service"),
       },
       {
         title: "Date",
@@ -244,6 +283,12 @@ class PregledTransakcija extends Component {
         title: "Value",
         dataIndex: "totalPrice",
         key: "totalPrice",
+        sorter: (a, b) => a.totalPrice - b.totalPrice,
+        render: (price) => (
+          <Tag id="tagIznosa" color="red">
+            {price} KM
+          </Tag>
+        ),
         // Filters into categories of prices: low, lower medium, medium, upper medium, high
         filters: [
           {
@@ -289,12 +334,6 @@ class PregledTransakcija extends Component {
               return true;
           }
         },
-        sorter: (a, b) => a.totalPrice - b.totalPrice,
-        render: (price) => (
-          <Tag id="tagIznosa" color="red">
-            {price} KM
-          </Tag>
-        ),
       },
     ];
     return (
@@ -314,6 +353,7 @@ class PregledTransakcija extends Component {
           return (
             <>
               <tr>
+                <td></td>
                 <th>Total</th>
                 <td></td>
                 <td></td>
