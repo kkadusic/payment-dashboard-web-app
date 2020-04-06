@@ -92,7 +92,7 @@ const RegistrationForm = (props) => {
                     },
                     ({getFieldValue}) => ({
                         validator() {
-                            if (getFieldValue('firstName').length >= 4 && getFieldValue('firstName').length <= 40) {
+                            if (getFieldValue('firstName').length >= 2 && getFieldValue('firstName').length <= 40) {
                                 return Promise.resolve();
                             }
                             return Promise.reject('First name should contain between 4 and 40 characters!');
@@ -114,7 +114,7 @@ const RegistrationForm = (props) => {
                     },
                     ({getFieldValue}) => ({
                         validator() {
-                            if (getFieldValue('lastName').length >= 4 && getFieldValue('lastName').length <= 40) {
+                            if (getFieldValue('lastName').length >= 3 && getFieldValue('lastName').length <= 40) {
                                 return Promise.resolve();
                             }
                             return Promise.reject('Last name should contain between 4 and 40 characters!');
@@ -177,7 +177,7 @@ const RegistrationForm = (props) => {
                     },
                     ({getFieldValue}) => ({
                         validator() {
-                            if (getFieldValue('username').length >= 3 && getFieldValue('username').length <= 15) {
+                            if (getFieldValue('username').length >= 4 && getFieldValue('username').length <= 15) {
                                 // Check if there is same username on server
                                 axios.get('https://payment-server-si.herokuapp.com/api/auth/user/checkUsernameAvailability?username=' + getFieldValue('username'))
                                     .then(response => {
