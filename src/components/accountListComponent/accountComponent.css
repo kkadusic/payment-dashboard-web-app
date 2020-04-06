@@ -1,7 +1,20 @@
 .site-collapse-custom-collapse .site-collapse-custom-panel {
-    background: #f0f5ff;
+    background: #d6e4ff;
     border-radius: 2px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    margin-top:10px;
     border: 0px;
     overflow: hidden;
+}
+
+.reload-button {
+    color: #1890ff;
+    background-color: #d6e4ff;
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+}
+
+.add-button {
+    float: right;
 }
