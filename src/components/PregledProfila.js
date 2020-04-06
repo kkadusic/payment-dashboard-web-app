@@ -29,7 +29,7 @@ const PregledProfila = () => {
             }
         ).then(res => {
             setAccounts({
-                data: Object.keys(res.data).length,
+                data: (res.data.length !== 0)? Object.keys(res.data).length : '0',
                 loading: false
             });
         }).catch(err => {
@@ -44,7 +44,7 @@ const PregledProfila = () => {
             }
         ).then(res => {
             setTransactions({
-                data: Object.keys(res.data).length,
+                data: (res.data.length !== 0)? Object.keys(res.data).length : '0',
                 loading: false
             });
         }).catch(err => {
