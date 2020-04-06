@@ -231,6 +231,9 @@ class PregledTransakcija extends Component {
         title: "Date",
         dataIndex: "date",
         key: "date",
+        sorter: (a, b) => {
+          return a.date.localeCompare(b.date);
+        },
         filters: [
           {
             text: "24 hours",
