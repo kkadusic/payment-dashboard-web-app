@@ -359,7 +359,7 @@ class PregledTransakcija extends Component {
                 <td></td>
                 <td></td>
                 <td id="totalSum">
-                  <Text strong>{total} KM</Text>
+                  <Text strong>{total.toFixed(3)} KM</Text>
                 </td>
               </tr>
             </>

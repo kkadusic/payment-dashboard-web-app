@@ -6,3 +6,43 @@
 #totalSum {
   padding-left: 19px;
 }
+
+.ant-layout {
+  background: #fff;
+}
+
+.ant-table tbody > tr > td {
+  border-bottom: 1px solid #030852;
+}
+
+.ant-table thead > tr > th,
+.ant-table thead th.ant-table-column-sort {
+  background: #030852;
+  color: white;
+  border-bottom: 1px solid #030852;
+}
+
+tr.ant-table-expanded-row thead > tr > th {
+  background: #fff;
+  color: #030852;
+}
+
+.ant-table thead th.ant-table-column-has-sorters:hover {
+  background: #030852;
+}
+
+.ant-table-filter-trigger {
+  color: #fff;
+}
+
+.ant-table .anticon {
+  color: #d6e4ff;
+}
+
+.ant-table-filter-trigger-container-open,
+.ant-table-filter-trigger-container:hover,
+thead
+  th.ant-table-column-has-sorters:hover
+  .ant-table-filter-trigger-container:hover {
+  background: #030852;
+}
