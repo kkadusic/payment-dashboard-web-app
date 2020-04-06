@@ -3,55 +3,46 @@ import "antd/dist/antd.css";
 import {Table, Input, Button} from "antd";
 import Highlighter from "react-highlight-words";
 import {SearchOutlined} from "@ant-design/icons";
-
-const data = [
-    {
-        key: "1",
-        accountOwner: "John Swift",
-        bankName: "Deutsche Bank",
-        expiryDate: "12.03.2021",
-        cvc: "123",
-        cardNumber: "1111111111111112"
-    },
-    {
-        key: "2",
-        accountOwner: "John Swift",
-        bankName: "American Bank",
-        expiryDate: "11.07.2020",
-        cvc: "456",
-        cardNumber: "1111111111111113"
-    },
-    {
-        key: "3",
-        accountOwner: "John Swift",
-        bankName: "PNC",
-        expiryDate: "22.10.2020",
-        cvc: "443",
-        cardNumber: "1111111111111155"
-    },
-    {
-        key: "4",
-        accountOwner: "John Swift",
-        bankName: "Citibank",
-        expiryDate: "01.05.2020",
-        cvc: "987",
-        cardNumber: "1111111111111119"
-    },
-    {
-        key: "5",
-        accountOwner: "John Swift",
-        bankName: "JPMorgan-Chase",
-        expiryDate: "09.01.2020",
-        cvc: "385",
-        cardNumber: "1111111111111112"
-    }
-];
+import {getToken} from "../utilities/Common";
+import axios from "axios";
 
 class BankAccTable extends Component {
     state = {
         searchText: "",
-        searchedColumn: ""
+        searchedColumn: "",
+        data: [],
+        key: 0
     };
+
+    componentWillMount() {
+        this.getBankAccounts();
+    }
+
+    getBankAccounts() {
+        axios
+            .get(
+                "https://payment-server-si.herokuapp.com/api/accounts/all",
+                {
+                    headers: {Authorization: "Bearer " + getToken()}
+                }
+            )
+            .then(response => {
+                const accounts = [];
+                response.data.forEach(account => {
+                    accounts.push({
+                        key: ++this.state.key,
+                        accountOwner: account.accountOwner,
+                        bankName: account.bankName,
+                        expiryDate: account.expiryDate.substr(0, 10),
+                        cardNumber: account.cardNumber
+                    });
+                });
+                this.setState({data: accounts}, () => {
+                    console.log(this.state.data);
+                });
+            })
+            .catch(err => console.log(err));
+    }
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({
@@ -169,13 +160,6 @@ class BankAccTable extends Component {
                 ...this.getColumnSearchProps("expiryDate")
             },
             {
-                title: "CVC",
-                dataIndex: "cvc",
-                key: "cvc",
-                sorter: (a, b) => a.cvc - b.cvc,
-                ...this.getColumnSearchProps("cvc")
-            },
-            {
                 title: "Card number",
                 dataIndex: "cardNumber",
                 key: "cardNumber",
@@ -184,7 +168,7 @@ class BankAccTable extends Component {
             }
         ];
 
-        return <Table columns={columns} dataSource={data}/>;
+        return <Table columns={columns} dataSource={this.state.data}/>;
     }
 }
 

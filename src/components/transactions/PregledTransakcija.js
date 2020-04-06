@@ -199,6 +199,7 @@ class PregledTransakcija extends Component {
         index ===
         self.findIndex((t) => t.text === thing.text && t.value === thing.value)
     );
+
     const columns = [
       {
         title: "Card number",
@@ -283,6 +284,12 @@ class PregledTransakcija extends Component {
         title: "Value",
         dataIndex: "totalPrice",
         key: "totalPrice",
+        sorter: (a, b) => a.totalPrice - b.totalPrice,
+        render: (price) => (
+          <Tag id="tagIznosa" color="red">
+            {price} KM
+          </Tag>
+        ),
         // Filters into categories of prices: low, lower medium, medium, upper medium, high
         filters: [
           {
@@ -328,12 +335,6 @@ class PregledTransakcija extends Component {
               return true;
           }
         },
-        sorter: (a, b) => a.totalPrice - b.totalPrice,
-        render: (price) => (
-          <Tag id="tagIznosa" color="red">
-            {price} KM
-          </Tag>
-        ),
       },
     ];
     return (
