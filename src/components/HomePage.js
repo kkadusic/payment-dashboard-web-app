@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Avatar, Tooltip } from "antd";
+import { Layout, Menu, Avatar } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
@@ -27,6 +27,7 @@ import PrikazNoveSifre from "./PrikazNoveSifre";
 import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
 import NewPasswordAlert from "./NewPasswordAlert";
+import PregledTransakcija from "./transactions/PregledTransakcija";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -91,6 +92,9 @@ function HomePage() {
                   </span>
                 }
               >
+                <Menu.Item key="pregledTransakcija">
+                  <Link to="/pregledTransakcija">All transactions</Link>
+                </Menu.Item>
                 <Menu.Item key="transakcije24">
                   <Link to="/transakcije24">Last 24h</Link>
                 </Menu.Item>
@@ -152,6 +156,11 @@ function HomePage() {
                 <Route
                   path="/dodavanjeRacuna"
                   component={DodavanjeRacuna}
+                ></Route>
+
+                <Route
+                  path="/pregledTransakcija"
+                  component={PregledTransakcija}
                 ></Route>
 
                 <Route
