@@ -82,11 +82,16 @@ function DodaniRacuni() {
               </Tooltip>
           </div>
       ) : (accounts.data.length === 0 ?
-          <Result
-              icon={<AccountBookOutlined />}
-              title="There are no Accounts here!"
-              extra={<Button type="primary" onClick={addNewAccount}>Add new account</Button>}
-          />
+          <div>
+              <Tooltip title={"Reload"}>
+                  <Button type="primary" shape="circle" className={"reload-button"} onClick={reload}  icon={<ReloadOutlined />} />
+              </Tooltip>
+              <Result
+                  icon={<AccountBookOutlined />}
+                  title="There are no Accounts here!"
+                  extra={<Button type="primary" onClick={addNewAccount}>Add new account</Button>}
+              />
+          </div>
       :
           (
           <div>
