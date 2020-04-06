@@ -8,7 +8,7 @@ import {
   UserOutlined,
   CreditCardOutlined,
   LogoutOutlined,
-  DollarOutlined
+  DollarOutlined,
 } from "@ant-design/icons";
 
 import Home from "./Home";
@@ -47,7 +47,7 @@ function HomePage() {
           <Avatar
             style={{
               color: "white",
-              backgroundColor: "#597ef7"
+              backgroundColor: "#597ef7",
             }}
             className="avatar"
           >
@@ -58,7 +58,7 @@ function HomePage() {
           <Sider width={200} className="site-layout-background">
             <Menu
               selectedKeys={selectedMenuItem}
-              onClick={e => setSelectedMenuItem(e.key)}
+              onClick={(e) => setSelectedMenuItem(e.key)}
               mode="inline"
               style={{ height: "100%", borderRight: 0 }}
             >
@@ -118,10 +118,9 @@ function HomePage() {
                   </span>
                 }
               >
-
-                  <Menu.Item key="pregledRacuna">
-                      <Link to="/pregledRacuna">Bank account details</Link>
-                  </Menu.Item>
+                <Menu.Item key="pregledRacuna">
+                  <Link to="/pregledRacuna">Bank account details</Link>
+                </Menu.Item>
                 <Menu.Item key="dodaniRacuni">
                   <Link to="/dodaniRacuni"> View added accounts</Link>
                 </Menu.Item>
@@ -141,7 +140,7 @@ function HomePage() {
               style={{
                 padding: 24,
                 margin: 0,
-                height: "100vh"
+                height: "100vh",
               }}
             >
               <Switch>
@@ -156,10 +155,7 @@ function HomePage() {
                   component={PromjenaLozinke}
                 ></Route>
 
-                  <Route
-                      path="/pregledRacuna"
-                      component={BankAccTable}
-                  />
+                <Route path="/pregledRacuna" component={BankAccTable} />
 
                 <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
 

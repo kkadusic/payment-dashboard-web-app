@@ -6,11 +6,11 @@ export const saveUserToken = (token, tokenType) => {
 // Remove user and token from local storage
 export const logoutUser = () => {
   localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  localStorage.removeItem("userData");
 };
 
 // Set user data to local storage
-export const saveUserData = user => {
+export const saveUserData = (user) => {
   localStorage.setItem("userData", JSON.stringify(user));
 };
 // Returns token - without Bearer prefix

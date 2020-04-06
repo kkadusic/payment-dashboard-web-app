@@ -13,11 +13,11 @@ function Prijava() {
   const hideWarning = () => {
     setWarning(false);
   };
-  const onFinish = values => {
+  const onFinish = (values) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
     // Send login request
     axios
@@ -25,35 +25,35 @@ function Prijava() {
         "https://payment-server-si.herokuapp.com/api/auth/signin",
         {
           usernameOrEmail: values.email,
-          password: values.password
+          password: values.password,
         },
         config
       )
-      .then(response => {
+      .then((response) => {
         // Save user token to local storage
         saveUserToken(response.data.accessToken, response.data.tokenType);
         // setToken({token: response.data.accessToken})
         return response.data;
       })
-      .then(data => {
+      .then((data) => {
         const accessToken = data.tokenType + " " + data.accessToken;
         // Send get user data request
         return axios.get(
           "https://payment-server-si.herokuapp.com/api/auth/user/me",
           {
             headers: {
-              Authorization: accessToken
-            }
+              Authorization: accessToken,
+            },
           }
         );
       })
-      .then(response => {
+      .then((response) => {
         //Create user object
         let user = {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
-          username: response.data.userName,
-          email: response.data.email
+          username: response.data.username,
+          email: response.data.email,
         };
 
         console.log(response);
@@ -66,7 +66,7 @@ function Prijava() {
       .then(() => {
         history.push("/pocetna");
       })
-      .catch(error => {
+      .catch((error) => {
         // if (error.response.data.path == "/api/auth/signin") {
         // }
         setWarning(true);
@@ -85,21 +85,20 @@ function Prijava() {
   return (
     <div>
       <div className="split left">
-        <div>
-          <h1 style={{ color: "white", fontStyle: "italic", fontSize: "60px" }}>
-            Payment
-          </h1>
-          <h1 style={{ color: "white", fontStyle: "italic", fontSize: "60px" }}>
-            Dashboard
-          </h1>
-        </div>
+        <div></div>
       </div>
       <div className="split loginContainer">
+        <h1 className="tekst" style={{ color: "black", fontSize: "30px" }}>
+          Payment dashboard, made for you!
+        </h1>
+        <h2 style={{ color: "gray", fontSize: "16px" }}>
+          Organize your bank accounts and transactions all in one place.
+        </h2>
         <div>
           <Form
             className="login-form"
             initialValues={{
-              remember: true
+              remember: true,
             }}
             onFinish={onFinish}
           >
@@ -108,8 +107,8 @@ function Prijava() {
               rules={[
                 {
                   required: true,
-                  message: "Please input your username or email!"
-                }
+                  message: "Please input your username or email!",
+                },
               ]}
             >
               <Input
@@ -124,8 +123,8 @@ function Prijava() {
               rules={[
                 {
                   required: true,
-                  message: "Please input your Password!"
-                }
+                  message: "Please input your Password!",
+                },
               ]}
             >
               <Input

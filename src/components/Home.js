@@ -42,3 +42,4 @@ function Home() {
 }
 
 export default Home;
+export const user = JSON.parse(getUser());
