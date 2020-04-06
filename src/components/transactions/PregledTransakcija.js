@@ -1,75 +1,57 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
-import {Table, Input, Button} from "antd";
+import { Table, Input, Button, Tag, Typography } from "antd";
 import Highlighter from "react-highlight-words";
-import {SearchOutlined} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
+import { getToken } from "../../utilities/Common";
+import axios from "axios";
+import "../../css/Transactions.css";
 
-const data = [
-    {
-        key: "1",
-        cardNumber: "1111111111111112",
-        merchant: "Bingo",
-        date: "01/04/2020",
-        price: 40
-    },
-    {
-        key: "2",
-        cardNumber: "1111111111111115",
-        merchant: "Bingo",
-        date: "01/03/2020",
-        price: 40
-    },
-    {
-        key: "3",
-        cardNumber: "1111111111111112",
-        merchant: "Bingo",
-        date: "29/02/2020",
-        price: 40
-    },
-    {
-        key: "4",
-        cardNumber: "1111111111111112",
-        merchant: "Bingo",
-        date: "15/02/2020",
-        price: 540
-    },
-    {
-        key: "5",
-        cardNumber: "1111111111111117",
-        merchant: "Bingo",
-        date: "02/04/2020",
-        price: 1230
-    },
-    {
-        key: "6",
-        cardNumber: "1111111111111199",
-        merchant: "Mercator",
-        date: "31/03/2020",
-        price: 1730
-    },
-    {
-        key: "7",
-        cardNumber: "1111111111111115",
-        merchant: "Cue",
-        date: "31/03/2019",
-        price: 1730
-    },
-    {
-        key: "8",
-        cardNumber: "1111111111111112",
-        merchant: "Yamm",
-        date: "26/11/2019",
-        price: 20
-    }
-];
-
+const { Text } = Typography;
 
 class PregledTransakcija extends Component {
     state = {
         searchText: "",
-        searchedColumn: ""
+        searchedColumn: "",
+        data: [],
+        key: 0
     };
+
+    componentWillMount() {
+        this.getTransactions();
+    }
+
+    getTransactions() {
+        axios
+            .get(
+                "https://payment-server-si.herokuapp.com/api/transactions/all",
+                {
+                    headers: { Authorization: "Bearer " + getToken() }
+                }
+            )
+            .then(response => {
+                const transactions = [];
+                response.data.forEach(transaction => {
+                    transactions.push({
+                        key: ++this.state.key,
+                        cardNumber: transaction.cardNumber,
+                        merchantName: transaction.merchantName,
+                        totalPrice: transaction.totalPrice,
+                        date: transaction.date.substr(0, 10),
+                        service: transaction.service
+                    });
+                });
+                this.setState({ data: transactions }, () => {
+                    //   this.state.data.forEach((element) => {
+                    //     //   element["key"] = uuid();
+                    //     element["key"] = ++this.state.key;
+                    //   });
+                    console.log(this.state.data);
+                });
+            })
+            .catch(err => console.log(err));
+    }
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({
@@ -78,7 +60,7 @@ class PregledTransakcija extends Component {
                              confirm,
                              clearFilters
                          }) => (
-            <div style={{padding: 8}}>
+            <div style={{ padding: 8 }}>
                 <Input
                     ref={node => {
                         this.searchInput = node;
@@ -91,28 +73,32 @@ class PregledTransakcija extends Component {
                     onPressEnter={() =>
                         this.handleSearch(selectedKeys, confirm, dataIndex)
                     }
-                    style={{width: 188, marginBottom: 8, display: "block"}}
+                    style={{ width: 188, marginBottom: 8, display: "block" }}
                 />
                 <Button
                     type="primary"
-                    onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-                    icon={<SearchOutlined/>}
+                    onClick={() =>
+                        this.handleSearch(selectedKeys, confirm, dataIndex)
+                    }
+                    icon={<SearchOutlined />}
                     size="small"
-                    style={{width: 90, marginRight: 8}}
+                    style={{ width: 90, marginRight: 8 }}
                 >
                     Search
                 </Button>
                 <Button
                     onClick={() => this.handleReset(clearFilters)}
                     size="small"
-                    style={{width: 90}}
+                    style={{ width: 90 }}
                 >
                     Reset
                 </Button>
             </div>
         ),
         filterIcon: filtered => (
-            <SearchOutlined style={{color: filtered ? "#1890ff" : undefined}}/>
+            <SearchOutlined
+                style={{ color: filtered ? "#1890ff" : undefined }}
+            />
         ),
         onFilter: (value, record) =>
             record[dataIndex]
@@ -127,7 +113,7 @@ class PregledTransakcija extends Component {
         render: text =>
             this.state.searchedColumn === dataIndex ? (
                 <Highlighter
-                    highlightStyle={{backgroundColor: "#ffc069", padding: 0}}
+                    highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
                     searchWords={[this.state.searchText]}
                     autoEscape
                     textToHighlight={text.toString()}
@@ -147,18 +133,17 @@ class PregledTransakcija extends Component {
 
     handleReset = clearFilters => {
         clearFilters();
-        this.setState({searchText: ""});
+        this.setState({ searchText: "" });
     };
-
 
     render() {
         let things = {};
         things.thing = [];
 
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 0; i < this.state.data.length; i++) {
             things.thing.push({
-                text: data[i].cardNumber,
-                value: data[i].cardNumber
+                text: this.state.data[i].cardNumber,
+                value: this.state.data[i].cardNumber
             });
         }
 
@@ -181,11 +166,16 @@ class PregledTransakcija extends Component {
             },
             {
                 title: "Merchant",
-                dataIndex: "merchant",
-                key: "merchant",
+                dataIndex: "merchantName",
+                key: "merchantName",
                 width: "20%",
-                sorter: (a, b) => a.merchant < b.merchant,
-                ...this.getColumnSearchProps("merchant")
+                sorter: (a, b) => a.merchantName < b.merchantName,
+                ...this.getColumnSearchProps("merchantName")
+            },
+            {
+                title: "Service",
+                dataIndex: "service",
+                key: "service"
             },
             {
                 title: "Date",
@@ -224,9 +214,9 @@ class PregledTransakcija extends Component {
                         today.getDate()
                     );
 
-                    const day = parseInt(record.date.substr(0, 2));
-                    const month = parseInt(record.date.substr(3, 5)) - 1;
-                    const year = parseInt(record.date.substr(6, 10));
+                    const day = parseInt(record.date.substr(8, 10));
+                    const month = parseInt(record.date.substr(5, 7)) - 1;
+                    const year = parseInt(record.date.substr(0, 4));
                     const date = new Date(year, month, day);
 
                     if (value === "24h") {
@@ -235,19 +225,47 @@ class PregledTransakcija extends Component {
                             date.getTime() === today.getTime() ||
                             date.getTime() === yesterday.getTime()
                         );
-                    } else if (value === "month") return monthAgo <= date && date <= today;
+                    } else if (value == "month")
+                        return monthAgo <= date && date <= today;
                     return yearAgo <= date && date <= today;
                 }
             },
             {
-                title: "Price",
-                dataIndex: "price",
-                key: "price",
-                sorter: (a, b) => a.price - b.price,
-                ...this.getColumnSearchProps("price")
+                title: "Value",
+                dataIndex: "totalPrice",
+                key: "totalPrice",
+                sorter: (a, b) => a.totalPrice - b.totalPrice,
+                ...this.getColumnSearchProps("totalPrice"),
+                render: price => (
+                    <Tag id="tagIznosa" color="red">
+                        {price} KM
+                    </Tag>
+                )
             }
         ];
-        return <Table columns={columns} dataSource={data}/>;
+        return <Table columns={columns} dataSource={this.state.data}
+                      summary={pageData  => {
+                          let total=0;
+                          pageData.forEach( ({totalPrice}) => {
+                              total+=totalPrice;
+                          });
+                          return (
+                              <>
+                                  <tr>
+                                      <th>Total</th>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td id="totalSum">
+                                          <Text strong>{total} KM</Text>
+                                      </td>
+                                  </tr>
+
+                              </>
+                          );
+
+                      } }
+        />;
     }
 }
 
