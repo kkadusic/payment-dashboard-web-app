@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Avatar, Tooltip } from "antd";
+import { Layout, Menu, Avatar } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
   LogoutOutlined,
-  DollarOutlined
+  DollarOutlined,
 } from "@ant-design/icons";
 
 import Home from "./Home";
@@ -17,16 +17,18 @@ import PregledProfila from "./PregledProfila";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
 import PromjenaLozinke from "./PromjenaLozinke";
-import Transakcije24 from "./Transakcije24";
-import TransakcijeMjesec from "./TransakcijeMjesec";
-import TransakcijeMerchant from "./TransakcijeMerchant";
-import TransakcijeProizvod from "./TransakcijeProizvod";
+import Transakcije24 from "./transactions/Transakcije24";
+import TransakcijeMjesec from "./transactions/TransakcijeMjesec";
+import TransakcijeMerchant from "./transactions/TransakcijeMerchant";
+import TransakcijeProizvod from "./transactions/TransakcijeProizvod";
 import OporavkaLozinke from "./OporavkaLozinke";
 import SigurnosnoPitanje from "./SigurnosnoPitanje";
 import PrikazNoveSifre from "./PrikazNoveSifre";
 import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
 import NewPasswordAlert from "./NewPasswordAlert";
+import PregledTransakcija from "./transactions/PregledTransakcija";
+import BankAccTable from "./BankAccTable";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -45,7 +47,7 @@ function HomePage() {
           <Avatar
             style={{
               color: "white",
-              backgroundColor: "#597ef7"
+              backgroundColor: "#597ef7",
             }}
             className="avatar"
           >
@@ -56,7 +58,7 @@ function HomePage() {
           <Sider width={200} className="site-layout-background">
             <Menu
               selectedKeys={selectedMenuItem}
-              onClick={e => setSelectedMenuItem(e.key)}
+              onClick={(e) => setSelectedMenuItem(e.key)}
               mode="inline"
               style={{ height: "100%", borderRight: 0 }}
             >
@@ -91,6 +93,9 @@ function HomePage() {
                   </span>
                 }
               >
+                <Menu.Item key="pregledTransakcija">
+                  <Link to="/pregledTransakcija">All transactions</Link>
+                </Menu.Item>
                 <Menu.Item key="transakcije24">
                   <Link to="/transakcije24">Last 24h</Link>
                 </Menu.Item>
@@ -113,6 +118,9 @@ function HomePage() {
                   </span>
                 }
               >
+                <Menu.Item key="pregledRacuna">
+                  <Link to="/pregledRacuna">Bank account details</Link>
+                </Menu.Item>
                 <Menu.Item key="dodaniRacuni">
                   <Link to="/dodaniRacuni"> View added accounts</Link>
                 </Menu.Item>
@@ -132,7 +140,7 @@ function HomePage() {
               style={{
                 padding: 24,
                 margin: 0,
-                height: "100vh"
+                height: "100vh",
               }}
             >
               <Switch>
@@ -147,11 +155,18 @@ function HomePage() {
                   component={PromjenaLozinke}
                 ></Route>
 
+                <Route path="/pregledRacuna" component={BankAccTable} />
+
                 <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
 
                 <Route
                   path="/dodavanjeRacuna"
                   component={DodavanjeRacuna}
+                ></Route>
+
+                <Route
+                  path="/pregledTransakcija"
+                  component={PregledTransakcija}
                 ></Route>
 
                 <Route

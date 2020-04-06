@@ -1,68 +1,81 @@
 .split {
-  height: 100%;
-  width: 50%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  overflow-x: hidden;
-  padding-top: 20px;
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
 }
+
 .left {
-  left: 0;
-  background-color: black;
-  background-image: url("../img/Analytics-services.jpg");
-  background-position: left;
-  background-repeat: no-repeat;
+    left: 0;
+    background-color: black;
+    background-image: url("../img/home-background.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .left div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  padding: 30px;
-  border-radius: 20%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 30px;
+    border-radius: 20%;
 }
+
+.tekst {
+    transform: translate(0%, 50%);
+}
+
 .loginContainer {
-  right: 0;
-  background-color: #000;
-  background-image: url("../img/Analytics-services1.jpg");
-  background-position: right;
-  background-repeat: no-repeat;
+    right: 0;
+    background-color: #000;
+    background-image: url("../img/home-background.png");
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .login-form {
-  text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 5%;
-  padding: 40px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-75%, -50%);
+    background: white;
+    border-radius: 5%;
+    padding: 40px;
+    border: 1px solid lightgray;
 }
+
 .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #030852;
-  border-color: #030852;
+    background-color: #030852;
+    border-color: #030852;
 }
+
 .login-button {
-  background-color: #030852;
-  border-style: none;
-  width: 100%;
+    background-color: #29b7e0;
+    border-style: none;
+    width: 100%;
 }
+
 .login-button:hover {
-  background-color: #597ef7;
+    background-color: #597ef7;
 }
 
 .login-forgot-password-link {
-  color: #597ef7;
-  white-space: nowrap;
+    color: #597ef7;
+    white-space: nowrap;
 }
+
 .login-register-link {
-  color: #597ef7;
+    color: #597ef7;
 }
 
 .login-remember-checkbox {
-  display: inline;
+    display: inline;
 }

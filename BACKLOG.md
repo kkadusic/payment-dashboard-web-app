@@ -144,3 +144,96 @@ Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost odja
 - Implementirati vraćanje na početnu stranicu nakon odjavljivanja
 - Uraditi push koda
 - Napraviti pull request
+
+# Feature
+
+Filtriranje transakcija po bankovnom računu
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa koji su plaćeni određenim bankovnim računom.
+
+## Task
+
+- Dodati opciju za filtriranje u koloni koja odgovara bankovnom računu u tabeli transakcija
+- Izlistati sve postojeće bankovne račune
+- Omogućiti filtriranje transakcija klikom na neki od ponuđenih računa
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Filtriranje transakcija po merchantu
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa koji su formirani u određenoj poslovnici.
+
+## Task
+
+- Dodati opciju za filtriranje u koloni koja odgovara merchantu u tabeli transakcija
+- Omogućiti filtriranje transakcija unošenjem imena željenog merchanta
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Filtriranje transakcija po datumu
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa koji su formirani u posljednja 24 sata, mjesec dana ili godinu dana.
+
+## Task
+
+- Dodati opciju za filtriranje u koloni koja odgovara datumu u tabeli transakcija
+- Izlistati sve postojeće bankovne račune
+- Omogućiti filtriranje transakcija klikom na neki od ponuđena tri vremenska perioda
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Filtriranje transakcija po usluzi koja je kupljena
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa čiji jedan dio predstavlja određena usluga koju je kupio.
+
+## Task
+
+- Dodati opciju za filtriranje u koloni koja odgovara uslugama u tabeli transakcija
+- Omogućiti filtriranje transakcija unosom željene usluge u polje za pretragu
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Sortiranje po bankovnom računu, merchantu, datumu i plaćenom iznosu
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost sortiranja transakcija po bankovnom računu, merchantu, datumu i plaćenom iznosu
+
+## Task
+
+- Dodati opciju za sortiranje u kolonama koja odgovaraju bankovnim računima, merchantima, datumima i plaćenom iznosu u tabeli transakcija
+- Omogućiti sortiranje transakcija klikom na ikonu za sortiranje
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz ukupnog plaćenog iznosa za prikazane transakcije
+
+## Item
+
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda ukupnog iznosa koji je plaćen za sve izlistane transakcije.
+
+## Task
+
+- Dodati polje za prikaz ukupnog iznosa
+- Sabrati sve iznose trenutno prikazanih transakcija
+- Ispisati sabrani iznos u dodano polje
+- Uraditi push koda
+- Napraviti pull request
