@@ -49,6 +49,7 @@ class PregledTransakcija extends Component {
       .then(this.load)
       .catch((err) => console.log(err));
   }
+
   getTransactionsByService = (selectedKeys) => {
     axios
       .get(
@@ -182,6 +183,22 @@ class PregledTransakcija extends Component {
   };
 
   render() {
+    let things = {};
+    things.thing = [];
+
+    for (let i = 0; i < this.state.data.length; i++) {
+      things.thing.push({
+        text: this.state.data[i].cardNumber,
+        value: this.state.data[i].cardNumber,
+      });
+    }
+
+    // Remove duplicate card numbers
+    things.thing = things.thing.filter(
+      (thing, index, self) =>
+        index ===
+        self.findIndex((t) => t.text === thing.text && t.value === thing.value)
+    );
     const columns = [
       {
         title: "Card number",
@@ -190,7 +207,8 @@ class PregledTransakcija extends Component {
         width: "30%",
         sorter: (a, b) => a.cardNumber - b.cardNumber,
         defaultSortOrder: "ascend",
-        ...this.getColumnSearchProps("cardNumber"),
+        filters: things.thing,
+        onFilter: (value, record) => record.cardNumber.indexOf(value) === 0,
       },
       {
         title: "Merchant",

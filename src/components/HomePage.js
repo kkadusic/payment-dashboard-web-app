@@ -28,6 +28,7 @@ import RacunUspjeh from "./RacunUspjeh";
 import Logout from "./Logout";
 import NewPasswordAlert from "./NewPasswordAlert";
 import PregledTransakcija from "./transactions/PregledTransakcija";
+import BankAccTable from "./BankAccTable";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -117,6 +118,10 @@ function HomePage() {
                   </span>
                 }
               >
+
+                  <Menu.Item key="pregledRacuna">
+                      <Link to="/pregledRacuna">Bank account details</Link>
+                  </Menu.Item>
                 <Menu.Item key="dodaniRacuni">
                   <Link to="/dodaniRacuni"> View added accounts</Link>
                 </Menu.Item>
@@ -150,6 +155,11 @@ function HomePage() {
                   path="/promjenaLozinke"
                   component={PromjenaLozinke}
                 ></Route>
+
+                  <Route
+                      path="/pregledRacuna"
+                      component={BankAccTable}
+                  />
 
                 <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
 
