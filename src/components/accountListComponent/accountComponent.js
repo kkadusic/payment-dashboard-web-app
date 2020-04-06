@@ -28,7 +28,7 @@ function AccountComponent(props) {
                 <Button style={{ "float": "right"}} type="link" onClick={showModal} danger>Delete</Button>
             </div>
             <Modal
-                title="Jeste li sigurni da zelite izbrisati ovaj racun?"
+                title="Are you sure that you want to delete this account?"
                 visible={state.visible}
                 onOk={handleOk}
                 onCancel={hideModal}>
