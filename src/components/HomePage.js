@@ -17,10 +17,9 @@ import PregledProfila from "./PregledProfila";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
 import PromjenaLozinke from "./PromjenaLozinke";
-import Transakcije24 from "./transactions/Transakcije24";
+import TransakcijeGodina from "./transactions/TransakcijeGodina";
 import TransakcijeMjesec from "./transactions/TransakcijeMjesec";
 import TransakcijeMerchant from "./transactions/TransakcijeMerchant";
-import TransakcijeProizvod from "./transactions/TransakcijeProizvod";
 import OporavkaLozinke from "./OporavkaLozinke";
 import SigurnosnoPitanje from "./SigurnosnoPitanje";
 import PrikazNoveSifre from "./PrikazNoveSifre";
@@ -29,6 +28,7 @@ import Logout from "./Logout";
 import NewPasswordAlert from "./NewPasswordAlert";
 import PregledTransakcija from "./transactions/PregledTransakcija";
 import BankAccTable from "./BankAccTable";
+import TransakcijeIznos from "./transactions/TransakcijeIznos";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -96,17 +96,17 @@ function HomePage() {
                 <Menu.Item key="pregledTransakcija">
                   <Link to="/pregledTransakcija">All transactions</Link>
                 </Menu.Item>
-                <Menu.Item key="transakcije24">
-                  <Link to="/transakcije24">Last 24h</Link>
+                <Menu.Item key="transakcijeGodina">
+                  <Link to="/transakcijeGodina">Months of past year</Link>
                 </Menu.Item>
                 <Menu.Item key="transakcijeMjesec">
                   <Link to="/transakcijeMjesec"> Last month</Link>
                 </Menu.Item>
                 <Menu.Item key="transakcijeMerchant">
-                  <Link to="/transakcijeMerchant">Spent by merchant</Link>
+                  <Link to="/transakcijeMerchant">Spent on merchant</Link>
                 </Menu.Item>
-                <Menu.Item key="transakcijeProizvod">
-                  <Link to="/transakcijeProizvod"> Spent by product</Link>
+                <Menu.Item key="transakcijeIznos">
+                  <Link to="/transakcijeIznos"> Spent by merchant</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu
@@ -171,8 +171,8 @@ function HomePage() {
 
                 <Route
                   exact
-                  path="/transakcije24"
-                  component={Transakcije24}
+                  path="/transakcijeGodina"
+                  component={TransakcijeGodina}
                 ></Route>
 
                 <Route
@@ -187,8 +187,8 @@ function HomePage() {
                 ></Route>
                 <Route
                   exact
-                  path="/transakcijeProizvod"
-                  component={TransakcijeProizvod}
+                  path="/transakcijeIznos"
+                  component={TransakcijeIznos}
                 ></Route>
 
                 <Route

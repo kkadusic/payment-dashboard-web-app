@@ -29,6 +29,7 @@ class PregledTransakcija extends Component {
         merchantName: transaction.merchantName,
         totalPrice: transaction.totalPrice,
         date: transaction.date.substr(0, 10),
+        time: transaction.date.substr(11, 8),
         service: transaction.service,
       });
     });
