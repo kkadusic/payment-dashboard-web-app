@@ -25,7 +25,7 @@ class PregledTransakcija extends Component {
     const transactions = [];
     response.data.forEach((transaction) => {
       transactions.push({
-        key: ++this.state.key,
+        key: transaction.transactionId,
         cardNumber: transaction.cardNumber,
         merchantName: transaction.merchantName,
         totalPrice: transaction.totalPrice,
