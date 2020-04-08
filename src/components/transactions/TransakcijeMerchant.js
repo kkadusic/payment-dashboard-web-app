@@ -1,5 +1,6 @@
 import React from "react";
 import { Divider } from "antd";
+import { Bar, Line, Pie, Doughnut, Polar, Scatter } from "react-chartjs-2";
 
 function TransakcijeMerchant() {
   return (
