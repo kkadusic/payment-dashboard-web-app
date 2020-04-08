@@ -29,6 +29,7 @@ import NewPasswordAlert from "./NewPasswordAlert";
 import PregledTransakcija from "./transactions/PregledTransakcija";
 import BankAccTable from "./BankAccTable";
 import TransakcijeIznos from "./transactions/TransakcijeIznos";
+import TransakcijeBankovni from "./transactions/TransakcijeBankovni";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -107,6 +108,9 @@ function HomePage() {
                 </Menu.Item>
                 <Menu.Item key="transakcijeIznos">
                   <Link to="/transakcijeIznos"> Spent by merchant</Link>
+                </Menu.Item>
+                <Menu.Item key="transakcijeBankovni">
+                  <Link to="/transakcijeBankovni"> Spent by bank account</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu
@@ -189,6 +193,11 @@ function HomePage() {
                   exact
                   path="/transakcijeIznos"
                   component={TransakcijeIznos}
+                ></Route>
+                <Route
+                  exact
+                  path="/transakcijeBankovni"
+                  component={TransakcijeBankovni}
                 ></Route>
 
                 <Route
