@@ -189,7 +189,7 @@ class PregledTransakcija extends Component {
             ],
           }}
           format="DD.MM.YYYY HH:mm:ss"
-          allowClear={true}
+          allowClear={false}
           id="date"
           name="date"
           onChange={(e) => {
