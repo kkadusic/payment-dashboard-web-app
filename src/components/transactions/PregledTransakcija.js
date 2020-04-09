@@ -188,7 +188,7 @@ class PregledTransakcija extends Component {
               moment("11:59:59", "HH:mm:ss"),
             ],
           }}
-          format="DD.MM.YYYY HH:mm:ss"
+          format="YYYY-MM-DD HH:mm:ss"
           allowClear={false}
           id="date"
           name="date"
