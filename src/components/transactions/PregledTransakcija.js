@@ -6,7 +6,7 @@ import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
-import uuid from "react-uuid";
+import moment from "moment";
 import "../../css/Transactions.css";
 
 const { Text } = Typography;
@@ -29,8 +29,8 @@ class PregledTransakcija extends Component {
         cardNumber: transaction.cardNumber,
         merchantName: transaction.merchantName,
         totalPrice: transaction.totalPrice,
-        date: transaction.date.substr(0, 10),
-        time: transaction.date.substr(11, 8),
+        date:
+          transaction.date.substr(0, 10) + " " + transaction.date.substr(11, 8),
         service: transaction.service,
       });
     });
@@ -59,7 +59,12 @@ class PregledTransakcija extends Component {
       ("0" + (date.getMonth() + 1)).slice(-2) +
       "." +
       date.getFullYear() +
-      " 00:00:00"
+      " " +
+      ("0" + date.getHours()).slice(-2) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2) +
+      ":" +
+      ("0" + date.getSeconds()).slice(-2)
     );
   };
 
@@ -177,11 +182,16 @@ class PregledTransakcija extends Component {
     }) => (
       <div style={{ padding: 8 }}>
         <RangePicker
+          showTime={{
+            defaultValue: [
+              moment("00:00:00", "HH:mm:ss"),
+              moment("11:59:59", "HH:mm:ss"),
+            ],
+          }}
+          format="DD.MM.YYYY HH:mm:ss"
           allowClear={true}
           id="date"
           name="date"
-          separator="-"
-          format="YYYY-MM-DD"
           onChange={(e) => {
             setSelectedKeys([e[0]._d, e[1]._d]);
           }}
