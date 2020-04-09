@@ -52,6 +52,41 @@ class PregledTransakcija extends Component {
       .catch((err) => console.log(err));
   }
 
+  formatDate = (date) => {
+    return (
+      ("0" + date.getDate()).slice(-2) +
+      "." +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "." +
+      date.getFullYear() +
+      " 00:00:00"
+    );
+  };
+
+  getTransactionsByDate = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      startDate: this.formatDate(selectedKeys[0]),
+      endDate: this.formatDate(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/date",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   getTransactionsByService = (selectedKeys) => {
     axios
       .get(
@@ -142,7 +177,7 @@ class PregledTransakcija extends Component {
     }) => (
       <div style={{ padding: 8 }}>
         <RangePicker
-          allowClear={false}
+          allowClear={true}
           id="date"
           name="date"
           separator="-"
@@ -155,7 +190,7 @@ class PregledTransakcija extends Component {
         <Button
           type="primary"
           onClick={() => {
-            this.handleDateSearch(selectedKeys, confirm, dataIndex);
+            this.getTransactionsByDate(selectedKeys);
           }}
           icon={<SearchOutlined />}
           size="small"
@@ -165,8 +200,7 @@ class PregledTransakcija extends Component {
         </Button>
         <Button
           onClick={() => {
-            this.handleReset(clearFilters);
-            console.log(this.state.searchText);
+            this.getTransactions();
           }}
           size="small"
           style={{ width: 90 }}
@@ -178,21 +212,21 @@ class PregledTransakcija extends Component {
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
-    onFilter: (value, record) => {
-      const day = parseInt(record.date.substr(8, 10));
-      const month = parseInt(record.date.substr(5, 7)) - 1;
-      const year = parseInt(record.date.substr(0, 4));
-      const date = new Date(year, month, day);
-      date.setHours(0, 0, 0, 0);
-      return (
-        this.state.searchText[0] <= date && date <= this.state.searchText[1]
-      );
-    },
-    onFilterDropdownVisibleChange: (visible) => {
-      if (visible) {
-        //   setTimeout(() => this.searchInput.select());
-      }
-    },
+    // onFilter: (value, record) => {
+    //   const day = parseInt(record.date.substr(8, 10));
+    //   const month = parseInt(record.date.substr(5, 7)) - 1;
+    //   const year = parseInt(record.date.substr(0, 4));
+    //   const date = new Date(year, month, day);
+    //   date.setHours(0, 0, 0, 0);
+    //   return (
+    //     this.state.searchText[0] <= date && date <= this.state.searchText[1]
+    //   );
+    // },
+    // onFilterDropdownVisibleChange: (visible) => {
+    //   if (visible) {
+    //     //   setTimeout(() => this.searchInput.select());
+    //   }
+    // },
     render: (text) => text,
   });
 
@@ -205,6 +239,7 @@ class PregledTransakcija extends Component {
       searchedColumn: dataIndex,
     });
   };
+
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     this.setState({
@@ -219,6 +254,8 @@ class PregledTransakcija extends Component {
       searchText: "",
     });
   };
+
+  handleDateReser = (clearFilters) => {};
 
   onTableRowExpand(expanded, record) {
     var keys = [];
