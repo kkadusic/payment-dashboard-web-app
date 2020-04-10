@@ -10,21 +10,21 @@ const { Option } = Select;
 
 function TransakcijeMerchant() {
   const [chartData, setChartData] = useState({});
-  const [datasets, setdatasets] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  //const accounts = [];
   //const [merchants, setMerchants] = useState([]);
-  const [selectedAcc, setSelectedAcc] = useState({});
+  const [selectedAcc, setSelectedAcc] = useState("all");
   const [chosenDate, setChosenDate] = useState({});
 
   const merchants = [];
   const prices = [];
+  const colors = [];
   const merchantPrice = [];
 
   useEffect(() => {
     getTransactions();
     getBankAccounts();
-    //  getMerchants();
   }, []);
 
   const getTransactions = () => {
@@ -33,7 +33,7 @@ function TransakcijeMerchant() {
         headers: { Authorization: "Bearer " + getToken() },
       })
       .then((response) => {
-        setTransactions([response.data]);
+        setTransactions(response.data);
         initialize(response.data);
       })
       .catch((err) => console.log(err));
@@ -47,7 +47,6 @@ function TransakcijeMerchant() {
       }
     );
     setAccounts([...response.data]);
-    console.log(accounts);
   };
 
   const getMerchants = async () => {
@@ -61,32 +60,79 @@ function TransakcijeMerchant() {
     console.log(merchants);
   };
 
+  const getTransactionsByDate = (startDate, endDate) => {
+    let data = {
+      startDate: startDate,
+      endDate: endDate,
+    };
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/date",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setTransactions(response.data);
+        console.log(transactions);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    handleAccChange(selectedAcc);
+  }, [transactions]);
+
+  const isEmpty = (object) => {
+    return JSON.stringify(object) === "{}";
+  };
+
+  const generateColor = () => {
+    return "#" + Math.random().toString(16).substr(-6);
+  };
+
   const initialize = (dbData) => {
     dbData.forEach((transaction) => {
       merchants.push(transaction.merchantName);
       prices.push(transaction.totalPrice);
     });
-
     dbData.forEach((transaction) => {
       if (merchantPrice.hasOwnProperty(transaction.merchant))
         merchantPrice[transaction.merchantName] += transaction.totalPrice;
       else merchantPrice[transaction.merchantName] = transaction.totalPrice;
+      colors.push(generateColor());
     });
+
     setChartData({
       labels: Object.keys(merchantPrice),
       datasets: [
         {
           label: "Spendings by merchant",
           data: Object.values(merchantPrice),
-          backgroundColor: ["#adc6ff", "#597ef7", "#1d39c4", "#061178"],
+          backgroundColor: colors,
         },
       ],
     });
     console.log(merchantPrice);
   };
 
-  const handleAccChange = (option) => {
-    setSelectedAcc({ id: option.key, cardNumber: option.value });
+  const handleAccChange = (value) => {
+    setSelectedAcc(value);
+    if (value !== "all") {
+      const newTransactions = [];
+      transactions.forEach((transaction) => {
+        if (transaction.cardNumber === value) newTransactions.push(transaction);
+      });
+      initialize(newTransactions);
+    } else {
+      initialize(transactions);
+    }
   };
 
   const makeDoubleDigit = (value) => {
@@ -110,10 +156,19 @@ function TransakcijeMerchant() {
   };
 
   const onDateOk = (value) => {
-    setChosenDate({
-      startDate: formatDate(value[0]._d),
-      endDate: formatDate(value[1]._d),
-    });
+    console.log(value);
+    if (value !== undefined)
+      setChosenDate(
+        {
+          startDate: formatDate(value[0]._d),
+          endDate: formatDate(value[1]._d),
+        },
+        getTransactionsByDate(formatDate(value[0]._d), formatDate(value[1]._d))
+      );
+  };
+
+  const handleClearDate = (value) => {
+    getTransactions();
   };
 
   return (
@@ -124,6 +179,7 @@ function TransakcijeMerchant() {
         koristeći pie chart za vremenski period izabran na date (range) pickeru{" "}
       </h1>
       <RangePicker
+        allowClear={true}
         showTime={{
           defaultValue: [
             moment("00:00:00", "HH:mm:ss"),
@@ -132,6 +188,7 @@ function TransakcijeMerchant() {
         }}
         format="DD.MM.YYYY HH:mm:ss"
         onOk={onDateOk}
+        onChange={handleClearDate}
       />
       <Select
         placeholder="Select bank account"
@@ -160,6 +217,11 @@ function TransakcijeMerchant() {
             title: {
               display: true,
               text: "Spendings by merchant",
+            },
+          },
+          {
+            legend: {
+              position: "left",
             },
           })
         }
