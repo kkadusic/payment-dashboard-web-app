@@ -17,6 +17,7 @@
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "react": "^16.13.1",
+    "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
     "react-highlight-words": "^0.16.0",
     "react-router-dom": "^5.1.2",
