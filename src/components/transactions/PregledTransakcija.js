@@ -223,7 +223,7 @@ class PregledTransakcija extends Component {
       },
       {
         title: "Service",
-        dataIndex: "service",
+        dataIndex: "key",
         key: "service",
         ellipsis: true,
         ...this.getColumnSearchProps("service"),
