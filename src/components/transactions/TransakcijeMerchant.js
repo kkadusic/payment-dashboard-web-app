@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Divider, DatePicker, Select } from "antd";
+import { Divider, DatePicker, Select, Modal, Empty, Button } from "antd";
 import moment from "moment";
 import { Bar, Line, Pie, Doughnut, Polar, Scatter } from "react-chartjs-2";
 import axios from "axios";
 import { getToken } from "../../utilities/Common";
+//import "chart.piecelabel.js";
+import "chartjs-plugin-piechart-outlabels";
+//import "chartjs-plugin-labels";
+import "../../css/TransakcijeMerchant.css";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -16,11 +20,12 @@ function TransakcijeMerchant() {
   //const [merchants, setMerchants] = useState([]);
   const [selectedAcc, setSelectedAcc] = useState("all");
   const [chosenDate, setChosenDate] = useState({});
+  const [visible, setVisible] = useState(false);
 
   const merchants = [];
   const prices = [];
   const colors = [];
-  const merchantPrice = [];
+  var merchantPrice = [];
 
   useEffect(() => {
     getTransactions();
@@ -78,7 +83,6 @@ function TransakcijeMerchant() {
       .then((response) => {
         console.log(response.data);
         setTransactions(response.data);
-        console.log(transactions);
       })
       .catch((err) => {
         console.log(err);
@@ -102,12 +106,21 @@ function TransakcijeMerchant() {
       merchants.push(transaction.merchantName);
       prices.push(transaction.totalPrice);
     });
+    var merchantPriceUnsorted = [];
     dbData.forEach((transaction) => {
-      if (merchantPrice.hasOwnProperty(transaction.merchant))
-        merchantPrice[transaction.merchantName] += transaction.totalPrice;
-      else merchantPrice[transaction.merchantName] = transaction.totalPrice;
+      if (merchantPriceUnsorted.hasOwnProperty(transaction.merchantName)) {
+        merchantPriceUnsorted[transaction.merchantName] +=
+          transaction.totalPrice;
+      } else
+        merchantPriceUnsorted[transaction.merchantName] =
+          transaction.totalPrice;
       colors.push(generateColor());
     });
+    merchantPrice = sortArray(merchantPriceUnsorted);
+
+    if (merchantPrice.length === 0) {
+      setVisible(true);
+    }
 
     setChartData({
       labels: Object.keys(merchantPrice),
@@ -120,6 +133,15 @@ function TransakcijeMerchant() {
       ],
     });
     console.log(merchantPrice);
+  };
+
+  const sortArray = (array) => {
+    var keys = Object.keys(array).sort((a, b) => array[b] - array[a]);
+    var sortedArray = [];
+    keys.forEach((key) => {
+      sortedArray[key] = array[key];
+    });
+    return sortedArray;
   };
 
   const handleAccChange = (value) => {
@@ -168,7 +190,55 @@ function TransakcijeMerchant() {
   };
 
   const handleClearDate = (value) => {
-    getTransactions();
+    if (value === null) getTransactions();
+  };
+
+  const handleCancel = (e) => {
+    setVisible(false);
+  };
+
+  const options = {
+    maintainAspectRatio: true,
+    responsive: true,
+    title: {
+      display: true,
+      text: "Spendings by merchant",
+      position: "left",
+    },
+    layout: {
+      padding: 60,
+    },
+    legend: {
+      display: false,
+    },
+    plugins: {
+      outlabels: {
+        text: "%l (%p)",
+        textAlign: "center",
+        stretch: 20,
+      },
+    },
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          return (
+            data["labels"][tooltipItem["index"]] +
+            ": " +
+            data["datasets"][0]["data"][tooltipItem["index"]] +
+            " KM"
+          );
+        },
+      },
+    },
+  };
+
+  const info = () => {
+    Modal.info({
+      title:
+        "You haven't made any transaction with selected bank account or within chosen dates!",
+      content: <Empty />,
+      onOk() {},
+    });
   };
 
   return (
@@ -183,7 +253,7 @@ function TransakcijeMerchant() {
         showTime={{
           defaultValue: [
             moment("00:00:00", "HH:mm:ss"),
-            moment("11:59:59", "HH:mm:ss"),
+            moment("23:59:59", "HH:mm:ss"),
           ],
         }}
         format="DD.MM.YYYY HH:mm:ss"
@@ -205,27 +275,20 @@ function TransakcijeMerchant() {
           All accounts
         </Select.Option>
       </Select>
-
       <Divider />
-      <Pie
-        data={chartData}
-        width={100}
-        height={50}
-        options={
-          ({ maintainAspectRatio: false },
-          {
-            title: {
-              display: true,
-              text: "Spendings by merchant",
-            },
-          },
-          {
-            legend: {
-              position: "left",
-            },
-          })
-        }
-      />
+      <Pie data={chartData} width={100} height={50} options={options} />
+      <Modal
+        visible={visible}
+        title="Title"
+        onCancel={handleCancel}
+        footer={[
+          <Button key="close" onClick={handleCancel}>
+            Close window
+          </Button>,
+        ]}
+      >
+        <Empty></Empty>
+      </Modal>
     </div>
   );
 }
