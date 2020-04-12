@@ -1,18 +1,41 @@
 .timePicker {
-    margin: 10px auto 10px auto;
+    margin: 30px auto 30px auto;
     display: table;
-
+    background-color: #ccdbe8;
+    min-width: 740px;
+    box-shadow: 2px 5px #888888;
 }
 
-.goButton {
+.filterButton {
     display: inline-block;
     margin: 10px;
     width: 200px;
     height: 40px;
+    border-color: #043058;
+    box-shadow: 2px 5px #888888;
 }
 
 .picker {
     margin: 10px;
     height: 40px;
     width: 500px;
+    border-color: #043058;
+    box-shadow: 2px 5px #888888;
+}
+
+.container {
+    margin: auto;
+    display: contents;
+}
+
+.parentContainer{
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    background: #d6e4ff38;
+    border: solid #adc6ff;
+    border-radius: 50px;
+    max-width: 1000px;
+    min-width: 870px;
+    box-shadow: 5px 5px 5px 5px #888888;
 }

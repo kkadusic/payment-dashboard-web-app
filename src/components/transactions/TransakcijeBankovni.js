@@ -6,10 +6,12 @@ import {Button, DatePicker, Result, TimePicker, Tooltip} from "antd";
 import moment from "moment";
 import "../../css/TransakcijeBankovni.css"
 import {message} from "antd";
-import PieChartOutlined from "@ant-design/icons/lib/icons/PieChartOutlined";
+
 const { RangePicker } = DatePicker;
 
 function TransakcijeBankovni() {
+    const backgroundColorStrength = '0.5';
+    const borderColorStrength = '1';
 
     const rangePickerFormat = "DD.MM.YYYY HH:mm:ss"
 
@@ -65,7 +67,8 @@ function TransakcijeBankovni() {
         if (!rangeDiffOk()) return;
         if ((interval.startDate == null || interval.startDate === "")
             || (interval.endDate == null || interval.endDate === "")) {
-            message.error("Please choose your wanted times!");
+            message.error("Please pick date-time range!");
+            loadData([]);
             return;
         }
         fetchData().then(response => {
@@ -79,48 +82,66 @@ function TransakcijeBankovni() {
 
     const loadData = transactions => {
         data.transactions = transactions;
-        console.log(data);
-        if (data.transactions.length === 0) return;
         fillChartData();
     };
 
     const fillChartData = () => {
-        let labels = [];
-        let map = new Map();
-        let totals = [];
-        // filling labels
-        let index = 0;
-        for (let t of data.transactions) {
-            if (typeof map.get(t.cardNumber) === "undefined") { // doesn't exist
-                map.set(t.cardNumber, index);
-                labels.push(t.cardNumber);
-                totals.push(t.totalPrice);
-                index++;
+        if (data.transactions.length) {
+            let labels = [];
+            let map = new Map();
+            let totals = [];
+            // filling labels
+            let index = 0;
+            for (let t of data.transactions) {
+                if (typeof map.get(t.cardNumber) === "undefined") { // doesn't exist
+                    map.set(t.cardNumber, index);
+                    labels.push(t.cardNumber);
+                    totals.push(t.totalPrice);
+                    index++;
 
-            } else {
-                totals[map.get(t.cardNumber)] += t.totalPrice;
+                } else {
+                    totals[map.get(t.cardNumber)] += t.totalPrice;
+                }
             }
+            // filling colors
+            let backgroundColors = [];
+            for(let i = 0; i < map.size; i++) {
+                backgroundColors.push(genColor(backgroundColorStrength));
+            }
+            dataChart.data.labels = labels;
+            dataChart.data.datasets.forEach(set => {
+                set.data = totals;
+                set.backgroundColor = backgroundColors;
+                let borderColors = [];
+                backgroundColors.forEach(c => {
+                    borderColors.push(c.substr(0, c.length - (backgroundColorStrength.length + 1)) + borderColorStrength + ')')
+                })
+                set.borderColor = borderColors;
+            });
         }
-        // filling colors
-        let colors = [];
-        for(let i = 0; i < map.size; i++) {
-            colors.push(genColor());
+        else {
+            dataChart.data = {
+                labels: [],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [],
+                    backgroundColor: [],
+                    borderColor: [],
+                    borderWidth: 1
+                }]
+            };
         }
-        dataChart.data.labels = labels;
-        dataChart.data.datasets.forEach(set => {
-            set.data = totals;
-            set.backgroundColor = colors;
-            set.borderColor = colors;
-        });
+
         ctx = document.getElementById('pieChart');
-        pieChart = new Chart(ctx, dataChart);
+        if (!pieChart) pieChart = new Chart(ctx, dataChart);
+        else pieChart.update();
     };
 
-    const genColor = () => {
+    const genColor = (strength) => {
         let r = Math.floor(Math.random() * 255);
         let g = Math.floor(Math.random() * 255);
         let b = Math.floor(Math.random() * 255);
-        return 'rgb(' + r + ',' + g + ',' + b + ', 0.2)';
+        return 'rgb(' + r + ',' + g + ',' + b + ',' + strength + ')';
     };
 
     const pickTime = () => (
@@ -135,7 +156,7 @@ function TransakcijeBankovni() {
                 defaultValue={[moment().startOf('month'), moment().endOf('month')]}
                 showTime format={rangePickerFormat}
                 onChange={onChangeTime}/>
-            <Button className={"goButton"} type={"primary"} shape={"round"} onClick={go}>Filter</Button>
+            <Button className={"filterButton"} type={"primary"} shape={"round"} onClick={go}>Filter</Button>
         </div>
     );
 
@@ -153,7 +174,6 @@ function TransakcijeBankovni() {
             startDate: stringTime[0],
             endDate: stringTime[1]
         };
-        go();
     }
 
     useEffect(() => {
@@ -161,14 +181,12 @@ function TransakcijeBankovni() {
     }, [])
 
     return (
-        <div>
-            {pickTime()}
-            {
-                (data.transactions === null || data.transactions.length === 0) ?
-                    <Result icon={<PieChartOutlined />} title={"Filter selected range!"}/>
-                    : <canvas id={"pieChart"} style={{margin: "auto"}} width="700" height="700"/>
-            }
+        <div className={"parentContainer"}>
+            <div className={"container"}>
+                {pickTime()}
+                <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="740" height="600"/>
 
+            </div>
         </div>
     );
 }
