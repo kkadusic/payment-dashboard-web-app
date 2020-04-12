@@ -157,8 +157,7 @@ function TransakcijeMjesec() {
   return (
     <div>
       <h1>
-        Za svakog merchanta, prikaz troškova u godini koju korisnik odabere, koristeći bar chart (za određeni ili
-        za sve bankovne račune)
+		Check your monthly expenses for chosen or all merchants
       </h1>
 
 	  <Select
