@@ -22,6 +22,7 @@ class PregledTransakcija extends Component {
     key: 0,
     expandedKeys: [],
     maxPrice: 0,
+    minPrice: 0,
     left: 0,
     right: 0
   };
@@ -42,6 +43,7 @@ class PregledTransakcija extends Component {
     this.setState({ data: transactions }, () => {
       console.log(this.state.data);
     });
+
     let maxP = 0;
     for (let i = 0; i < this.state.data.length; i++) {
       if (parseFloat(this.state.data[i].totalPrice) > maxP) {
@@ -50,6 +52,16 @@ class PregledTransakcija extends Component {
     }
     this.setState({ maxPrice: maxP }, () => {
       console.log(this.state.maxPrice);
+    });
+
+    let minP = transactions[0].totalPrice;
+    for (let i = 0; i < this.state.data.length; i++) {
+      if (parseFloat(this.state.data[i].totalPrice) < minP) {
+        minP = parseFloat(this.state.data[i].totalPrice);
+      }
+    }
+    this.setState({ minPrice: minP }, () => {
+      console.log(this.state.minPrice);
     });
   };
 
@@ -207,72 +219,6 @@ class PregledTransakcija extends Component {
     );
   };
 
-  getPriceSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-        <div
-          className="price-filter"
-          style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
-        >
-          <Row>
-            <Col span={4}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <div>
-                  <strong>Min:</strong>
-                </div>
-                <div>{numeral(0).format("0.0a")} <br></br> {"KM"} </div>
-              </div>
-            </Col>
-            <Col span={16}>
-              <Slider
-                range
-                value={[0, parseFloat(this.state.maxPrice)]}
-                tipFormatter={value => {
-                  return numeral(value).format("0.0a");
-                }}
-                step='0.1'
-                onChange={e => this.setState({ left: e[0], right: e[1] })}
-              />
-            </Col>
-            <Col span={4}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <div>
-                  <strong>Max:</strong>
-                </div>
-                <div>{numeral(this.state.maxPrice).format("0.0a")}  <br></br> {"KM"}</div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Button
-              type="primary"
-              block
-              size="small"
-              onClick={() => {
-                confirm();
-              }}
-            >
-              Confirm
-      </Button>
-            <Button
-              onClick={() => {
-                this.getTransactions();
-                clearFilters();
-              }}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Reset
-            </Button>
-          </Row>
-        </div>
-      )
-  });
-
 
   render() {
     let things = {};
@@ -297,53 +243,18 @@ class PregledTransakcija extends Component {
 
 
     // find max price
-    let maxPrice = 0;
-    for (let i = 0; i < this.state.data.length; i++) {
-      if (parseFloat(this.state.data[i].totalPrice) > maxPrice) {
-        maxPrice = parseFloat(this.state.data[i].totalPrice);
-      }
-    }
+    
 
     const sliderProps = {
       range: true,
-      min: 0,
-      max: parseFloat(maxPrice),
+      min: parseFloat(this.state.minPrice),
+      max: parseFloat(this.state.maxPrice),
       tipFormatter: value => {
         return numeral(value).format("0.0a");
       },
-      step: '0.1'
+      step: '0.1',
+      onChange: e => this.setState({ left: e[0], right: e[1] })
     };
-
-    /*const formattedMin = numeral(0).format("0.0a");
-    const formattedMax = numeral(maxPrice).format("0.0a");
-    const slider = (
-      <div
-        className="price-filter"
-        style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
-      >
-        <Row>
-          <Col span={4}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div>
-                <strong>Min:</strong>
-              </div>
-              <div>{formattedMin} <br></br> {"KM"} </div>
-            </div>
-          </Col>
-          <Col span={16}>
-            <Slider {...sliderProps} />
-          </Col>
-          <Col span={4}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div>
-                <strong>Max:</strong>
-              </div>
-              <div>{formattedMax}  <br></br> {"KM"}</div>
-            </div>
-          </Col>
-        </Row>
-      </div>
-    );*/
 
 
     const columns = [
@@ -455,7 +366,7 @@ class PregledTransakcija extends Component {
                     <div>
                       <strong>Min:</strong>
                     </div>
-                    <div>{numeral(0).format("0.0a")} <br></br> {"KM"} </div>
+                    <div>{numeral(this.state.minPrice).format("0.0a")} <br></br> {"KM"} </div>
                   </div>
                 </Col>
                 <Col span={16}>
@@ -484,8 +395,8 @@ class PregledTransakcija extends Component {
                 </Row>
             </div>
           ),
-        onFilter: (values, record) => {
-          return (parseFloat(values[0]) <= parseFloat(record.totalPrice) && parseFloat(record.totalPrice) <= parseFloat(values[1]));
+        onFilter: (record) => {
+          return (parseFloat(this.state.left) <= parseFloat(record.totalPrice) && parseFloat(record.totalPrice) <= parseFloat(this.state.right));
         }
       },
     ];
