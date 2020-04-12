@@ -265,8 +265,6 @@ class PregledTransakcija extends Component {
     });
   };
 
-  handleDateReser = (clearFilters) => {};
-
   onTableRowExpand(expanded, record) {
     var keys = [];
     if (expanded) {
@@ -346,7 +344,7 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("service"),
       },
       {
-        title: "Date",
+        title: "Date and time",
         dataIndex: "date",
         key: "date",
         sorter: (a, b) => {
