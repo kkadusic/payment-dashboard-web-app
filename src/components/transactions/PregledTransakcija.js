@@ -48,7 +48,7 @@ class PregledTransakcija extends Component {
         headers: { Authorization: "Bearer " + getToken() },
       })
       .then(this.load)
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   }
 
   getTransactionsByService = (selectedKeys) => {
