@@ -1,170 +1,174 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import axios from "axios";
 import {getToken} from "../../utilities/Common";
 import Chart from 'chart.js';
-import {DatePicker, TimePicker, Tooltip} from "antd";
+import {Button, DatePicker, Result, TimePicker, Tooltip} from "antd";
 import moment from "moment";
 import "../../css/TransakcijeBankovni.css"
+import {message} from "antd";
+import PieChartOutlined from "@ant-design/icons/lib/icons/PieChartOutlined";
+const { RangePicker } = DatePicker;
 
 function TransakcijeBankovni() {
 
-    const [state, setState] = useState({
-        startDate: null,
-        startTime: null,
-        endDate: null,
-        endTime: null,
-        interval: {
-            startDate: null,
-            endDate: null
-        }
-    });
+    const rangePickerFormat = "DD.MM.YYYY HH:mm:ss"
 
-    const timeFormat = 'HH:mm';
-    const dateFormat = "DD.MM.YYYY";
+    let interval = {
+        startDate: moment().startOf('month').format(rangePickerFormat),
+        endDate: moment().endOf('month').format(rangePickerFormat)
+    }
+    let data = {
+        transactions: []
+    };
 
     let ctx = null;
-    let startDatePicker = null;
-    let endDatePicker = null;
-    let dataChart = {
+    let pieChart = null;
+    const dataChart = {
         type: 'pie',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: [],
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                data: [],
+                backgroundColor: [],
+                borderColor: [],
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: false,
             scales: {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true
                     }
                 }]
+            },
+            title: {
+                display: true,
+                text: 'Expenses per account for Range: From (' + interval.startDate + ') To (' + interval.endDate +')'
             }
         }
     };
 
     const fetchData = () => {
-        return axios.post("https://payment-server-si.herokuapp.com/api/transactions/date", state.interval, {
+        return axios.post("https://payment-server-si.herokuapp.com/api/transactions/date", JSON.stringify(interval), {
             headers: {
-                Authorization: "Bearer " + getToken()
+                Authorization: "Bearer " + getToken(),
+                'Content-Type': 'application/json'
             }
-        }).catch(err => console.log(err))
+        }).then()
+            .catch(err => console.log(err))
     };
+
+    const go = () => {
+        if (!rangeDiffOk()) return;
+        if ((interval.startDate == null || interval.startDate === "")
+            || (interval.endDate == null || interval.endDate === "")) {
+            message.error("Please choose your wanted times!");
+            return;
+        }
+        fetchData().then(response => {
+            if (!(response.status === 200 || response.statusText === 'OK')) {
+                console.log(response);
+                return [];
+            }
+            return response.data;
+        }).then(loadData);
+    };
+
+    const loadData = transactions => {
+        data.transactions = transactions;
+        console.log(data);
+        if (data.transactions.length === 0) return;
+        fillChartData();
+    };
+
+    const fillChartData = () => {
+        let labels = [];
+        let map = new Map();
+        let totals = [];
+        // filling labels
+        let index = 0;
+        for (let t of data.transactions) {
+            if (typeof map.get(t.cardNumber) === "undefined") { // doesn't exist
+                map.set(t.cardNumber, index);
+                labels.push(t.cardNumber);
+                totals.push(t.totalPrice);
+                index++;
+
+            } else {
+                totals[map.get(t.cardNumber)] += t.totalPrice;
+            }
+        }
+        // filling colors
+        let colors = [];
+        for(let i = 0; i < map.size; i++) {
+            colors.push(genColor());
+        }
+        dataChart.data.labels = labels;
+        dataChart.data.datasets.forEach(set => {
+            set.data = totals;
+            set.backgroundColor = colors;
+            set.borderColor = colors;
+        });
+        ctx = document.getElementById('pieChart');
+        pieChart = new Chart(ctx, dataChart);
+    };
+
+    const genColor = () => {
+        let r = Math.floor(Math.random() * 255);
+        let g = Math.floor(Math.random() * 255);
+        let b = Math.floor(Math.random() * 255);
+        return 'rgb(' + r + ',' + g + ',' + b + ', 0.2)';
+    };
+
+    const pickTime = () => (
+        <div className={"timePicker"}>
+            <RangePicker
+                className={"picker"}
+                ranges={{
+                    Today: [moment().startOf('day'), moment().endOf('day')],
+                    'This Week': [moment().startOf('week'), moment().endOf('week')],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                }}
+                defaultValue={[moment().startOf('month'), moment().endOf('month')]}
+                showTime format={rangePickerFormat}
+                onChange={onChangeTime}/>
+            <Button className={"goButton"} type={"primary"} shape={"round"} onClick={go}>Filter</Button>
+        </div>
+    );
+
+    const rangeDiffOk = () => {
+        const duration = moment.duration(moment(interval.endDate).diff(moment(interval.startDate)));
+        if (duration.asHours() < 1) {
+            message.error("Range difference has to be bigger than 1 hour!")
+            return false;
+        }
+        return true;
+    }
+
+    const onChangeTime = (value, stringTime) => {
+        interval = {
+            startDate: stringTime[0],
+            endDate: stringTime[1]
+        };
+        go();
+    }
 
     useEffect(() => {
-        ctx = document.getElementById('pieChart');
-        startDatePicker = document.getElementById('startDate');
-        endDatePicker = document.getElementById('endDate');
-        let dates = getDefaultDates();
-
-        startDatePicker.setAttribute("defaultValue", dates.startDate);
-        endDatePicker.setAttribute("defaultValue", dates.endDate);
-        setState({
-            interval: {
-                startDate: state.startDate + " " + state.startTime,
-                endDate: state.endDate + " " + state.endTime
-            }
-        })
-        fetchData().then(data => {
-            console.log(data);
-        });
-
+        go();
     }, [])
-
-    const loadDate = data => {
-
-    };
-
-    const startDate = (date, dateString) => {
-        console.log("Chose: " + dateString + " as starting date!")
-        setState({
-            startDate: dateString
-        });
-    };
-
-    const startTime = (time, timeString) => {
-        console.log("Chose: " + timeString + " as starting time!")
-        setState({
-            startTime: timeString
-        });
-    };
-
-    const endDate = (date, dateString) => {
-        console.log("Chose: " + dateString + " as ending date!")
-        setState({
-            endDate: dateString
-        });
-    };
-
-    const endTime = (time, timeString) => {
-        console.log("Chose: " + timeString + " as ending time!")
-        setState({
-            endTime: timeString
-        });
-    };
-
-
-    const getDefaultDates = () => {
-        let end = new Date();
-        let endDay = end.getDate();
-        if (endDay < 10) endDay = "0" + endDay;
-        let endMonth = end.getMonth() + 1;
-        if (endMonth < 10) endMonth = "0" + endMonth;
-
-
-        let start = end; // setting week before
-        start.setDate(endDay - 7);
-        let startDay = start.getDate();
-        if (startDay < 10) startDay = "0" + startDay;
-        let startMonth = start.getMonth() + 1;
-        if (startMonth < 10) startMonth = "0" + startMonth;
-
-        return {
-            startDate: startDay + "." + startMonth + "." + start.getFullYear(),
-            endDate: endDay + "." + endMonth + "." + end.getFullYear()
-        }
-
-    }
 
     return (
         <div>
-            <div className={"timePicker"}>From
-                <Tooltip title={"Pick starting date"}>
-                    <DatePicker id={"startDate"} onChange={startDate} className={"picker"} format={dateFormat}/>
-                </Tooltip>
-                <Tooltip title={"Pick starting time"}>
-                    <TimePicker className={"picker"} style={{display: "inline-block"}} onChange={startTime} format={timeFormat}/>
-                </Tooltip>
-            </div>
-            <div className={"timePicker"}>To
-                <Tooltip title={"Pick ending date"}>
-                    <DatePicker id={"endDate"} onChange={endDate} className={"picker"} defaultValue={moment(Date.now(), dateFormat)} format={dateFormat}/>
-                </Tooltip>
-                <Tooltip title={"Pick ending time"}>
-                    <TimePicker className={"picker"} style={{display: "inline-block"}} onChange={endTime} defaultValue={moment('23:59', timeFormat)} format={timeFormat}/>
-                </Tooltip>
-            </div>
+            {pickTime()}
+            {
+                (data.transactions === null || data.transactions.length === 0) ?
+                    <Result icon={<PieChartOutlined />} title={"Filter selected range!"}/>
+                    : <canvas id={"pieChart"} style={{margin: "auto"}} width="700" height="700"/>
+            }
 
-            <canvas id={"pieChart"} width={'600px'} height={'600px'}></canvas>
         </div>
     );
 }

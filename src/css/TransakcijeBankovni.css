@@ -1,9 +1,18 @@
 .timePicker {
-    display: inline-block;
-    margin: 10px;
+    margin: 10px auto 10px auto;
+    display: table;
 
 }
 
+.goButton {
+    display: inline-block;
+    margin: 10px;
+    width: 200px;
+    height: 40px;
+}
+
 .picker {
-    margin: 5px;
+    margin: 10px;
+    height: 40px;
+    width: 500px;
 }
