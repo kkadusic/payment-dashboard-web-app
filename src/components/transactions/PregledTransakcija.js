@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
-import { Table, Input, Button, Tag, Typography } from "antd";
+import { Table, Input, Button, Tag, Typography, Row, Col } from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
 import uuid from "react-uuid";
 import "../../css/Transactions.css";
+
+import numeral from "numeral";
+import Slider from "antd/lib/slider";
 
 const { Text } = Typography;
 
@@ -200,6 +203,63 @@ class PregledTransakcija extends Component {
         self.findIndex((t) => t.text === thing.text && t.value === thing.value)
     );
 
+    // price slider
+    // slider props
+    const sliderProps = {
+      range: true,
+      /*defaultValue,
+      min,
+      max,
+      onChange: values => onFilterChange(values),*/
+      tipFormatter: value => {
+        const currentGroup = this.state.data[value] || [];
+        const currentResult = currentGroup[0] || {};
+        const price = currentResult.totalPrice;
+        const formattedPrice = numeral(price).format("0.0a");
+        return formattedPrice;
+      }
+    };
+
+    // fin max price
+    let maxPrice = 0;
+    for(let i = 0; i < this.state.data.length; i++) {
+      if(parseFloat(this.state.data[i].totalPrice) > maxPrice) {
+        maxPrice = parseFloat(this.state.data[i].totalPrice);
+      }
+    }
+
+    const formattedMin = numeral(0).format("0.0a");
+    const formattedMax = numeral(maxPrice).format("0.0a");
+    const slider = (
+      <div
+        className="custom-filter-dropdown ant-table-filter-dropdown"
+        style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+      >
+        <Row>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Min:</strong>
+              </div>
+              <div>{formattedMin}</div>
+            </div>
+          </Col>
+          <Col span={16}>
+            <Slider {...sliderProps} />
+          </Col>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Max:</strong>
+              </div>
+              <div>{formattedMax}</div>
+            </div>
+          </Col>
+        </Row>
+      </div>
+    );
+  
+
     const columns = [
       {
         title: "Card number",
@@ -293,51 +353,7 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        // Filters into categories of prices: low, lower medium, medium, upper medium, high
-        filters: [
-          {
-            text: "Low (0-5 BAM)",
-            value: "low",
-          },
-          {
-            text: "Lower medium (5-20 BAM)",
-            value: "lowMedium",
-          },
-          {
-            text: "Medium (20-50 BAM)",
-            value: "medium",
-          },
-          {
-            text: "Upper medium (50-100 BAM)",
-            value: "upMedium",
-          },
-          {
-            text: "High (100+ BAM)",
-            value: "high",
-          },
-        ],
-        onFilter: (value, record) => {
-          const price = record.totalPrice;
-          const lowStart = 0,
-            lowMediumStart = 5,
-            mediumStart = 20,
-            upMediumStart = 50,
-            highStart = 100;
-          switch (value) {
-            case "low":
-              return price >= lowStart && price < lowMediumStart;
-            case "lowMedium":
-              return price >= lowMediumStart && price < mediumStart;
-            case "medium":
-              return price >= mediumStart && price < upMediumStart;
-            case "upMedium":
-              return price >= upMediumStart && price < highStart;
-            case "high":
-              return price >= highStart;
-            default:
-              return true;
-          }
-        },
+        filterDropdown: slider
       },
     ];
     return (
