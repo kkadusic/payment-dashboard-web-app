@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Divider, DatePicker, Select, Modal, Empty, Button } from "antd";
+import { Divider, DatePicker, Select, Modal, Empty, Button, Space } from "antd";
 import moment from "moment";
 import { Bar, Line, Pie, Doughnut, Polar, Scatter } from "react-chartjs-2";
 import axios from "axios";
@@ -20,7 +20,6 @@ function TransakcijeMerchant() {
   //const [merchants, setMerchants] = useState([]);
   const [selectedAcc, setSelectedAcc] = useState("all");
   const [chosenDate, setChosenDate] = useState({});
-  const [visible, setVisible] = useState(false);
 
   const merchants = [];
   const prices = [];
@@ -117,16 +116,11 @@ function TransakcijeMerchant() {
       colors.push(generateColor());
     });
     merchantPrice = sortArray(merchantPriceUnsorted);
-
-    if (merchantPrice.length === 0) {
-      setVisible(true);
-    }
-
     setChartData({
       labels: Object.keys(merchantPrice),
       datasets: [
         {
-          label: "Spendings by merchant",
+          label: "Spendings on merchant",
           data: Object.values(merchantPrice),
           backgroundColor: colors,
         },
@@ -193,17 +187,15 @@ function TransakcijeMerchant() {
     if (value === null) getTransactions();
   };
 
-  const handleCancel = (e) => {
-    setVisible(false);
-  };
-
   const options = {
     maintainAspectRatio: true,
     responsive: true,
     title: {
       display: true,
-      text: "Spendings by merchant",
+      text: "Spendings on merchants",
       position: "left",
+      fontColor: "#030852",
+      fontSize: 16,
     },
     layout: {
       padding: 60,
@@ -242,53 +234,44 @@ function TransakcijeMerchant() {
   };
 
   return (
-    <div>
-      <h1>
-        Prikaz dijagrama za iznos troškova po merchantima u odnosu na vremenski
-        interval kojeg korisnik odabere (za određeni ili za sve bankovne račune)
-        koristeći pie chart za vremenski period izabran na date (range) pickeru{" "}
-      </h1>
-      <RangePicker
-        allowClear={true}
-        showTime={{
-          defaultValue: [
-            moment("00:00:00", "HH:mm:ss"),
-            moment("23:59:59", "HH:mm:ss"),
-          ],
-        }}
-        format="DD.MM.YYYY HH:mm:ss"
-        onOk={onDateOk}
-        onChange={handleClearDate}
-      />
-      <Select
-        placeholder="Select bank account"
-        style={{ width: 200 }}
-        onChange={handleAccChange}
-        defaultValue="all"
-      >
-        {accounts.map((title) => (
-          <Select.Option key={title.id} value={title.cardNumber}>
-            {title.cardNumber}
+    <div className="all-items">
+      <Divider>
+        <h1 style={{ color: "#030852" }}>
+          Choose bank account and pick dates to see how much money you spent on
+          different merchants
+        </h1>
+      </Divider>
+      <Space size="large">
+        <RangePicker
+          allowClear={true}
+          showTime={{
+            defaultValue: [
+              moment("00:00:00", "HH:mm:ss"),
+              moment("23:59:59", "HH:mm:ss"),
+            ],
+          }}
+          format="DD.MM.YYYY HH:mm:ss"
+          onOk={onDateOk}
+          onChange={handleClearDate}
+        />
+        <Select
+          placeholder="Select bank account"
+          style={{ width: 200 }}
+          onChange={handleAccChange}
+          defaultValue="all"
+        >
+          {accounts.map((title) => (
+            <Select.Option key={title.id} value={title.cardNumber}>
+              {title.cardNumber}
+            </Select.Option>
+          ))}
+          <Select.Option key="all" value="all">
+            All accounts
           </Select.Option>
-        ))}
-        <Select.Option key="all" value="all">
-          All accounts
-        </Select.Option>
-      </Select>
+        </Select>
+      </Space>
       <Divider />
       <Pie data={chartData} width={100} height={50} options={options} />
-      <Modal
-        visible={visible}
-        title="Title"
-        onCancel={handleCancel}
-        footer={[
-          <Button key="close" onClick={handleCancel}>
-            Close window
-          </Button>,
-        ]}
-      >
-        <Empty></Empty>
-      </Modal>
     </div>
   );
 }
