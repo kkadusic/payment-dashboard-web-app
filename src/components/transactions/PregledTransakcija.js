@@ -21,6 +21,9 @@ class PregledTransakcija extends Component {
     data: [],
     key: 0,
     expandedKeys: [],
+    maxPrice: 0,
+    left: 0,
+    right: 0
   };
 
   load = (response) => {
@@ -38,6 +41,15 @@ class PregledTransakcija extends Component {
     });
     this.setState({ data: transactions }, () => {
       console.log(this.state.data);
+    });
+    let maxP = 0;
+    for (let i = 0; i < this.state.data.length; i++) {
+      if (parseFloat(this.state.data[i].totalPrice) > maxP) {
+        maxP = parseFloat(this.state.data[i].totalPrice);
+      }
+    }
+    this.setState({ maxPrice: maxP }, () => {
+      console.log(this.state.maxPrice);
     });
   };
 
@@ -58,7 +70,7 @@ class PregledTransakcija extends Component {
     axios
       .get(
         "https://payment-server-si.herokuapp.com/api/transactions/service/" +
-          selectedKeys,
+        selectedKeys,
         {
           headers: { Authorization: "Bearer " + getToken() },
         }
@@ -74,47 +86,47 @@ class PregledTransakcija extends Component {
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={(node) => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            this.handleSearch(selectedKeys, confirm, dataIndex)
-          }
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => {
-            dataIndex !== "service"
-              ? this.handleSearch(selectedKeys, confirm, dataIndex)
-              : this.getTransactionsByService(selectedKeys);
-          }}
-          icon={<SearchOutlined />}
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={(node) => {
+              this.searchInput = node;
+            }}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={(e) =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() =>
+              this.handleSearch(selectedKeys, confirm, dataIndex)
+            }
+            style={{ width: 188, marginBottom: 8, display: "block" }}
+          />
+          <Button
+            type="primary"
+            onClick={() => {
+              dataIndex !== "service"
+                ? this.handleSearch(selectedKeys, confirm, dataIndex)
+                : this.getTransactionsByService(selectedKeys);
+            }}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Search
         </Button>
-        <Button
-          onClick={() => {
-            dataIndex !== "service"
-              ? this.handleReset(clearFilters)
-              : this.getTransactions();
-          }}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
+          <Button
+            onClick={() => {
+              dataIndex !== "service"
+                ? this.handleReset(clearFilters)
+                : this.getTransactions();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
         </Button>
-      </div>
-    ),
+        </div>
+      ),
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
@@ -134,8 +146,8 @@ class PregledTransakcija extends Component {
           textToHighlight={text.toString()}
         />
       ) : (
-        text
-      ),
+          text
+        ),
   });
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -150,6 +162,16 @@ class PregledTransakcija extends Component {
     clearFilters();
     this.setState({
       searchText: "",
+    });
+  };
+
+  handleSearchPrice = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
     });
   };
 
@@ -185,6 +207,72 @@ class PregledTransakcija extends Component {
     );
   };
 
+  getPriceSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+        <div
+          className="price-filter"
+          style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+        >
+          <Row>
+            <Col span={4}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div>
+                  <strong>Min:</strong>
+                </div>
+                <div>{numeral(0).format("0.0a")} <br></br> {"KM"} </div>
+              </div>
+            </Col>
+            <Col span={16}>
+              <Slider
+                range
+                value={[0, parseFloat(this.state.maxPrice)]}
+                tipFormatter={value => {
+                  return numeral(value).format("0.0a");
+                }}
+                step='0.1'
+                onChange={e => this.setState({ left: e[0], right: e[1] })}
+              />
+            </Col>
+            <Col span={4}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div>
+                  <strong>Max:</strong>
+                </div>
+                <div>{numeral(this.state.maxPrice).format("0.0a")}  <br></br> {"KM"}</div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Button
+              type="primary"
+              block
+              size="small"
+              onClick={() => {
+                confirm();
+              }}
+            >
+              Confirm
+      </Button>
+            <Button
+              onClick={() => {
+                this.getTransactions();
+                clearFilters();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+          </Row>
+        </div>
+      )
+  });
+
 
   render() {
     let things = {};
@@ -206,12 +294,12 @@ class PregledTransakcija extends Component {
 
     // price slider
     // slider props
-    
+
 
     // find max price
     let maxPrice = 0;
-    for(let i = 0; i < this.state.data.length; i++) {
-      if(parseFloat(this.state.data[i].totalPrice) > maxPrice) {
+    for (let i = 0; i < this.state.data.length; i++) {
+      if (parseFloat(this.state.data[i].totalPrice) > maxPrice) {
         maxPrice = parseFloat(this.state.data[i].totalPrice);
       }
     }
@@ -226,7 +314,7 @@ class PregledTransakcija extends Component {
       step: '0.1'
     };
 
-    const formattedMin = numeral(0).format("0.0a");
+    /*const formattedMin = numeral(0).format("0.0a");
     const formattedMax = numeral(maxPrice).format("0.0a");
     const slider = (
       <div
@@ -243,7 +331,7 @@ class PregledTransakcija extends Component {
             </div>
           </Col>
           <Col span={16}>
-            <Slider {...sliderProps}/>
+            <Slider {...sliderProps} />
           </Col>
           <Col span={4}>
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -255,8 +343,8 @@ class PregledTransakcija extends Component {
           </Col>
         </Row>
       </div>
-    );
-  
+    );*/
+
 
     const columns = [
       {
@@ -351,10 +439,53 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        filter: slider,
-        filterDropdown: slider,
+        filterDropdown: ({
+          setSelectedKeys,
+          selectedKeys,
+          confirm,
+          clearFilters,
+        }) => (
+            <div
+              className="price-filter"
+              style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+            >
+              <Row>
+                <Col span={4}>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div>
+                      <strong>Min:</strong>
+                    </div>
+                    <div>{numeral(0).format("0.0a")} <br></br> {"KM"} </div>
+                  </div>
+                </Col>
+                <Col span={16}>
+                  <Slider {...sliderProps} />
+                </Col>
+                <Col span={4}>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div>
+                      <strong>Max:</strong>
+                    </div>
+                    <div>{numeral(this.state.maxPrice).format("0.0a")}  <br></br> {"KM"}</div>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Button
+                  type="primary"
+                  block
+                  size="small"
+                  onClick={() => {
+                    confirm();
+                  }}
+                >
+                  Confirm
+                </Button>
+                </Row>
+            </div>
+          ),
         onFilter: (values, record) => {
-          return (values[0] <= record.totalPrice && record.totalPrice <= values[1]);
+          return (parseFloat(values[0]) <= parseFloat(record.totalPrice) && parseFloat(record.totalPrice) <= parseFloat(values[1]));
         }
       },
     ];
