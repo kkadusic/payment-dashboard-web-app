@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import { getToken } from "../../utilities/Common";
-import { DatePicker, Select } from "antd";
+import { DatePicker, Select, Divider } from "antd";
 
 function TransakcijeMjesec() {
 	const [accounts, setAccounts] = useState([]);
@@ -106,10 +106,30 @@ function TransakcijeMjesec() {
 	
 	}
 
+	const colors = []
+	var customColors = ["#95de64", "#d3f261", "#fff566", "#ffd666", "#ffc069", "#ff9c6e", "#ff7875"];
+
+	const setColorValues = () => {
+
+		var sortedMonthlyValues = Object.keys(monthlyCosts).sort((a, b) => monthlyCosts[a] - monthlyCosts[b]);
+		
+		var customColorIndex = 0;
+	
+		sortedMonthlyValues.forEach((month) => {
+			if(monthlyCosts[month] != 0) { 
+				colors[month] = customColors[customColorIndex]
+				if(customColorIndex != 6) {
+					customColorIndex++;
+				}
+			 }	
+		})
+	  };
+
 	const updateChartData = (data) => {
 
 		months.forEach((month) => {
 			monthlyCosts[month] = 0
+			colors[month] = "#d3f261"
 		})
 
 		data.forEach((transaction) => {
@@ -121,13 +141,14 @@ function TransakcijeMjesec() {
 			}
 		})
 
+		setColorValues()
 		setChartData({
 			labels: months,
 			datasets: [
 			  {
-				label: "Money spent",
+				// label: "Money spent",
 				data: Object.values(monthlyCosts),
-				backgroundColor: "#597ef7",
+				backgroundColor: Object.values(colors),
 			  },
 			],
 		});
@@ -139,22 +160,7 @@ function TransakcijeMjesec() {
         Za svakog merchanta, prikaz troškova u godini koju korisnik odabere, koristeći bar chart (za određeni ili
         za sve bankovne račune)
       </h1>
-	  <DatePicker onChange={handleYearChanged} picker="year"/>
-      <Select
-        placeholder="Select Account"
-        style={{ width: 200 }}
-        onChange={handleAccChange}
-        defaultValue="all"
-      >
-        {accounts.map((title) => (
-          <Select.Option key={title.id} value={title.cardNumber}>
-            {title.cardNumber}
-          </Select.Option>
-        ))}
-        <Select.Option key="all" value="all">
-          All accounts
-        </Select.Option>
-      </Select>
+
 	  <Select
         placeholder="Select Merchant"
         style={{ width: 200 }}
@@ -162,7 +168,7 @@ function TransakcijeMjesec() {
         defaultValue="all"
       >
         {merchants.map((title) => (
-          <Select.Option key={title.merchantID} value={title.merchantName}>
+          <Select.Option key={title.merchantId} value={title.merchantName}>
             {title.merchantName}
           </Select.Option>
         ))}
@@ -170,6 +176,26 @@ function TransakcijeMjesec() {
           All Merchants
         </Select.Option>
       </Select>
+
+      <Select
+        placeholder="Select Account"
+        style={{ width: 200, marginLeft:"30px"}}
+        onChange={handleAccChange}
+		defaultValue="all"
+      >
+        {accounts.map((title) => (
+          <Select.Option key={"account"+title.id} value={title.cardNumber}>
+            {title.cardNumber}
+          </Select.Option>
+        ))}
+        <Select.Option key="all" value="all">
+          All accounts
+        </Select.Option>
+      </Select>
+
+	  <DatePicker onChange={handleYearChanged} picker="year" style={{float: "right" }}/>
+
+	  <Divider></Divider>
 	  <Bar
         data={chartData}
         width={100}
@@ -182,7 +208,19 @@ function TransakcijeMjesec() {
             title: {
               display: true,
               text: "Spendings in a year",
-            },
+			},
+			legend: {
+				display: false
+			},
+			scales: {
+				yAxes: [{
+					display: true,
+					ticks: {
+						suggestedMin: 0,
+						suggestedMax: 100
+					}
+				}]		
+			}
           })
         }
       />
