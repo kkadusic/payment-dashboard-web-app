@@ -185,6 +185,7 @@ class PregledTransakcija extends Component {
     );
   };
 
+
   render() {
     let things = {};
     things.thing = [];
@@ -205,22 +206,9 @@ class PregledTransakcija extends Component {
 
     // price slider
     // slider props
-    const sliderProps = {
-      range: true,
-      /*defaultValue,
-      min,
-      max,
-      onChange: values => onFilterChange(values),*/
-      tipFormatter: value => {
-        const currentGroup = this.state.data[value] || [];
-        const currentResult = currentGroup[0] || {};
-        const price = currentResult.totalPrice;
-        const formattedPrice = numeral(price).format("0.0a");
-        return formattedPrice;
-      }
-    };
+    
 
-    // fin max price
+    // find max price
     let maxPrice = 0;
     for(let i = 0; i < this.state.data.length; i++) {
       if(parseFloat(this.state.data[i].totalPrice) > maxPrice) {
@@ -228,11 +216,21 @@ class PregledTransakcija extends Component {
       }
     }
 
+    const sliderProps = {
+      range: true,
+      min: 0,
+      max: parseFloat(maxPrice),
+      tipFormatter: value => {
+        return numeral(value).format("0.0a");
+      },
+      step: '0.1'
+    };
+
     const formattedMin = numeral(0).format("0.0a");
     const formattedMax = numeral(maxPrice).format("0.0a");
     const slider = (
       <div
-        className="custom-filter-dropdown ant-table-filter-dropdown"
+        className="price-filter"
         style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
       >
         <Row>
@@ -241,18 +239,18 @@ class PregledTransakcija extends Component {
               <div>
                 <strong>Min:</strong>
               </div>
-              <div>{formattedMin}</div>
+              <div>{formattedMin} <br></br> {"KM"} </div>
             </div>
           </Col>
           <Col span={16}>
-            <Slider {...sliderProps} />
+            <Slider {...sliderProps}/>
           </Col>
           <Col span={4}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div>
                 <strong>Max:</strong>
               </div>
-              <div>{formattedMax}</div>
+              <div>{formattedMax}  <br></br> {"KM"}</div>
             </div>
           </Col>
         </Row>
@@ -353,7 +351,11 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        filterDropdown: slider
+        filter: slider,
+        filterDropdown: slider,
+        onFilter: (values, record) => {
+          return (values[0] <= record.totalPrice && record.totalPrice <= values[1]);
+        }
       },
     ];
     return (
