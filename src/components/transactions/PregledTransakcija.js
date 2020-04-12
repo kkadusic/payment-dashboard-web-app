@@ -72,6 +72,9 @@ class PregledTransakcija extends Component {
       clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
+        {
+          (dataIndex === 'service') ? <p>Filter by product</p> : null
+        }
         <Input
           ref={(node) => {
             this.searchInput = node;
@@ -222,9 +225,20 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("merchantName"),
       },
       {
-        title: "Service",
+        title: "Transaction Id",
         dataIndex: "key",
-        key: "service",
+        key: "key",
+        render: tags => (
+            <span>
+              {tags.map(tag => {
+                return (
+                    <Tag color={'geekblue'} key={tag}>
+                      {tag}
+                    </Tag>
+                )
+              })}
+            </span>
+        ),
         ellipsis: true,
         ...this.getColumnSearchProps("service"),
       },
