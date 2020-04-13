@@ -173,7 +173,7 @@ function TransakcijeMerchant() {
 
   const onDateOk = (value) => {
     console.log(value);
-    if (value !== undefined)
+    if (value !== undefined && value[0] !== null && value[1] !== null)
       setChosenDate(
         {
           startDate: formatDate(value[0]._d),
@@ -222,15 +222,6 @@ function TransakcijeMerchant() {
         },
       },
     },
-  };
-
-  const info = () => {
-    Modal.info({
-      title:
-        "You haven't made any transaction with selected bank account or within chosen dates!",
-      content: <Empty />,
-      onOk() {},
-    });
   };
 
   return (
