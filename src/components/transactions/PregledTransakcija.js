@@ -224,7 +224,7 @@ class PregledTransakcija extends Component {
                 step='0.1'
                 onChange={(e) => {
                   console.log(e);
-                  setSelectedKeys([e[0]._d, e[1]._d]);
+                  setSelectedKeys([parseFloat(e[0]), parseFloat(e[1])]);
                 }}
               />
             </Col>
