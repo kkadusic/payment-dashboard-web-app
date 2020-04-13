@@ -55,12 +55,7 @@ function TransakcijeBankovni() {
       },
       title: {
         display: true,
-        text:
-          "Interval:  From (" +
-          interval.startDate +
-          ") To (" +
-          interval.endDate +
-          ")",
+        text: 'Spendings by bank account'
       },
       tooltips: {
         callbacks: {
@@ -82,7 +77,14 @@ function TransakcijeBankovni() {
     },
   };
 
-  const fetchData = () => {
+  const fetchAllData = () => {
+    return axios
+        .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
+          headers: { Authorization: "Bearer " + getToken() },
+        }).catch(err => console.log(err));
+  }
+
+  const fetchDataForTimeRange = () => {
     return axios
       .post(
         "https://payment-server-si.herokuapp.com/api/transactions/date",
@@ -99,30 +101,37 @@ function TransakcijeBankovni() {
   };
 
   const go = () => {
-    if (!rangeDiffOk()) return;
-    if (
-      interval.startDate == null ||
-      interval.startDate === "" ||
-      interval.endDate == null ||
-      interval.endDate === ""
-    ) {
-      message.error("Please pick date-time range!");
-      loadData([]);
-      return;
-    }
-    fetchData()
-      .then((response) => {
-        if (!(response.status === 200 || response.statusText === "OK")) {
+    if ((interval.startDate == null || interval.startDate === "")  //If range picker is empty
+        && (interval.endDate == null || interval.endDate === "")) {
+      fetchAllData().then((response) => {
+        if (!(response.status === 200 || response.statusText === 'OK')) {
           console.log(response);
           return [];
         }
         return response.data;
-      })
-      .then(loadData);
+      }).then(loadData);
+    } else if ((interval.startDate == null || interval.startDate === "")  //If range picker is empty
+        || (interval.endDate == null || interval.endDate === "")){
+        message.error('You can not pick only one date!')
+        loadData([]);
+        return;
+    }else if (rangeDiffOk()) {
+      fetchDataForTimeRange()
+          .then((response) => {
+            if (!(response.status === 200 || response.statusText === "OK")) {
+              console.log(response);
+              return [];
+            }
+            return response.data;
+          })
+          .then(loadData);
+    }
+
   };
 
   const loadData = (transactions) => {
     data.transactions = transactions;
+    console.log(data.transactions);
     fillChartData();
   };
 
@@ -241,7 +250,7 @@ function TransakcijeBankovni() {
     <div className={"container"}>
       <Divider>
         <h1 className={"transactionsHeaderPie"}>
-          Expenses per account for selected time range
+          Spendings by bank account for selected time range
         </h1>
       </Divider>
       {pickTime()}
