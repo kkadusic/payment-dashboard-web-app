@@ -14,11 +14,11 @@ function DodavanjeRacuna() {
   useEffect(() => {
     setAccOwner({
       value:
-        JSON.parse(getUser()).firstName + " " + JSON.parse(getUser()).lastName
+        JSON.parse(getUser()).firstName + " " + JSON.parse(getUser()).lastName,
     });
   }, []);
 
-  const onFinish = values => {
+  const onFinish = (values) => {
     console.log("Received values of form: ", values);
 
     const data = {
@@ -31,19 +31,19 @@ function DodavanjeRacuna() {
       // "." +
       // values.expiryDate._d.getFullYear(),
       cvc: values.cvc,
-      cardNumber: values.cardNumber
+      cardNumber: values.cardNumber,
     };
 
     axios
       .post("https://payment-server-si.herokuapp.com/api/accounts/add", data, {
         headers: {
-          Authorization: "Bearer " + getToken()
-        }
+          Authorization: "Bearer " + getToken(),
+        },
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.success === true) history.push("/racunUspjeh");
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.response.data.status === 404)
           message.error(err.response.data.message);
       });
@@ -60,7 +60,7 @@ function DodavanjeRacuna() {
               rules={[
                 { required: true, message: "Card number is required" },
                 { len: 16, message: "Card number must have 16 digits" },
-                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ }
+                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
               ]}
             >
               <Input style={{ width: 200 }} placeholder="Enter card number" />
@@ -80,7 +80,7 @@ function DodavanjeRacuna() {
               rules={[
                 { required: true, message: "CVC is required" },
                 { len: 3, message: "Card number must have 3 digits" },
-                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ }
+                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
               ]}
             >
               <Input style={{ width: 150 }} placeholder="Enter CVC" />

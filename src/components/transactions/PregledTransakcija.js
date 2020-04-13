@@ -1,15 +1,30 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
-import { Table, Input, Button, Tag, Typography } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Tag,
+  Typography,
+  DatePicker,
+  Space,
+  Row,
+  Col,
+} from "antd";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
+import moment from "moment";
 import uuid from "react-uuid";
 import "../../css/Transactions.css";
 
+import numeral from "numeral";
+import Slider from "antd/lib/slider";
+
 const { Text } = Typography;
+const { RangePicker } = DatePicker;
 
 class PregledTransakcija extends Component {
   state = {
@@ -18,21 +33,27 @@ class PregledTransakcija extends Component {
     data: [],
     key: 0,
     expandedKeys: [],
+    maxPrice: 0,
+    minPrice: 0,
+    total: 0,
   };
 
   load = (response) => {
     const transactions = [];
+    let suma = 0;
     response.data.forEach((transaction) => {
       transactions.push({
-        key: ++this.state.key,
+        key: transaction.transactionId,
         cardNumber: transaction.cardNumber,
         merchantName: transaction.merchantName,
         totalPrice: transaction.totalPrice,
-        date: transaction.date.substr(0, 10),
+        date:
+          transaction.date.substr(0, 10) + " " + transaction.date.substr(11, 8),
         service: transaction.service,
       });
+      suma += transaction.totalPrice;
     });
-    this.setState({ data: transactions }, () => {
+    this.setState({ data: transactions, total: suma }, () => {
       console.log(this.state.data);
     });
   };
@@ -46,9 +67,71 @@ class PregledTransakcija extends Component {
       .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
-      .then(this.load)
+      .then((response) => {
+        this.load(response);
+        // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
+        let maxP = 0;
+        for (let i = 0; i < this.state.data.length; i++) {
+          if (parseFloat(this.state.data[i].totalPrice) > maxP) {
+            maxP = parseFloat(this.state.data[i].totalPrice);
+          }
+        }
+        this.setState({ maxPrice: maxP }, () => {
+          console.log(this.state.maxPrice);
+        });
+
+        let minP = this.state.data[0].totalPrice;
+        for (let i = 0; i < this.state.data.length; i++) {
+          if (parseFloat(this.state.data[i].totalPrice) < minP) {
+            minP = parseFloat(this.state.data[i].totalPrice);
+          }
+        }
+        this.setState({ minPrice: minP }, () => {
+          console.log(this.state.minPrice);
+        });
+      })
       .catch((err) => console.log(err));
   }
+
+  formatDate = (date) => {
+    return (
+      ("0" + date.getDate()).slice(-2) +
+      "." +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "." +
+      date.getFullYear() +
+      " " +
+      ("0" + date.getHours()).slice(-2) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2) +
+      ":" +
+      ("0" + date.getSeconds()).slice(-2)
+    );
+  };
+
+  getTransactionsByDate = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      startDate: this.formatDate(selectedKeys[0]),
+      endDate: this.formatDate(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/date",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   getTransactionsByService = (selectedKeys) => {
     axios
@@ -71,6 +154,7 @@ class PregledTransakcija extends Component {
       clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
+        {dataIndex === "service" ? <p>Filter by product</p> : null}
         <Input
           ref={(node) => {
             this.searchInput = node;
@@ -133,6 +217,192 @@ class PregledTransakcija extends Component {
         text
       ),
   });
+
+  // price filtering function
+
+  getTransactionsByPriceRange = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      minPrice: parseFloat(selectedKeys[0]),
+      maxPrice: parseFloat(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/price",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // price slider filtering
+  getPriceSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div
+        className="price-filter"
+        style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+      >
+        <Row>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Min:</strong>
+              </div>
+              <div>
+                {numeral(this.state.minPrice).format("0.0a")} <br></br> {"KM"}{" "}
+              </div>
+            </div>
+          </Col>
+          <Col span={16}>
+            <Slider
+              id="slider"
+              name="slider"
+              range
+              min={parseFloat(this.state.minPrice)}
+              max={parseFloat(this.state.maxPrice)}
+              tipFormatter={(value) => {
+                return numeral(value).format("0.0a");
+              }}
+              step="0.1"
+              onChange={(e) => {
+                console.log(e);
+                setSelectedKeys([parseFloat(e[0]), parseFloat(e[1])]);
+              }}
+            />
+          </Col>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Max:</strong>
+              </div>
+              <div>
+                {numeral(this.state.maxPrice).format("0.0a")} <br></br> {"KM"}
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Button
+            type="primary"
+            onClick={() => {
+              this.getTransactionsByPriceRange(selectedKeys);
+              confirm();
+            }}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            OK
+          </Button>
+          <Button
+            onClick={() => {
+              this.getTransactions();
+              clearFilters();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Row>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <FilterFilled style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+  });
+
+  getDateSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8, textAlign: "center" }}>
+        <Space direction="vertical">
+          <RangePicker
+            showTime={{
+              defaultValue: [
+                moment("00:00:00", "HH:mm:ss"),
+                moment("23:59:59", "HH:mm:ss"),
+              ],
+            }}
+            format="YYYY-MM-DD HH:mm:ss"
+            allowClear={false}
+            id="date"
+            name="date"
+            onChange={(e) => {
+              setSelectedKeys([e[0]._d, e[1]._d]);
+            }}
+          ></RangePicker>
+
+          <Space size="large">
+            <Button
+              type="primary"
+              onClick={() => {
+                this.getTransactionsByDate(selectedKeys);
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                this.getTransactions();
+                clearFilters();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    render: (text) => text,
+  });
+
+  handleDateSearch = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleSearchPrice = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
+    });
+  };
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -204,7 +474,7 @@ class PregledTransakcija extends Component {
         title: "Card number",
         dataIndex: "cardNumber",
         key: "cardNumber",
-        width: "30%",
+        width: "20%",
         sorter: (a, b) => a.cardNumber - b.cardNumber,
         defaultSortOrder: "ascend",
         filters: things.thing,
@@ -214,73 +484,38 @@ class PregledTransakcija extends Component {
         title: "Merchant",
         dataIndex: "merchantName",
         key: "merchantName",
-        width: "20%",
+        width: "15%",
         sorter: (a, b) => {
           return a.merchantName.localeCompare(b.merchantName);
         },
         ...this.getColumnSearchProps("merchantName"),
       },
       {
-        title: "Service",
-        dataIndex: "service",
-        key: "service",
-        ellipsis: true,
+        title: "Transaction ID",
+        dataIndex: "key",
+        key: "key",
+        width: "25%",
+        render: (tags) => (
+          <span>
+            {tags.map((tag) => {
+              return (
+                <Tag color={"geekblue"} key={tag}>
+                  {tag}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
         ...this.getColumnSearchProps("service"),
       },
       {
-        title: "Date",
+        title: "Date and time",
         dataIndex: "date",
         key: "date",
         sorter: (a, b) => {
           return a.date.localeCompare(b.date);
         },
-        filters: [
-          {
-            text: "24 hours",
-            value: "24h",
-          },
-          {
-            text: "Last month",
-            value: "month",
-          },
-          {
-            text: "Last year",
-            value: "year",
-          },
-        ],
-        onFilter: (value, record) => {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const yesterday = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() - 1
-          );
-          const monthAgo = new Date(
-            today.getFullYear(),
-            today.getMonth() - 1,
-            today.getDate()
-          );
-          const yearAgo = new Date(
-            today.getFullYear() - 1,
-            today.getMonth(),
-            today.getDate()
-          );
-
-          const day = parseInt(record.date.substr(8, 10));
-          const month = parseInt(record.date.substr(5, 7)) - 1;
-          const year = parseInt(record.date.substr(0, 4));
-          const date = new Date(year, month, day);
-
-          if (value === "24h") {
-            console.log(today + " " + date);
-            return (
-              date.getTime() === today.getTime() ||
-              date.getTime() === yesterday.getTime()
-            );
-          } else if (value == "month") return monthAgo <= date && date <= today;
-          return yearAgo <= date && date <= today;
-        },
+        ...this.getDateSearchProps("date"),
       },
       {
         title: "Value",
@@ -292,51 +527,7 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        // Filters into categories of prices: low, lower medium, medium, upper medium, high
-        filters: [
-          {
-            text: "Low (0-5 BAM)",
-            value: "low",
-          },
-          {
-            text: "Lower medium (5-20 BAM)",
-            value: "lowMedium",
-          },
-          {
-            text: "Medium (20-50 BAM)",
-            value: "medium",
-          },
-          {
-            text: "Upper medium (50-100 BAM)",
-            value: "upMedium",
-          },
-          {
-            text: "High (100+ BAM)",
-            value: "high",
-          },
-        ],
-        onFilter: (value, record) => {
-          const price = record.totalPrice;
-          const lowStart = 0,
-            lowMediumStart = 5,
-            mediumStart = 20,
-            upMediumStart = 50,
-            highStart = 100;
-          switch (value) {
-            case "low":
-              return price >= lowStart && price < lowMediumStart;
-            case "lowMedium":
-              return price >= lowMediumStart && price < mediumStart;
-            case "medium":
-              return price >= mediumStart && price < upMediumStart;
-            case "upMedium":
-              return price >= upMediumStart && price < highStart;
-            case "high":
-              return price >= highStart;
-            default:
-              return true;
-          }
-        },
+        ...this.getPriceSearchProps("totalPrice"),
       },
     ];
     return (
@@ -348,10 +539,17 @@ class PregledTransakcija extends Component {
           expandedRowRender: (record) => this.expandedRowRender(record),
         }}
         expandedRowKeys={this.state.expandedKeys}
+        onChange={(pagination, filter, sorter, currentTable) => {
+          let suma = 0;
+          currentTable.currentDataSource.forEach((red) => {
+            suma += red.totalPrice;
+          });
+          this.setState({ ...this.state, total: suma });
+        }}
         summary={(pageData) => {
-          let total = 0;
-          pageData.forEach(({ totalPrice }) => {
-            total += totalPrice;
+          let pageSum = 0;
+          pageData.forEach((row) => {
+            pageSum += row.totalPrice;
           });
           return (
             <>
@@ -362,7 +560,18 @@ class PregledTransakcija extends Component {
                 <td></td>
                 <td></td>
                 <td id="totalSum">
-                  <Text strong>{total.toFixed(3)} KM</Text>
+                  {<Text strong>{pageSum.toFixed(3)} KM</Text>}
+                </td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <th>Grand total</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="totalSum">
+                  {<Text strong>{this.state.total.toFixed(3)} KM</Text>}
                 </td>
               </tr>
             </>
