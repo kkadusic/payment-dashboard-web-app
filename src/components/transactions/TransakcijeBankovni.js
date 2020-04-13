@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import axios from "axios";
 import {getToken} from "../../utilities/Common";
 import Chart from 'chart.js';
-import {Button, DatePicker, PageHeader, Result, TimePicker, Tooltip} from "antd";
+import {Button, DatePicker} from "antd";
 import moment from "moment";
 import "../../css/TransakcijeBankovni.css"
 import {message} from "antd";
@@ -58,7 +58,7 @@ function TransakcijeBankovni() {
                     label: function (tooltipItem, data) {
                         return (
                             data["labels"][tooltipItem["index"]] +
-                            ": " +
+                            "\nSpent: " +
                             data["datasets"][0]["data"][tooltipItem["index"]] +
                             " KM"
                         );
@@ -110,7 +110,7 @@ function TransakcijeBankovni() {
             for (let t of data.transactions) {
                 if (typeof map.get(t.cardNumber) === "undefined") { // doesn't exist
                     map.set(t.cardNumber, index);
-                    labels.push(t.cardNumber);
+                    labels.push('Card number: ' + t.cardNumber);
                     totals.push(t.totalPrice);
                     index++;
 
