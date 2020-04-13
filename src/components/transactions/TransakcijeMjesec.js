@@ -134,11 +134,7 @@ function TransakcijeMjesec() {
 
 		data.forEach((transaction) => {
 			let month = months[parseInt(transaction.date.substr(5,2))-1]
-			if (monthlyCosts.hasOwnProperty(month)) {
-				monthlyCosts[month] += transaction.totalPrice
-			} else {
-				monthlyCosts[month] = transaction.totalPrice
-			}
+			monthlyCosts[month] += transaction.totalPrice	
 		})
 
 		setColorValues()
