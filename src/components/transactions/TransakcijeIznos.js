@@ -10,6 +10,7 @@ const TransakcijeMerchant = () => {
     const [accounts, setAccounts] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState("all");
 
+    const comparedAccounts = [];
     const merchantPrice = [];
 
     useEffect(() => {
@@ -46,12 +47,19 @@ const TransakcijeMerchant = () => {
     }, [transactions]);
 
 
+    let chartOptions = {
+        maintainAspectRatio: true,
+        responsive: true,
+        title: {},
+        legend: {},
+        tooltips: {},
+    };
+
     const initialize = (dbData) => {
         dbData.forEach((transaction) => {
             if (merchantPrice.hasOwnProperty(transaction.merchantName)) {
                 merchantPrice[transaction.merchantName] += transaction.totalPrice;
-            }
-            else {
+            } else {
                 merchantPrice[transaction.merchantName] = transaction.totalPrice;
             }
         });
@@ -69,44 +77,67 @@ const TransakcijeMerchant = () => {
         });
     };
 
+    function random_rgba() {
+        let o = Math.round, r = Math.random, s = 255;
+        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',0.3)';
+    }
+
+    const initializeCompare = (myAccounts, myTransactions) => {
+        myAccounts.forEach((account) => {
+            comparedAccounts.push({
+                cardNumber: account.cardNumber,
+                merchantPrice: []
+            });
+        });
+
+        myTransactions.forEach((transaction) => {
+            for (let i = 0; i < comparedAccounts.length; i++) {
+                comparedAccounts[i].merchantPrice[transaction.merchantName] = 0;
+            }
+        });
+
+        myTransactions.forEach((transaction) => {
+            for (let i = 0; i < comparedAccounts.length; i++) {
+                if (transaction.cardNumber === comparedAccounts[i].cardNumber) {
+                    comparedAccounts[i].merchantPrice[transaction.merchantName] += transaction.totalPrice;
+                }
+            }
+        });
+
+
+        let myDatasets = [];
+        comparedAccounts.forEach((item) => {
+            let color = random_rgba();
+            myDatasets.push({
+                label: item.cardNumber,
+                backgroundColor: color,
+                borderColor: 'gray',
+                data: Object.values(item.merchantPrice),
+            });
+        });
+
+        setChartData({
+            labels: Object.keys(comparedAccounts[0].merchantPrice),
+            datasets: myDatasets
+        });
+    };
+
     const handleAccChange = (value) => {
         setSelectedAccount(value);
-        if (value !== "all") {
+        if (value === "all") {
+            initialize(transactions);
+        } else if (value === "compareAll") {
+            initializeCompare(accounts, transactions);
+        } else {
             const newTransactions = [];
             transactions.forEach((transaction) => {
                 if (transaction.cardNumber === value) newTransactions.push(transaction);
             });
             initialize(newTransactions);
-        } else {
-            initialize(transactions);
         }
     };
 
-    const chartOptions = {
-        maintainAspectRatio: true,
-        responsive: true,
-        title: {
-            display: true,
-            text: "Spendings on merchants",
-            fontColor: "#030852",
-            fontSize: 16,
-        },
-        legend: {
-            display: false,
-        },
-        tooltips: {
-            callbacks: {
-                label: function (tooltipItem, data) {
-                    return (
-                        data["labels"][tooltipItem["index"]] + ": " +
-                        data["datasets"][0]["data"][tooltipItem["index"]] + " KM"
-                    );
-                },
-            },
-        },
-    };
-
-
+    
     return (
         <div>
             <h1>
@@ -125,6 +156,9 @@ const TransakcijeMerchant = () => {
                 ))}
                 <Select.Option key="all" value="all">
                     All accounts
+                </Select.Option>
+                <Select.Option key="compareAll" value="compareAll">
+                    Compare all accounts
                 </Select.Option>
             </Select>
 
