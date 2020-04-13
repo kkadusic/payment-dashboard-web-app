@@ -55,12 +55,7 @@ function TransakcijeBankovni() {
       },
       title: {
         display: true,
-        text:
-          "Interval:  From (" +
-          interval.startDate +
-          ") To (" +
-          interval.endDate +
-          ")",
+        text: 'Spendings by bank account'
       },
       tooltips: {
         callbacks: {
@@ -255,7 +250,7 @@ function TransakcijeBankovni() {
     <div className={"container"}>
       <Divider>
         <h1 className={"transactionsHeaderPie"}>
-          Expenses per account for selected time range
+          Spendings by bank account for selected time range
         </h1>
       </Divider>
       {pickTime()}
