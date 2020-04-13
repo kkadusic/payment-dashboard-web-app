@@ -52,7 +52,19 @@ function TransakcijeBankovni() {
             title: {
                 display: true,
                 text: 'Interval:  From (' + interval.startDate + ') To (' + interval.endDate +')'
-            }
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        return (
+                            data["labels"][tooltipItem["index"]] +
+                            ": " +
+                            data["datasets"][0]["data"][tooltipItem["index"]] +
+                            " KM"
+                        );
+                    },
+                },
+            },
         }
     };
 
@@ -187,7 +199,7 @@ function TransakcijeBankovni() {
         <div className={"container"}>
             <h1 className={'transactionsHeaderPie'} >Expenses per account for selected time range</h1>
             {pickTime()}
-            <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="740" height="600"/>
+            <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="738" height="598"/>
         </div>
     );
 }
