@@ -1,15 +1,25 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
-import { Table, Input, Button, Tag, Typography } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Tag,
+  Typography,
+  DatePicker,
+  Space,
+  Divider,
+} from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
-import uuid from "react-uuid";
+import moment from "moment";
 import "../../css/Transactions.css";
 
 const { Text } = Typography;
+const { RangePicker } = DatePicker;
 
 class PregledTransakcija extends Component {
   state = {
@@ -28,8 +38,8 @@ class PregledTransakcija extends Component {
         cardNumber: transaction.cardNumber,
         merchantName: transaction.merchantName,
         totalPrice: transaction.totalPrice,
-        date: transaction.date.substr(0, 10),
-        time: transaction.date.substr(11, 8),
+        date:
+          transaction.date.substr(0, 10) + " " + transaction.date.substr(11, 8),
         service: transaction.service,
       });
     });
@@ -50,6 +60,46 @@ class PregledTransakcija extends Component {
       .then(this.load)
       .catch((err) => console.log(err));
   }
+
+  formatDate = (date) => {
+    return (
+      ("0" + date.getDate()).slice(-2) +
+      "." +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "." +
+      date.getFullYear() +
+      " " +
+      ("0" + date.getHours()).slice(-2) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2) +
+      ":" +
+      ("0" + date.getSeconds()).slice(-2)
+    );
+  };
+
+  getTransactionsByDate = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      startDate: this.formatDate(selectedKeys[0]),
+      endDate: this.formatDate(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/date",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   getTransactionsByService = (selectedKeys) => {
     axios
@@ -80,9 +130,6 @@ class PregledTransakcija extends Component {
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            this.handleSearch(selectedKeys, confirm, dataIndex)
           }
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
@@ -134,6 +181,74 @@ class PregledTransakcija extends Component {
         text
       ),
   });
+
+  getDateSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8, textAlign: "center" }}>
+        <Space direction="vertical">
+          <RangePicker
+            showTime={{
+              defaultValue: [
+                moment("00:00:00", "HH:mm:ss"),
+                moment("23:59:59", "HH:mm:ss"),
+              ],
+            }}
+            format="YYYY-MM-DD HH:mm:ss"
+            allowClear={false}
+            id="date"
+            name="date"
+            onChange={(e) => {
+              setSelectedKeys([e[0]._d, e[1]._d]);
+            }}
+          ></RangePicker>
+
+          <Space size="large">
+            <Button
+              type="primary"
+              onClick={() => {
+                this.getTransactionsByDate(selectedKeys);
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                this.getTransactions();
+                clearFilters();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    render: (text) => text,
+  });
+
+  handleDateSearch = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
+    });
+  };
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -205,7 +320,7 @@ class PregledTransakcija extends Component {
         title: "Card number",
         dataIndex: "cardNumber",
         key: "cardNumber",
-        width: "30%",
+        width: "20%",
         sorter: (a, b) => a.cardNumber - b.cardNumber,
         defaultSortOrder: "ascend",
         filters: things.thing,
@@ -215,7 +330,7 @@ class PregledTransakcija extends Component {
         title: "Merchant",
         dataIndex: "merchantName",
         key: "merchantName",
-        width: "20%",
+        width: "15%",
         sorter: (a, b) => {
           return a.merchantName.localeCompare(b.merchantName);
         },
@@ -229,59 +344,13 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("service"),
       },
       {
-        title: "Date",
+        title: "Date and time",
         dataIndex: "date",
         key: "date",
         sorter: (a, b) => {
           return a.date.localeCompare(b.date);
         },
-        filters: [
-          {
-            text: "24 hours",
-            value: "24h",
-          },
-          {
-            text: "Last month",
-            value: "month",
-          },
-          {
-            text: "Last year",
-            value: "year",
-          },
-        ],
-        onFilter: (value, record) => {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const yesterday = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() - 1
-          );
-          const monthAgo = new Date(
-            today.getFullYear(),
-            today.getMonth() - 1,
-            today.getDate()
-          );
-          const yearAgo = new Date(
-            today.getFullYear() - 1,
-            today.getMonth(),
-            today.getDate()
-          );
-
-          const day = parseInt(record.date.substr(8, 10));
-          const month = parseInt(record.date.substr(5, 7)) - 1;
-          const year = parseInt(record.date.substr(0, 4));
-          const date = new Date(year, month, day);
-
-          if (value === "24h") {
-            console.log(today + " " + date);
-            return (
-              date.getTime() === today.getTime() ||
-              date.getTime() === yesterday.getTime()
-            );
-          } else if (value == "month") return monthAgo <= date && date <= today;
-          return yearAgo <= date && date <= today;
-        },
+        ...this.getDateSearchProps("date"),
       },
       {
         title: "Value",
