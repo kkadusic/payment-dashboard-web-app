@@ -223,7 +223,7 @@ class PregledTransakcija extends Component {
                 tipFormatter={value => {
                   return numeral(value).format("0.0a");
                 }}
-                step='0.1'
+                step = '0.1'
                 onChange={(e) => {
                   console.log(e);
                   setSelectedKeys([parseFloat(e[0]), parseFloat(e[1])]);
@@ -346,25 +346,6 @@ class PregledTransakcija extends Component {
         index ===
         self.findIndex((t) => t.text === thing.text && t.value === thing.value)
     );
-
-    // price slider
-    // slider props
-
-
-    // find max price
-
-
-    const sliderProps = {
-      range: true,
-      min: parseFloat(this.state.minPrice),
-      max: parseFloat(this.state.maxPrice),
-      tipFormatter: value => {
-        return numeral(value).format("0.0a");
-      },
-      step: '0.1',
-      onChange: e => this.setState({ left: e[0], right: e[1] })
-    };
-
 
     const columns = [
       {
