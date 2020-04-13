@@ -19,6 +19,7 @@
     "chartjs-plugin-piechart-outlabels": "^0.1.4",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
+    "numeral": "^2.0.6",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",

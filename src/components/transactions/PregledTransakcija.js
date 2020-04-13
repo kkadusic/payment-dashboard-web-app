@@ -9,14 +9,18 @@ import {
   Typography,
   DatePicker,
   Space,
-  Divider,
+  Row,
+  Col,
 } from "antd";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
 import moment from "moment";
 import "../../css/Transactions.css";
+
+import numeral from "numeral";
+import Slider from "antd/lib/slider";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -28,6 +32,8 @@ class PregledTransakcija extends Component {
     data: [],
     key: 0,
     expandedKeys: [],
+    maxPrice: 0,
+    minPrice: 0,
   };
 
   load = (response) => {
@@ -57,7 +63,29 @@ class PregledTransakcija extends Component {
       .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
-      .then(this.load)
+      .then((response) => {
+        this.load(response);
+        // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
+        let maxP = 0;
+        for (let i = 0; i < this.state.data.length; i++) {
+          if (parseFloat(this.state.data[i].totalPrice) > maxP) {
+            maxP = parseFloat(this.state.data[i].totalPrice);
+          }
+        }
+        this.setState({ maxPrice: maxP }, () => {
+          console.log(this.state.maxPrice);
+        });
+
+        let minP = this.state.data[0].totalPrice;
+        for (let i = 0; i < this.state.data.length; i++) {
+          if (parseFloat(this.state.data[i].totalPrice) < minP) {
+            minP = parseFloat(this.state.data[i].totalPrice);
+          }
+        }
+        this.setState({ minPrice: minP }, () => {
+          console.log(this.state.minPrice);
+        });
+      })
       .catch((err) => console.log(err));
   }
 
@@ -131,6 +159,9 @@ class PregledTransakcija extends Component {
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
+          onPressEnter={() =>
+            this.handleSearch(selectedKeys, confirm, dataIndex)
+          }
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Button
@@ -180,6 +211,114 @@ class PregledTransakcija extends Component {
       ) : (
         text
       ),
+  });
+
+  // price filtering function
+
+  getTransactionsByPriceRange = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      minPrice: parseFloat(selectedKeys[0]),
+      maxPrice: parseFloat(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/price",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // price slider filtering
+  getPriceSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div
+        className="price-filter"
+        style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+      >
+        <Row>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Min:</strong>
+              </div>
+              <div>
+                {numeral(this.state.minPrice).format("0.0a")} <br></br> {"KM"}{" "}
+              </div>
+            </div>
+          </Col>
+          <Col span={16}>
+            <Slider
+              id="slider"
+              name="slider"
+              range
+              min={parseFloat(this.state.minPrice)}
+              max={parseFloat(this.state.maxPrice)}
+              tipFormatter={(value) => {
+                return numeral(value).format("0.0a");
+              }}
+              step="0.1"
+              onChange={(e) => {
+                console.log(e);
+                setSelectedKeys([parseFloat(e[0]), parseFloat(e[1])]);
+              }}
+            />
+          </Col>
+          <Col span={4}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>
+                <strong>Max:</strong>
+              </div>
+              <div>
+                {numeral(this.state.maxPrice).format("0.0a")} <br></br> {"KM"}
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Button
+            type="primary"
+            onClick={() => {
+              this.getTransactionsByPriceRange(selectedKeys);
+              confirm();
+            }}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            OK
+          </Button>
+          <Button
+            onClick={() => {
+              this.getTransactions();
+              clearFilters();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Row>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <FilterFilled style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
   });
 
   getDateSearchProps = (dataIndex) => ({
@@ -241,6 +380,16 @@ class PregledTransakcija extends Component {
   });
 
   handleDateSearch = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleSearchPrice = (selectedKeys, confirm, dataIndex) => {
     console.log(selectedKeys);
     confirm();
     this.setState({
@@ -362,51 +511,7 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        // Filters into categories of prices: low, lower medium, medium, upper medium, high
-        filters: [
-          {
-            text: "Low (0-5 BAM)",
-            value: "low",
-          },
-          {
-            text: "Lower medium (5-20 BAM)",
-            value: "lowMedium",
-          },
-          {
-            text: "Medium (20-50 BAM)",
-            value: "medium",
-          },
-          {
-            text: "Upper medium (50-100 BAM)",
-            value: "upMedium",
-          },
-          {
-            text: "High (100+ BAM)",
-            value: "high",
-          },
-        ],
-        onFilter: (value, record) => {
-          const price = record.totalPrice;
-          const lowStart = 0,
-            lowMediumStart = 5,
-            mediumStart = 20,
-            upMediumStart = 50,
-            highStart = 100;
-          switch (value) {
-            case "low":
-              return price >= lowStart && price < lowMediumStart;
-            case "lowMedium":
-              return price >= lowMediumStart && price < mediumStart;
-            case "medium":
-              return price >= mediumStart && price < upMediumStart;
-            case "upMedium":
-              return price >= upMediumStart && price < highStart;
-            case "high":
-              return price >= highStart;
-            default:
-              return true;
-          }
-        },
+        ...this.getPriceSearchProps("totalPrice"),
       },
     ];
     return (
