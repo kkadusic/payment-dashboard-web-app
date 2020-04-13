@@ -239,7 +239,6 @@ class PregledTransakcija extends Component {
               })}
             </span>
         ),
-        ellipsis: true,
         ...this.getColumnSearchProps("service"),
       },
       {
