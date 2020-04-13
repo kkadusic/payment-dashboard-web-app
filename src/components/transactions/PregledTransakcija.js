@@ -17,6 +17,7 @@ import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
 import moment from "moment";
+import uuid from "react-uuid";
 import "../../css/Transactions.css";
 
 import numeral from "numeral";
@@ -34,10 +35,12 @@ class PregledTransakcija extends Component {
     expandedKeys: [],
     maxPrice: 0,
     minPrice: 0,
+    total: 0,
   };
 
   load = (response) => {
     const transactions = [];
+    let suma = 0;
     response.data.forEach((transaction) => {
       transactions.push({
         key: transaction.transactionId,
@@ -48,8 +51,9 @@ class PregledTransakcija extends Component {
           transaction.date.substr(0, 10) + " " + transaction.date.substr(11, 8),
         service: transaction.service,
       });
+      suma += transaction.totalPrice;
     });
-    this.setState({ data: transactions }, () => {
+    this.setState({ data: transactions, total: suma }, () => {
       console.log(this.state.data);
     });
   };
@@ -487,9 +491,10 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("merchantName"),
       },
       {
-        title: "Transaction Id",
+        title: "Transaction ID",
         dataIndex: "key",
         key: "key",
+        width: "25%",
         render: (tags) => (
           <span>
             {tags.map((tag) => {
@@ -534,10 +539,17 @@ class PregledTransakcija extends Component {
           expandedRowRender: (record) => this.expandedRowRender(record),
         }}
         expandedRowKeys={this.state.expandedKeys}
+        onChange={(pagination, filter, sorter, currentTable) => {
+          let suma = 0;
+          currentTable.currentDataSource.forEach((red) => {
+            suma += red.totalPrice;
+          });
+          this.setState({ ...this.state, total: suma });
+        }}
         summary={(pageData) => {
-          let total = 0;
-          pageData.forEach(({ totalPrice }) => {
-            total += totalPrice;
+          let pageSum = 0;
+          pageData.forEach((row) => {
+            pageSum += row.totalPrice;
           });
           return (
             <>
@@ -548,7 +560,18 @@ class PregledTransakcija extends Component {
                 <td></td>
                 <td></td>
                 <td id="totalSum">
-                  <Text strong>{total.toFixed(3)} KM</Text>
+                  {<Text strong>{pageSum.toFixed(3)} KM</Text>}
+                </td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <th>Grand total</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="totalSum">
+                  {<Text strong>{this.state.total.toFixed(3)} KM</Text>}
                 </td>
               </tr>
             </>
