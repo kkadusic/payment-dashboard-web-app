@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import axios from "axios";
 import {getToken} from "../../utilities/Common";
 import Chart from 'chart.js';
-import {Button, DatePicker} from "antd";
+import {Button, DatePicker, Divider} from "antd";
 import moment from "moment";
 import "../../css/TransakcijeBankovni.css"
 import {message} from "antd";
@@ -197,8 +197,11 @@ function TransakcijeBankovni() {
 
     return (
         <div className={"container"}>
-            <h1 className={'transactionsHeaderPie'} >Expenses per account for selected time range</h1>
+            <Divider>
+                <h1 className={'transactionsHeaderPie'} >Expenses per account for selected time range</h1>
+            </Divider>
             {pickTime()}
+            <Divider/>
             <canvas style={{margin: "auto"}} id={"pieChart"}  width="738" height="598"/>
         </div>
     );
