@@ -199,7 +199,7 @@ function TransakcijeBankovni() {
         <div className={"container"}>
             <h1 className={'transactionsHeaderPie'} >Expenses per account for selected time range</h1>
             {pickTime()}
-            <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="738" height="598"/>
+            <canvas style={{margin: "auto"}} id={"pieChart"}  width="738" height="598"/>
         </div>
     );
 }
