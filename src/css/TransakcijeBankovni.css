@@ -28,14 +28,7 @@
     display: contents;
 }
 
-.parentContainer{
+.transactionHeaderPie {
     margin: auto;
-    height: 100%;
-    width: 100%;
-    background: #d6e4ff38;
-    border: solid #adc6ff;
-    border-radius: 50px;
-    max-width: 1000px;
-    min-width: 870px;
-    box-shadow: 5px 5px 5px 5px #888888;
+    padding: initial;
 }

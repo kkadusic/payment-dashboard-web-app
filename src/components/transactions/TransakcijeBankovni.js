@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import axios from "axios";
 import {getToken} from "../../utilities/Common";
 import Chart from 'chart.js';
-import {Button, DatePicker, Result, TimePicker, Tooltip} from "antd";
+import {Button, DatePicker, PageHeader, Result, TimePicker, Tooltip} from "antd";
 import moment from "moment";
 import "../../css/TransakcijeBankovni.css"
 import {message} from "antd";
@@ -41,14 +41,17 @@ function TransakcijeBankovni() {
             responsive: false,
             scales: {
                 yAxes: [{
+                    gridLines: {
+                        display: false,
+                    },
                     ticks: {
-                        beginAtZero: true
+                        display: false //this will remove only the label
                     }
                 }]
             },
             title: {
                 display: true,
-                text: 'Expenses per account for Range: From (' + interval.startDate + ') To (' + interval.endDate +')'
+                text: 'Interval:  From (' + interval.startDate + ') To (' + interval.endDate +')'
             }
         }
     };
@@ -181,12 +184,10 @@ function TransakcijeBankovni() {
     }, [])
 
     return (
-        <div className={"parentContainer"}>
-            <div className={"container"}>
-                {pickTime()}
-                <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="740" height="600"/>
-
-            </div>
+        <div className={"container"}>
+            <h1 className={'transactionsHeaderPie'} >Expenses per account for selected time range</h1>
+            {pickTime()}
+            <canvas style={{margin: "auto", border: "solid 1px #043058", boxShadow: '5px 10px #888888'}} id={"pieChart"}  width="740" height="600"/>
         </div>
     );
 }
