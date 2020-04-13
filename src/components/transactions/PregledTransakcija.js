@@ -41,28 +41,6 @@ class PregledTransakcija extends Component {
     this.setState({ data: transactions }, () => {
       console.log(this.state.data);
     });
-
-    // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
-
-    let maxP = 0;
-    for (let i = 0; i < this.state.data.length; i++) {
-      if (parseFloat(this.state.data[i].totalPrice) > maxP) {
-        maxP = parseFloat(this.state.data[i].totalPrice);
-      }
-    }
-    this.setState({ maxPrice: maxP }, () => {
-      console.log(this.state.maxPrice);
-    });
-
-    let minP = transactions[0].totalPrice;
-    for (let i = 0; i < this.state.data.length; i++) {
-      if (parseFloat(this.state.data[i].totalPrice) < minP) {
-        minP = parseFloat(this.state.data[i].totalPrice);
-      }
-    }
-    this.setState({ minPrice: minP }, () => {
-      console.log(this.state.minPrice);
-    });
   };
 
   componentWillMount() {
@@ -74,8 +52,32 @@ class PregledTransakcija extends Component {
       .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
-      .then(this.load)
-      .catch((err) => console.log(err));
+      .then(
+        (response) => {
+          this.load(response);
+          // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
+          let maxP = 0;
+          for (let i = 0; i < this.state.data.length; i++) {
+            if (parseFloat(this.state.data[i].totalPrice) > maxP) {
+              maxP = parseFloat(this.state.data[i].totalPrice);
+            }
+          }
+          this.setState({ maxPrice: maxP }, () => {
+            console.log(this.state.maxPrice);
+          });
+  
+          let minP = this.state.data[0].totalPrice;
+          for (let i = 0; i < this.state.data.length; i++) {
+            if (parseFloat(this.state.data[i].totalPrice) < minP) {
+              minP = parseFloat(this.state.data[i].totalPrice);
+            }
+          }
+          this.setState({ minPrice: minP }, () => {
+            console.log(this.state.minPrice);
+          });
+        }
+      )
+      .catch ((err) => console.log(err));
   }
 
   getTransactionsByService = (selectedKeys) => {
