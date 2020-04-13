@@ -1,0 +1,37 @@
+.timePicker {
+    margin: 30px auto 30px auto;
+    display: table;
+    min-width: 740px;
+}
+
+.filterButton {
+    display: inline-block;
+    margin: 10px;
+    width: 200px;
+    height: 40px;
+}
+
+.picker {
+    margin: 10px;
+    height: 40px;
+    width: 500px;
+}
+
+.container {
+    margin: auto;
+    display: contents;
+}
+
+.transactionHeaderPie {
+    color: #030852;
+}
+
+.ant-divider {
+    background: #030852;
+}
+
+.ant-divider-horizontal.ant-divider-with-text-center::before,
+.ant-divider-horizontal.ant-divider-with-text-center::after {
+    border-top: 1px solid #030852;
+}
+
