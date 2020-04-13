@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import { Table, Input, Button, Tag, Typography, Row, Col } from "antd";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
 import uuid from "react-uuid";
@@ -22,9 +22,7 @@ class PregledTransakcija extends Component {
     key: 0,
     expandedKeys: [],
     maxPrice: 0,
-    minPrice: 0,
-    left: 0,
-    right: 0
+    minPrice: 0
   };
 
   load = (response) => {
@@ -43,6 +41,8 @@ class PregledTransakcija extends Component {
     this.setState({ data: transactions }, () => {
       console.log(this.state.data);
     });
+
+    // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
 
     let maxP = 0;
     for (let i = 0; i < this.state.data.length; i++) {
@@ -162,6 +162,122 @@ class PregledTransakcija extends Component {
         ),
   });
 
+  // price filtering function
+
+  getTransactionsByPriceRange = (selectedKeys) => {
+    console.log(selectedKeys);
+
+    let data = {
+      minPrice: parseFloat(selectedKeys[0]),
+      maxPrice: parseFloat(selectedKeys[1]),
+    };
+    console.log(data);
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/price",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then(this.load)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
+
+  // price slider filtering
+  getPriceSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+        <div
+          className="price-filter"
+          style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
+        >
+          <Row>
+            <Col span={4}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div>
+                  <strong>Min:</strong>
+                </div>
+                <div>{numeral(this.state.minPrice).format("0.0a")} <br></br> {"KM"} </div>
+              </div>
+            </Col>
+            <Col span={16}>
+              <Slider
+                id="slider"
+                name="slider"
+                range
+                min={parseFloat(this.state.minPrice)}
+                max={parseFloat(this.state.maxPrice)}
+                tipFormatter={value => {
+                  return numeral(value).format("0.0a");
+                }}
+                step='0.1'
+                onChange={(e) => {
+                  console.log(e);
+                  setSelectedKeys([e[0]._d, e[1]._d]);
+                }}
+              />
+            </Col>
+            <Col span={4}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div>
+                  <strong>Max:</strong>
+                </div>
+                <div>{numeral(this.state.maxPrice).format("0.0a")}  <br></br> {"KM"}</div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.getTransactionsByPriceRange(selectedKeys);
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              OK
+            </Button>
+            <Button
+              onClick={() => {
+                this.getTransactions();
+                clearFilters();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+          </Row>
+        </div>
+      ),
+    filterIcon: (filtered) => (
+      <FilterFilled style={{ color: filtered ? "#1890ff" : undefined }} />
+    )
+  });
+
+  handleSearchPrice = (selectedKeys, confirm, dataIndex) => {
+    console.log(selectedKeys);
+    confirm();
+    this.setState({
+      searchText: [selectedKeys[0], selectedKeys[1]],
+
+      searchedColumn: dataIndex,
+    });
+  };
+
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     this.setState({
@@ -177,15 +293,6 @@ class PregledTransakcija extends Component {
     });
   };
 
-  handleSearchPrice = (selectedKeys, confirm, dataIndex) => {
-    console.log(selectedKeys);
-    confirm();
-    this.setState({
-      searchText: [selectedKeys[0], selectedKeys[1]],
-
-      searchedColumn: dataIndex,
-    });
-  };
 
   onTableRowExpand(expanded, record) {
     var keys = [];
@@ -243,7 +350,7 @@ class PregledTransakcija extends Component {
 
 
     // find max price
-    
+
 
     const sliderProps = {
       range: true,
@@ -350,54 +457,7 @@ class PregledTransakcija extends Component {
             {price} KM
           </Tag>
         ),
-        filterDropdown: ({
-          setSelectedKeys,
-          selectedKeys,
-          confirm,
-          clearFilters,
-        }) => (
-            <div
-              className="price-filter"
-              style={{ minWidth: "20rem", padding: "0.5rem 1rem" }}
-            >
-              <Row>
-                <Col span={4}>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div>
-                      <strong>Min:</strong>
-                    </div>
-                    <div>{numeral(this.state.minPrice).format("0.0a")} <br></br> {"KM"} </div>
-                  </div>
-                </Col>
-                <Col span={16}>
-                  <Slider {...sliderProps} />
-                </Col>
-                <Col span={4}>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div>
-                      <strong>Max:</strong>
-                    </div>
-                    <div>{numeral(this.state.maxPrice).format("0.0a")}  <br></br> {"KM"}</div>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Button
-                  type="primary"
-                  block
-                  size="small"
-                  onClick={() => {
-                    confirm();
-                  }}
-                >
-                  Confirm
-                </Button>
-                </Row>
-            </div>
-          ),
-        onFilter: (record) => {
-          return (parseFloat(this.state.left) <= parseFloat(record.totalPrice) && parseFloat(record.totalPrice) <= parseFloat(this.state.right));
-        }
+        ...this.getPriceSearchProps("totalPrice"),
       },
     ];
     return (
