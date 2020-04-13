@@ -247,7 +247,7 @@ function TransakcijeBankovni() {
       {pickTime()}
       <Divider />
       <canvas
-        style={{ margin: "auto" }}
+        style={{ margin: "20px auto" }}
         id={"pieChart"}
         width="738"
         height="598"

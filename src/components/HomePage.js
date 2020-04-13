@@ -17,7 +17,6 @@ import PregledProfila from "./PregledProfila";
 import DodaniRacuni from "./DodaniRacuni";
 import DodavanjeRacuna from "./DodavanjeRacuna";
 import PromjenaLozinke from "./PromjenaLozinke";
-import TransakcijeGodina from "./transactions/TransakcijeGodina";
 import TransakcijeMjesec from "./transactions/TransakcijeMjesec";
 import TransakcijeMerchant from "./transactions/TransakcijeMerchant";
 import OporavkaLozinke from "./OporavkaLozinke";
@@ -97,11 +96,8 @@ function HomePage() {
                 <Menu.Item key="pregledTransakcija">
                   <Link to="/pregledTransakcija">All transactions</Link>
                 </Menu.Item>
-                <Menu.Item key="transakcijeGodina">
-                  <Link to="/transakcijeGodina">Months of past year</Link>
-                </Menu.Item>
                 <Menu.Item key="transakcijeMjesec">
-                  <Link to="/transakcijeMjesec"> Last month</Link>
+                  <Link to="/transakcijeMjesec"> Spent in a year</Link>
                 </Menu.Item>
                 <Menu.Item key="transakcijeMerchant">
                   <Link to="/transakcijeMerchant">Spent on merchant</Link>
@@ -171,12 +167,6 @@ function HomePage() {
                 <Route
                   path="/pregledTransakcija"
                   component={PregledTransakcija}
-                ></Route>
-
-                <Route
-                  exact
-                  path="/transakcijeGodina"
-                  component={TransakcijeGodina}
                 ></Route>
 
                 <Route

@@ -5,158 +5,180 @@ import { getToken } from "../../utilities/Common";
 import { DatePicker, Select, Divider } from "antd";
 
 function TransakcijeMjesec() {
-	const [accounts, setAccounts] = useState([]);
-	const [merchants, setMerchants] = useState([]);
-	const [transactions, setTransactions] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+  const [merchants, setMerchants] = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
-	const [currentMerchant, setCurrentMerchant] = useState("all");
-	const [currentYear, setCurrentYear] = useState("");
-	const [currentAccount, setCurrentAccount] = useState("all");
+  const [currentMerchant, setCurrentMerchant] = useState("all");
+  const [currentYear, setCurrentYear] = useState("");
+  const [currentAccount, setCurrentAccount] = useState("all");
 
-	const [chartData, setChartData] = useState({});
-	
-	let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];	
-	const monthlyCosts= []
+  const [chartData, setChartData] = useState({});
 
-	useEffect(() => {
-		// setChartData({ labels: months })
-		let year = new Date().getFullYear()
-		setCurrentYear(year)
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthlyCosts = [];
 
-		getBankAccounts()
-		getMerchants()
-		getAllTransactionsFor(year, currentMerchant, currentAccount)
-	}, []);
-	
-	const getAllTransactionsFor = (year, merchant, account) => {
-		
-		let startDateString = "01.01." + year + " 00:00:00"
-		let endDateString = "31.12."+ year + " 23:59:59"
-	  
-		let data = {
-			startDate: startDateString,
-			endDate: endDateString
-		};
+  useEffect(() => {
+    // setChartData({ labels: months })
+    let year = new Date().getFullYear();
+    setCurrentYear(year);
 
-		axios
-			.post(
-				"https://payment-server-si.herokuapp.com/api/transactions/date",
-				data,
-				{
-					headers: {
-					Authorization: "Bearer " + getToken(),
-					},
-				}
-			)
-			.then((response) => {
-				var data = response.data
-				
-				if(account != "all") {
-					data = data.filter(transaction => transaction.cardNumber == account)
-				}
+    getBankAccounts();
+    getMerchants();
+    getAllTransactionsFor(year, currentMerchant, currentAccount);
+  }, []);
 
-				if(merchant != "all") {
-					data = data.filter(transaction => transaction.merchantName == merchant)
-				}
-				console.log("data: ",data)
-				updateChartData(data);
-				setTransactions(data);
-				}
-			)
-			.catch((err) => {
-			console.log(err);
-			}
-		);
-	}
+  const getAllTransactionsFor = (year, merchant, account) => {
+    let startDateString = "01.01." + year + " 00:00:00";
+    let endDateString = "31.12." + year + " 23:59:59";
 
-	const getBankAccounts = async () => {
-		let response = await axios.get(
-		  	"https://payment-server-si.herokuapp.com/api/accounts/all",
-		  	{
-				headers: { Authorization: "Bearer " + getToken() },
-		  	}
-		);
-		setAccounts([...response.data]);
-	};
+    let data = {
+      startDate: startDateString,
+      endDate: endDateString,
+    };
 
-	const getMerchants = async () => {
-		let response = await axios.get(
-		  "https://payment-server-si.herokuapp.com/api/merchants/all",
-		  {
-			headers: { Authorization: "Bearer " + getToken() },
-		  }
-		);
-		setMerchants([...response.data]);
-	};
+    axios
+      .post(
+        "https://payment-server-si.herokuapp.com/api/transactions/date",
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+      )
+      .then((response) => {
+        var data = response.data;
 
-	const handleYearChanged = value => {
-		let year = value == undefined ? new Date().getFullYear() : value._d.getFullYear()
-		setCurrentYear(year)
-		getAllTransactionsFor(year, currentMerchant, currentAccount)
-	}
+        if (account != "all") {
+          data = data.filter(
+            (transaction) => transaction.cardNumber == account
+          );
+        }
 
-	const handleAccChange = (value) => {
-		setCurrentAccount(value)
-		getAllTransactionsFor(currentYear, currentMerchant, value)
-	}
+        if (merchant != "all") {
+          data = data.filter(
+            (transaction) => transaction.merchantName == merchant
+          );
+        }
+        console.log("data: ", data);
+        updateChartData(data);
+        setTransactions(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-	const handleMerchantChange = (value) => {
-		setCurrentMerchant(value)
-		getAllTransactionsFor(currentYear, value, currentAccount)
-	
-	}
+  const getBankAccounts = async () => {
+    let response = await axios.get(
+      "https://payment-server-si.herokuapp.com/api/accounts/all",
+      {
+        headers: { Authorization: "Bearer " + getToken() },
+      }
+    );
+    setAccounts([...response.data]);
+  };
 
-	const colors = []
-	var customColors = ["#95de64", "#d3f261", "#fff566", "#ffd666", "#ffc069", "#ff9c6e", "#ff7875"];
+  const getMerchants = async () => {
+    let response = await axios.get(
+      "https://payment-server-si.herokuapp.com/api/merchants/all",
+      {
+        headers: { Authorization: "Bearer " + getToken() },
+      }
+    );
+    setMerchants([...response.data]);
+  };
 
-	const setColorValues = () => {
+  const handleYearChanged = (value) => {
+    let year =
+      value == undefined ? new Date().getFullYear() : value._d.getFullYear();
+    setCurrentYear(year);
+    getAllTransactionsFor(year, currentMerchant, currentAccount);
+  };
 
-		var sortedMonthlyValues = Object.keys(monthlyCosts).sort((a, b) => monthlyCosts[a] - monthlyCosts[b]);
-		
-		var customColorIndex = 0;
-	
-		sortedMonthlyValues.forEach((month) => {
-			if(monthlyCosts[month] != 0) { 
-				colors[month] = customColors[customColorIndex]
-				if(customColorIndex != 6) {
-					customColorIndex++;
-				}
-			 }	
-		})
-	  };
+  const handleAccChange = (value) => {
+    setCurrentAccount(value);
+    getAllTransactionsFor(currentYear, currentMerchant, value);
+  };
 
-	const updateChartData = (data) => {
+  const handleMerchantChange = (value) => {
+    setCurrentMerchant(value);
+    getAllTransactionsFor(currentYear, value, currentAccount);
+  };
 
-		months.forEach((month) => {
-			monthlyCosts[month] = 0
-			colors[month] = "#d3f261"
-		})
+  const colors = [];
+  var customColors = [
+    "#95de64",
+    "#d3f261",
+    "#fff566",
+    "#ffd666",
+    "#ffc069",
+    "#ff9c6e",
+    "#ff7875",
+  ];
 
-		data.forEach((transaction) => {
-			let month = months[parseInt(transaction.date.substr(5,2))-1]
-			monthlyCosts[month] += transaction.totalPrice	
-		})
+  const setColorValues = () => {
+    var sortedMonthlyValues = Object.keys(monthlyCosts).sort(
+      (a, b) => monthlyCosts[a] - monthlyCosts[b]
+    );
 
-		setColorValues()
-		setChartData({
-			labels: months,
-			datasets: [
-			  {
-				// label: "Money spent",
-				data: Object.values(monthlyCosts),
-				backgroundColor: Object.values(colors),
-			  },
-			],
-		});
-	}
-	
+    var customColorIndex = 0;
+
+    sortedMonthlyValues.forEach((month) => {
+      if (monthlyCosts[month] != 0) {
+        colors[month] = customColors[customColorIndex];
+        if (customColorIndex != 6) {
+          customColorIndex++;
+        }
+      }
+    });
+  };
+
+  const updateChartData = (data) => {
+    months.forEach((month) => {
+      monthlyCosts[month] = 0;
+      colors[month] = "#d3f261";
+    });
+
+    data.forEach((transaction) => {
+      let month = months[parseInt(transaction.date.substr(5, 2)) - 1];
+      monthlyCosts[month] += transaction.totalPrice;
+    });
+
+    setColorValues();
+    setChartData({
+      labels: months,
+      datasets: [
+        {
+          // label: "Money spent",
+          data: Object.values(monthlyCosts),
+          backgroundColor: Object.values(colors),
+        },
+      ],
+    });
+  };
+
   return (
     <div>
-      <h1>
-		Check your monthly expenses for chosen or all merchants
-      </h1>
+      <Divider>
+        <h1>Check your monthly expenses for one or every merchant</h1>
+      </Divider>
 
-	  <Select
+      <Select
         placeholder="Select Merchant"
         style={{ width: 200 }}
         onChange={handleMerchantChange}
@@ -174,12 +196,12 @@ function TransakcijeMjesec() {
 
       <Select
         placeholder="Select Account"
-        style={{ width: 200, marginLeft:"30px"}}
+        style={{ width: 200, marginLeft: "30px" }}
         onChange={handleAccChange}
-		defaultValue="all"
+        defaultValue="all"
       >
         {accounts.map((title) => (
-          <Select.Option key={"account"+title.id} value={title.cardNumber}>
+          <Select.Option key={"account" + title.id} value={title.cardNumber}>
             {title.cardNumber}
           </Select.Option>
         ))}
@@ -188,34 +210,38 @@ function TransakcijeMjesec() {
         </Select.Option>
       </Select>
 
-	  <DatePicker onChange={handleYearChanged} picker="year" style={{float: "right" }}/>
+      <DatePicker
+        onChange={handleYearChanged}
+        picker="year"
+        style={{ float: "right" }}
+      />
 
-	  <Divider></Divider>
-	  <Bar
+      <Divider></Divider>
+      <Bar
         data={chartData}
         width={100}
-		height={50}
-	
+        height={50}
         options={
-		  ({ maintainAspectRatio: true },
-			
+          ({ maintainAspectRatio: true },
           {
             title: {
               display: true,
               text: "Spendings in a year",
-			},
-			legend: {
-				display: false
-			},
-			scales: {
-				yAxes: [{
-					display: true,
-					ticks: {
-						suggestedMin: 0,
-						suggestedMax: 100
-					}
-				}]		
-			}
+            },
+            legend: {
+              display: false,
+            },
+            scales: {
+              yAxes: [
+                {
+                  display: true,
+                  ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                  },
+                },
+              ],
+            },
           })
         }
       />
