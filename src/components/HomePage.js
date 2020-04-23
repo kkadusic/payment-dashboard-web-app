@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, Badge } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
   LogoutOutlined,
   DollarOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 
 import Home from "./Home";
@@ -29,12 +30,22 @@ import PregledTransakcija from "./transactions/PregledTransakcija";
 import BankAccTable from "./BankAccTable";
 import TransakcijeIznos from "./transactions/TransakcijeIznos";
 import TransakcijeBankovni from "./transactions/TransakcijeBankovni";
+import io from "socket.io-client";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
+  const [response, setResponse] = useState("");
+
+  // useEffect(() => {
+  //   const socket = io("http://");
+  //   socket.on("connection", (data) => {
+  //     console.log(data);
+  //     setResponse(data);
+  //   });
+  // }, []);
 
   return (
     <Router>
@@ -44,15 +55,26 @@ function HomePage() {
             <p style={{ color: "white" }}>Payment </p>
             <p style={{ color: "#597ef7" }}> Dashboard</p>
           </div>
-          <Avatar
-            style={{
-              color: "white",
-              backgroundColor: "#597ef7",
-            }}
-            className="avatar"
-          >
-            {JSON.parse(getUser()).firstName.charAt(0)}
-          </Avatar>
+          <div style={{ float: "right" }}>
+            <Avatar
+              style={{
+                color: "white",
+                backgroundColor: "#597ef7",
+              }}
+              className="avatar"
+            >
+              {JSON.parse(getUser()).firstName.charAt(0)}
+            </Avatar>
+            <Badge count={0} showZero style={{ marginRight: "18px" }}>
+              <BellOutlined
+                style={{
+                  color: "white",
+                  fontSize: "20px",
+                  paddingRight: "20px",
+                }}
+              />
+            </Badge>
+          </div>
         </Header>
         <Layout>
           <Sider width={200} className="site-layout-background">
