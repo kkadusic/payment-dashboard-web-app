@@ -184,9 +184,11 @@ class PregledTransakcija extends Component {
         </Button>
         <Button
           onClick={() => {
-            dataIndex !== "service"
+            /*dataIndex !== "service"
               ? this.handleReset(clearFilters)
-              : this.getTransactions();
+              : this.getTransactions();*/
+              this.handleReset(clearFilters);
+              
           }}
           size="small"
           style={{ width: 90 }}
