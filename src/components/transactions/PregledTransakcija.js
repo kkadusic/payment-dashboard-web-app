@@ -187,9 +187,8 @@ class PregledTransakcija extends Component {
             /*dataIndex !== "service"
               ? this.handleReset(clearFilters)
               : this.getTransactions();*/
-              this.handleReset(clearFilters);
-              this.getTransactions();
-              
+            if (dataIndex === "service") this.getTransactions();
+            this.handleReset(clearFilters);
           }}
           size="small"
           style={{ width: 90 }}
