@@ -188,6 +188,7 @@ class PregledTransakcija extends Component {
               ? this.handleReset(clearFilters)
               : this.getTransactions();*/
               this.handleReset(clearFilters);
+              this.getTransactions();
               
           }}
           size="small"
