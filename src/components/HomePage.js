@@ -58,21 +58,22 @@ function HomePage() {
   ]);
   const [count, setCount] = useState(0);
 
-  // useEffect(() => {
-  //   const socket = new SockJS(SERVER_URL);
-  //   stompClient = Stomp.over(socket);
-  //   stompClient.connect(
-  //     {},
-  //     () => {
-  //       stompClient.subscribe("/topic/news", (msg) => {
-  //         const data = JSON.parse(msg.body);
-  //         setResponse((res) => [data, ...res]);
-  //         setCount(count + 1);
-  //       });
-  //     },
-  //     (err) => console.log(err)
-  //   );
-  // }, []);
+  useEffect(() => {
+    const socket = new SockJS(SERVER_URL);
+    stompClient = Stomp.over(socket);
+    stompClient.connect(
+      {},
+      () => {
+        stompClient.subscribe("/topic/news", (msg) => {
+          const data = JSON.parse(msg.body);
+          setResponse((res) => [data, ...res]);
+          setCount(count + 1);
+          console.log({ response: data, count: count });
+        });
+      },
+      (err) => console.log(err)
+    );
+  }, []);
 
   const checkType = (notification) => {
     if (notification.notificationStatus === "INFO")
