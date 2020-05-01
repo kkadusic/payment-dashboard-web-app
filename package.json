@@ -19,8 +19,8 @@
     "chartjs-plugin-piechart-outlabels": "^0.1.4",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
-    "numeral": "^2.0.6",
     "moment": "^2.24.0",
+    "numeral": "^2.0.6",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
@@ -28,7 +28,9 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-uuid": "^1.0.2",
-    "semantic-ui-react": "^0.88.2"
+    "semantic-ui-react": "^0.88.2",
+    "sockjs-client": "^1.4.0",
+    "stompjs": "^2.3.3"
   },
   "scripts": {
     "start": "react-scripts start",

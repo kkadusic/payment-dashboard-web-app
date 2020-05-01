@@ -182,13 +182,13 @@ Filtriranje transakcija po datumu
 
 ## Item
 
-Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa koji su formirani u posljednja 24 sata, mjesec dana ili godinu dana.
+Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda svih računa koji su formirani u vremenskom periodu koji je odabran.
 
 ## Task
 
 - Dodati opciju za filtriranje u koloni koja odgovara datumu u tabeli transakcija
-- Izlistati sve postojeće bankovne račune
-- Omogućiti filtriranje transakcija klikom na neki od ponuđena tri vremenska perioda
+- Dodati prikaz kalendara
+- Omogućiti filtriranje transakcija klikom na opciju "Search"
 - Uraditi push koda
 - Napraviti pull request
 
@@ -235,5 +235,75 @@ Prijavljeni korisnik Payment Dashboard web aplikacije mora imati mogućnost preg
 - Dodati polje za prikaz ukupnog iznosa
 - Sabrati sve iznose trenutno prikazanih transakcija
 - Ispisati sabrani iznos u dodano polje
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz dijagrama koji preslikava zavisnost troška od merchanta u kojima su kupovane usluge (u određenom vremenskom periodu i sa određenim bankovnim računom)
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda dijagrama za iznos troškova po merchantima u odnosu na vremenski interval kojeg sam odabere (za određeni ili za sve bankovne račune) koristeći pie chart.
+
+## Task
+
+- Dodati polja za izbor bankovnog računa i datuma
+- Izdvojiti podatke koji će odrediti sadržaj x-ose i y-ose
+- Kreirati "pie chart"
+- Za svaki dio dijagrama, prikazati naziv merchanta i iznos troškova
+- Za svaki dio dijagrama, prikazati procenat koji zauzima u odnosu na cjelinu
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz dijagrama koji preslikava zavisnost troška od bankovnog računa kojim je izvršeno plaćanje (u određenom vremenskom periodu)
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda troškova po bankovnim računima pomoću pie chart-a, i to u vremenskom periodu koji sam odabere.
+
+## Task
+
+- Dodati polje za izbor datuma
+- Izdvojiti podatke koji će odrediti sadržaj x-ose i y-ose
+- Kreirati "pie chart"
+- Za svaki dio dijagrama, prikazati broj bankovne kartice i iznos troškova
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz dijagrama koji preslikava zavisnost troška od mjeseca tokom kojeg je izvršeno plaćanje (u određenoj godini)
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije mora imati mogućnost da za svakog merchanta (kojeg sam odabere), pregleda troškove za svaki mjesec odabrane godine koristeći bar chart (za određeni ili za sve bankovne račune).
+
+## Task
+
+- Dodati polja za izbor merchanta, bankovnog računa i godine
+- Izdvojiti podatke koji će odrediti sadržaj x-ose i y-ose
+- Kreirati "bar chart"
+- Za svaki bar dijagrama, prikazati iznos troškova
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz dijagrama koji preslikava zavisnost troška od merchanta kod kojeg je izvršeno plaćanje
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda merchanta kod kojih je najviše novca ostavio pomoću Radar chart-a (za određeni ili za sve bankovne račune)
+
+## Task
+
+- Dodati polje za izbor bankovnog računa
+- Izdvojiti podatke koji će odrediti sadržaj x-ose i y-ose
+- Kreirati "radar chart"
+- Za svaki dio dijagrama, prikazati iznos troškova
+- Dodati mogućnost prikaza rezultata za sve postojeće bankovne račune na jednom dijagramu
 - Uraditi push koda
 - Napraviti pull request

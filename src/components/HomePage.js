@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import "antd/dist/antd.css";
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, Badge, Popover, Empty, List } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
   LogoutOutlined,
   DollarOutlined,
+  BellOutlined,
+  NotificationOutlined,
+  InfoCircleTwoTone,
+  WarningTwoTone,
+  CloseCircleTwoTone,
 } from "@ant-design/icons";
 
 import Home from "./Home";
@@ -29,12 +34,85 @@ import PregledTransakcija from "./transactions/PregledTransakcija";
 import BankAccTable from "./BankAccTable";
 import TransakcijeIznos from "./transactions/TransakcijeIznos";
 import TransakcijeBankovni from "./transactions/TransakcijeBankovni";
+import Notifikacije from "./Notifikacije";
+import * as SockJS from "sockjs-client";
+import * as Stomp from "stompjs";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
+const SERVER_URL = " ";
+let stompClient;
+
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
+  const [response, setResponse] = useState("");
+  const [notifications, setNotifications] = useState([
+    {
+      notificationId: "jsjsjsjsjssiij",
+      subjectId: "idTransakcije",
+      message: "poruka",
+      notificationStatus: "INFO",
+      notificationType: "TRANSACTION",
+    },
+  ]);
+  const [count, setCount] = useState(0);
+
+  // useEffect(() => {
+  //   const socket = new SockJS(SERVER_URL);
+  //   stompClient = Stomp.over(socket);
+  //   stompClient.connect(
+  //     {},
+  //     () => {
+  //       stompClient.subscribe("/topic/news", (msg) => {
+  //         const data = JSON.parse(msg.body);
+  //         setResponse((res) => [data, ...res]);
+  //         setCount(count + 1);
+  //       });
+  //     },
+  //     (err) => console.log(err)
+  //   );
+  // }, []);
+
+  const checkType = (notification) => {
+    if (notification.notificationStatus === "INFO")
+      return <InfoCircleTwoTone twoToneColor="#41bdf2" />;
+    else if (notification.notificationStatus === "WARNING")
+      return <WarningTwoTone twoToneColor="#f0a800" />;
+    else if (notification.notificationStatus === "ERROR")
+      return <CloseCircleTwoTone twoToneColor="#f00000" />;
+  };
+
+  const content = () => {
+    return (
+      <div>
+        <p style={{ color: "#030852" }}>See all notifications</p>
+
+        {notifications.length === 0 ? (
+          <Empty description="No new notifications"></Empty>
+        ) : (
+          <List
+            itemLayout="horizontal"
+            dataSource={notifications}
+            renderItem={(notification) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      style={{ backgroundColor: "white" }}
+                      icon={checkType(notification)}
+                    />
+                  }
+                  title={notification.notificationType}
+                  description={notification.message}
+                />
+              </List.Item>
+            )}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <Router>
@@ -44,15 +122,33 @@ function HomePage() {
             <p style={{ color: "white" }}>Payment </p>
             <p style={{ color: "#597ef7" }}> Dashboard</p>
           </div>
-          <Avatar
-            style={{
-              color: "white",
-              backgroundColor: "#597ef7",
-            }}
-            className="avatar"
-          >
-            {JSON.parse(getUser()).firstName.charAt(0)}
-          </Avatar>
+          <div style={{ float: "right" }}>
+            <Avatar
+              style={{
+                color: "white",
+                backgroundColor: "#597ef7",
+              }}
+              className="avatar"
+            >
+              {JSON.parse(getUser()).firstName.charAt(0)}
+            </Avatar>
+            <Popover
+              placement="bottomLeft"
+              title="New notification"
+              content={content}
+              trigger="click"
+            >
+              <Badge count={count} showZero style={{ marginRight: "18px" }}>
+                <BellOutlined
+                  style={{
+                    color: "white",
+                    fontSize: "20px",
+                    paddingRight: "20px",
+                  }}
+                />
+              </Badge>
+            </Popover>
+          </div>
         </Header>
         <Layout>
           <Sider width={200} className="site-layout-background">
@@ -128,8 +224,14 @@ function HomePage() {
                   <Link to="/dodavanjeRacuna"> Add new account</Link>
                 </Menu.Item>
               </SubMenu>
+
+              <Menu.Item key="notifikacije">
+                <NotificationOutlined />
+                <Link to="/notifikacije">Notifications</Link>
+              </Menu.Item>
+
               <Menu.Item key="logout">
-                <LogoutOutlined></LogoutOutlined>
+                <LogoutOutlined />
                 <Link to="/logout">Log out</Link>
               </Menu.Item>
             </Menu>
@@ -144,80 +246,66 @@ function HomePage() {
               }}
             >
               <Switch>
-                <Route exact path="/" component={Home}></Route>
+                <Route exact path="/" component={Home} />
 
-                <Route
-                  path="/pregledProfila"
-                  component={PregledProfila}
-                ></Route>
-                <Route
-                  path="/promjenaLozinke"
-                  component={PromjenaLozinke}
-                ></Route>
+                <Route path="/pregledProfila" component={PregledProfila} />
+
+                <Route path="/promjenaLozinke" component={PromjenaLozinke} />
 
                 <Route path="/pregledRacuna" component={BankAccTable} />
 
-                <Route path="/dodaniRacuni" component={DodaniRacuni}></Route>
+                <Route path="/dodaniRacuni" component={DodaniRacuni} />
 
-                <Route
-                  path="/dodavanjeRacuna"
-                  component={DodavanjeRacuna}
-                ></Route>
+                <Route path="/dodavanjeRacuna" component={DodavanjeRacuna} />
 
                 <Route
                   path="/pregledTransakcija"
                   component={PregledTransakcija}
-                ></Route>
+                />
 
                 <Route
                   exact
                   path="/transakcijeMjesec"
                   component={TransakcijeMjesec}
-                ></Route>
+                />
                 <Route
                   exact
                   path="/transakcijeMerchant"
                   component={TransakcijeMerchant}
-                ></Route>
+                />
                 <Route
                   exact
                   path="/transakcijeIznos"
                   component={TransakcijeIznos}
-                ></Route>
+                />
                 <Route
                   exact
                   path="/transakcijeBankovni"
                   component={TransakcijeBankovni}
-                ></Route>
+                />
 
-                <Route
-                  path="/oporavkaLozinke"
-                  component={OporavkaLozinke}
-                ></Route>
+                <Route path="/oporavkaLozinke" component={OporavkaLozinke} />
 
                 <Route
                   path="/sigurnosnoPitanje"
                   component={SigurnosnoPitanje}
-                ></Route>
+                />
 
-                <Route
-                  path="/newPasswordAlert"
-                  component={NewPasswordAlert}
-                ></Route>
+                <Route path="/newPasswordAlert" component={NewPasswordAlert} />
 
-                <Route path="/novaSifra" component={PrikazNoveSifre}></Route>
-                <Route path="/racunUspjeh" component={RacunUspjeh}></Route>
+                <Route path="/notifikacije" component={Notifikacije} />
 
-                <Route path="/pocetna" component={Home}></Route>
-                <Route path="/logout" component={Logout}></Route>
-                <Route path="/prijava" component={Prijava}></Route>
+                <Route path="/novaSifra" component={PrikazNoveSifre} />
+                <Route path="/racunUspjeh" component={RacunUspjeh} />
+
+                <Route path="/pocetna" component={Home} />
+                <Route path="/logout" component={Logout} />
+                <Route path="/prijava" component={Prijava} />
               </Switch>
             </Content>
           </Layout>
         </Layout>
-        <Footer style={{ textAlign: "center" }}>
-          Ant Design ©2018 Created by Ant UED
-        </Footer>
+        <Footer style={{ textAlign: "center" }}>Payment Dashboard ©2020</Footer>
       </Layout>
     </Router>
   );
