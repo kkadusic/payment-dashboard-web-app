@@ -37,39 +37,58 @@ import TransakcijeBankovni from "./transactions/TransakcijeBankovni";
 import Notifikacije from "./Notifikacije";
 import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
+import axios from "axios";
+import { getToken } from "../utilities/Common";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
-const SERVER_URL = " ";
+const SERVER_URL = "https://payment-server-si.herokuapp.com/websocket";
 let stompClient;
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
   const [response, setResponse] = useState("");
   const [notifications, setNotifications] = useState([
-    {
-      notificationId: "jsjsjsjsjssiij",
-      subjectId: "idTransakcije",
-      message: "poruka",
-      notificationStatus: "INFO",
-      notificationType: "TRANSACTION",
-    },
+    // {
+    //   notificationId: "jsjsjsjsjssiij",
+    //   subjectId: "idTransakcije",
+    //   message: "poruka",
+    //   notificationStatus: "INFO",
+    //   notificationType: "TRANSACTION",
+    // },
   ]);
   const [count, setCount] = useState(0);
 
+  const getUnreadNotifications = () => {
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/notifications/unread", {
+        headers: { Authorization: "Bearer " + getToken() },
+      })
+      .then((res) => {
+        setNotifications([...res.data]);
+        setCount(res.data.length);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
+    getUnreadNotifications();
     const socket = new SockJS(SERVER_URL);
     stompClient = Stomp.over(socket);
     stompClient.connect(
       {},
       () => {
-        stompClient.subscribe("/topic/news", (msg) => {
-          const data = JSON.parse(msg.body);
-          setResponse((res) => [data, ...res]);
-          setCount(count + 1);
-          console.log({ response: data, count: count });
-        });
+        stompClient.subscribe(
+          "/queue/reply" + JSON.parse(getUser()).username,
+          (msg) => {
+            const data = JSON.parse(msg.body);
+            setResponse((res) => [data, ...res]);
+            setCount(count + 1);
+            setNotifications([...data]);
+            console.log({ response: data, count: count });
+          }
+        );
       },
       (err) => console.log(err)
     );
@@ -135,7 +154,7 @@ function HomePage() {
             </Avatar>
             <Popover
               placement="bottomLeft"
-              title="New notification"
+              title="New notifications"
               content={content}
               trigger="click"
             >

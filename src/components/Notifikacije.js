@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Empty, List, Divider } from "antd";
 import {
   CheckCircleTwoTone,
@@ -6,31 +6,47 @@ import {
   WarningTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
+import axios from "axios";
+import { getToken } from "../utilities/Common";
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([
-    {
-      notificationId: "jsjsjsjsjssiij",
-      subjectId: "idTransakcije",
-      message: "poruka",
-      notificationStatus: "INFO",
-      notificationType: "TRANSACTION",
-    },
-    {
-      notificationId: "jsjsjsjsjssiij",
-      subjectId: "idTransakcije",
-      message: "poruka",
-      notificationStatus: "ERROR",
-      notificationType: "TRANSACTION",
-    },
-    {
-      notificationId: "jsjsjsjsjssiij",
-      subjectId: "idTransakcije",
-      message: "poruka",
-      notificationStatus: "WARNING",
-      notificationType: "TRANSACTION",
-    },
+    // {
+    //   notificationId: "jsjsjsjsjssiij",
+    //   subjectId: "idTransakcije",
+    //   message: "poruka",
+    //   notificationStatus: "INFO",
+    //   notificationType: "TRANSACTION",
+    // },
+    // {
+    //   notificationId: "jsjsjsjsjssiij",
+    //   subjectId: "idTransakcije",
+    //   message: "poruka",
+    //   notificationStatus: "ERROR",
+    //   notificationType: "TRANSACTION",
+    // },
+    // {
+    //   notificationId: "jsjsjsjsjssiij",
+    //   subjectId: "idTransakcije",
+    //   message: "poruka",
+    //   notificationStatus: "WARNING",
+    //   notificationType: "TRANSACTION",
+    // },
   ]);
+
+  const getNotifications = () => {
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/notifications/all", {
+        headers: { Authorization: "Bearer " + getToken() },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setNotifications([...res.data]);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(getNotifications, []);
 
   const checkType = (notification) => {
     if (notification.notificationStatus === "INFO")
@@ -47,7 +63,7 @@ function Notifikacije() {
         <h1 style={{ color: "#030852" }}>Received notifications</h1>
       </Divider>
       {notifications.length === 0 ? (
-        <Empty description="No new notifications"></Empty>
+        <Empty description="No notifications"></Empty>
       ) : (
         <List
           itemLayout="horizontal"
