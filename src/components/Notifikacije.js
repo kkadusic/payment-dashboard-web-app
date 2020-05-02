@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Empty, List, Divider } from "antd";
+import { Avatar, Empty, List, Divider, Popover } from "antd";
 import {
   CheckCircleTwoTone,
   InfoCircleTwoTone,
   WarningTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { getToken } from "../utilities/Common";
 
@@ -77,7 +78,7 @@ function Notifikacije() {
                     icon={checkType(notification)}
                   />
                 }
-                title={notification.notificationType}
+                title={notification.notificationDateAndTime}
                 description={notification.message}
               />
             </List.Item>

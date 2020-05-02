@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
+import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
 
 import { Layout, Menu, Avatar, Badge, Popover, Empty, List } from "antd";
@@ -48,28 +49,31 @@ let stompClient;
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
-  const [response, setResponse] = useState("");
   const [notifications, setNotifications] = useState([
     // {
-    //   notificationId: "jsjsjsjsjssiij",
-    //   subjectId: "idTransakcije",
     //   message: "poruka",
+    //   notificationDateAndTime: "2020-05-02 14:03:49",
+    //   notificationId: "jsjsjsjsjssiij",
     //   notificationStatus: "INFO",
-    //   notificationType: "TRANSACTION",
+    //   notificationType: "MONEY_TRANSFER",
+    //   subjectId: "idTransakcije",
+    //   read: true,
     // },
   ]);
   const [count, setCount] = useState(0);
 
-  const getUnreadNotifications = () => {
-    axios
-      .get("https://payment-server-si.herokuapp.com/api/notifications/unread", {
-        headers: { Authorization: "Bearer " + getToken() },
-      })
-      .then((res) => {
-        setNotifications([...res.data]);
-        setCount(res.data.length);
-      })
-      .catch((err) => console.log(err));
+  const getUnreadNotifications = async () => {
+    let res = await axios.get(
+      "https://payment-server-si.herokuapp.com/api/notifications/unread",
+      {
+        headers: {
+          Authorization: "Bearer " + getToken(),
+        },
+      }
+    );
+    setNotifications(res.data);
+    setCount(res.data.length);
+    console.log(notifications);
   };
 
   useEffect(() => {
@@ -83,7 +87,6 @@ function HomePage() {
           "/queue/reply" + JSON.parse(getUser()).username,
           (msg) => {
             const data = JSON.parse(msg.body);
-            setResponse((res) => [data, ...res]);
             setCount(count + 1);
             setNotifications([...data]);
             console.log({ response: data, count: count });
@@ -93,6 +96,29 @@ function HomePage() {
       (err) => console.log(err)
     );
   }, []);
+
+  const handleTransfer = (transfer) => {
+    console.log(transfer);
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/notifications/specific/" +
+          transfer.notificationId,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then(() => {
+        getUnreadNotifications();
+        console.log("preusmjeri");
+      })
+      .catch((err) => console.log(err));
+  };
+  const handleTransaction = (transaction) => {
+    console.log(transaction);
+  };
+  const handleAccount = (account) => {
+    console.log(account);
+  };
 
   const checkType = (notification) => {
     if (notification.notificationStatus === "INFO")
@@ -106,29 +132,58 @@ function HomePage() {
   const content = () => {
     return (
       <div>
-        <p style={{ color: "#030852" }}>See all notifications</p>
+        <Link to="/notifikacije" style={{ color: "#030852" }}>
+          See all notifications
+        </Link>
 
         {notifications.length === 0 ? (
           <Empty description="No new notifications"></Empty>
         ) : (
-          <List
-            itemLayout="horizontal"
-            dataSource={notifications}
-            renderItem={(notification) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      style={{ backgroundColor: "white" }}
-                      icon={checkType(notification)}
-                    />
-                  }
-                  title={notification.notificationType}
-                  description={notification.message}
-                />
-              </List.Item>
-            )}
-          />
+          <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            useWindow={false}
+            style={{
+              overflow: "auto",
+              padding: "8px 24px",
+              height: "300px",
+            }}
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={notifications}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Link
+                      onClick={() => {
+                        if (item.notificationType === "MONEY_TRANSFER")
+                          handleTransfer(item);
+                        else if (item.notificationType === "TRANSACTION")
+                          handleTransaction(item);
+                        else if (item.notificationType === "ACCOUNT_BALANCE")
+                          handleAccount(item);
+                      }}
+                      to="/notifikacije"
+                    >
+                      See more
+                    </Link>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        style={{ backgroundColor: "white" }}
+                        icon={checkType(item)}
+                      />
+                    }
+                    title={item.notificationDateAndTime}
+                    description={item.message}
+                  />
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
         )}
       </div>
     );
