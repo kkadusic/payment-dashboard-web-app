@@ -62,6 +62,28 @@ function HomePage() {
   ]);
   const [count, setCount] = useState(0);
 
+  useEffect(() => {
+    //getUnreadNotifications();
+    const socket = new SockJS(SERVER_URL);
+    stompClient = Stomp.over(socket);
+    stompClient.connect(
+      {},
+      () => {
+        stompClient.subscribe(
+          "/queue/reply" + JSON.parse(getUser()).username,
+          (msg) => {
+            console.log("OVDEEE");
+            const data = JSON.parse(msg.body);
+            setCount(count + 1);
+            setNotifications([...data]);
+            console.log({ response: data, count: count });
+          }
+        );
+      },
+      (err) => console.log(err)
+    );
+  }, []);
+
   const getUnreadNotifications = async () => {
     let res = await axios.get(
       "https://payment-server-si.herokuapp.com/api/notifications/unread",
@@ -75,27 +97,6 @@ function HomePage() {
     setCount(res.data.length);
     console.log(notifications);
   };
-
-  useEffect(() => {
-    getUnreadNotifications();
-    const socket = new SockJS(SERVER_URL);
-    stompClient = Stomp.over(socket);
-    stompClient.connect(
-      {},
-      () => {
-        stompClient.subscribe(
-          "/queue/reply" + JSON.parse(getUser()).username,
-          (msg) => {
-            const data = JSON.parse(msg.body);
-            setCount(count + 1);
-            setNotifications([...data]);
-            console.log({ response: data, count: count });
-          }
-        );
-      },
-      (err) => console.log(err)
-    );
-  }, []);
 
   const handleTransfer = (transfer) => {
     console.log(transfer);
@@ -113,9 +114,11 @@ function HomePage() {
       })
       .catch((err) => console.log(err));
   };
+
   const handleTransaction = (transaction) => {
     console.log(transaction);
   };
+
   const handleAccount = (account) => {
     console.log(account);
   };
@@ -143,6 +146,7 @@ function HomePage() {
             initialLoad={false}
             pageStart={0}
             useWindow={false}
+            loadMore={() => {}}
             style={{
               overflow: "auto",
               padding: "8px 24px",
