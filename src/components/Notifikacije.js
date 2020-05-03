@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Empty, List, Divider, Popover } from "antd";
+import { Avatar, Empty, List, Divider } from "antd";
 import {
-  CheckCircleTwoTone,
   InfoCircleTwoTone,
   WarningTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { getToken } from "../utilities/Common";
+import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([
@@ -58,6 +57,36 @@ function Notifikacije() {
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
+  const checkPath = (notification) => {
+    if (
+      notification.notificationStatus === "INFO" &&
+      notification.notificationType === "MONEY_TRANSFER"
+    )
+      return "/transferi";
+    else if (notification.notificationType === "TRANSACTION")
+      return "/pregledTransakcija";
+    else if (notification.notificationType === "ACCOUNT_BALANCE")
+      return "/pregledRacuna";
+  };
+
+  const transferDetails = (id) => {
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/accounts/moneyTransfer/" +
+          id,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        saveTransfer(response.data.transfers[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <Divider>
@@ -70,7 +99,33 @@ function Notifikacije() {
           itemLayout="horizontal"
           dataSource={notifications}
           renderItem={(notification) => (
-            <List.Item>
+            <List.Item
+              actions={[
+                <Link
+                  onClick={() => {
+                    saveNotification(notification);
+                    if (notification.notificationType === "MONEY_TRANSFER")
+                      transferDetails(notification.subjectId);
+                  }}
+                  to={{
+                    pathname: checkPath(notification),
+                    notification: notification,
+                  }}
+                >
+                  See more
+                </Link>,
+                // <Link
+                //   onClick={() => {
+                //     saveNotification(notification);
+                //     if (notification.notificationType === "MONEY_TRANSFER")
+                //       transferDetails(notification.subjectId);
+                //   }}
+                //   to={checkPath(notification)}
+                // >
+                //   See more
+                // </Link>,
+              ]}
+            >
               <List.Item.Meta
                 avatar={
                   <Avatar

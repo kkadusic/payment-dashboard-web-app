@@ -172,8 +172,10 @@ class BankAccTable extends Component {
         return <Table columns={columns}
                       dataSource={this.state.data}
                       rowClassName={(record, index) => {
+                          console.log("NOTIF", this.props.location.notification);
+                          console.log("RED", record);
                           if (this.props.location.notification != null &&
-                              record.id === this.props.location.notification.subjectId) {
+                              record.id == this.props.location.notification.subjectId) {
                               if (this.props.location.notification.notificationStatus === "INFO") {
                                   return 'table-row-notification-info';
                               } else if (this.props.location.notification.notificationStatus === "WARNING") {
