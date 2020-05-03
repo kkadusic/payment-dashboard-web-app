@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Empty, List, Divider } from "antd";
+import {Avatar, Empty, List, Divider, BackTop} from "antd";
 import {
   InfoCircleTwoTone,
   WarningTwoTone,
@@ -7,7 +7,12 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
+import {
+  getToken,
+  saveNotification,
+  saveTransfer
+} from "../utilities/Common";
+import { notificationStatus, notificationType, showFailedTransaction } from '../utilities/notificationHandlers'
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([
@@ -49,23 +54,26 @@ function Notifikacije() {
   useEffect(getNotifications, []);
 
   const checkType = (notification) => {
-    if (notification.notificationStatus === "INFO")
+    if (notification.notificationStatus === notificationStatus.INFO)
       return <InfoCircleTwoTone twoToneColor="#41bdf2" />;
-    else if (notification.notificationStatus === "WARNING")
+    else if (notification.notificationStatus === notificationStatus.WARNING)
       return <WarningTwoTone twoToneColor="#f0a800" />;
-    else if (notification.notificationStatus === "ERROR")
+    else if (notification.notificationStatus === notificationStatus.ERROR)
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
   const checkPath = (notification) => {
     if (
-      notification.notificationStatus === "INFO" &&
-      notification.notificationType === "MONEY_TRANSFER"
+      notification.notificationStatus === notificationStatus.INFO &&
+      notification.notificationType === notificationType.MONEY_TRANSFER
     )
       return "/transferi";
-    else if (notification.notificationType === "TRANSACTION")
-      return "/pregledTransakcija";
-    else if (notification.notificationType === "ACCOUNT_BALANCE")
+    else if (notification.notificationType === notificationType.TRANSACTION) {
+      if (notification.notificationStatus === notificationStatus.ERROR) return '/notifikacije';
+      else return "/pregledTransakcija";
+    }
+
+    else if (notification.notificationType === notificationType.ACCOUNT_BALANCE)
       return "/dodaniRacuni";
   };
 
@@ -104,8 +112,11 @@ function Notifikacije() {
                 <Link
                   onClick={() => {
                     saveNotification(notification);
-                    if (notification.notificationType === "MONEY_TRANSFER")
+                    if (notification.notificationType === notificationType.MONEY_TRANSFER)
                       transferDetails(notification.subjectId);
+                    else if (notification.notificationType == notificationType.TRANSACTION && notification.notificationStatus == notificationStatus.ERROR)
+                      showFailedTransaction(notification);
+
                   }}
                   to={{
                     pathname: checkPath(notification),

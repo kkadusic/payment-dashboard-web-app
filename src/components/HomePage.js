@@ -6,7 +6,8 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
-import { getUser } from "../utilities/Common";
+import {getUser} from "../utilities/Common";
+import { notificationStatus, notificationType, showFailedTransaction } from '../utilities/notificationHandlers'
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
 
@@ -47,7 +48,11 @@ import * as Stomp from "stompjs";
 import axios from "axios";
 import { getToken } from "../utilities/Common";
 import Transferi from "./Transferi";
+import { Modal } from 'antd';
 
+
+const ReachableContext = React.createContext();
+const UnreachableContext = React.createContext();
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -122,22 +127,24 @@ function HomePage() {
   };
 
   const checkType = (notification) => {
-    if (notification.notificationStatus === "INFO")
+    if (notification.notificationStatus === notificationStatus.INFO)
       return <InfoCircleTwoTone twoToneColor="#41bdf2" />;
-    else if (notification.notificationStatus === "WARNING")
+    else if (notification.notificationStatus === notificationStatus.WARNING)
       return <WarningTwoTone twoToneColor="#f0a800" />;
-    else if (notification.notificationStatus === "ERROR")
+    else if (notification.notificationStatus === notificationStatus.ERROR)
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
   const checkPath = (notification) => {
     if (
-      notification.notificationType === "INFO" &&
-      notification.notificationType === "MONEY_TRANSFER"
+      notification.notificationStatus === notificationStatus.INFO &&
+      notification.notificationType === notificationType.MONEY_TRANSFER
     )
       return "/transferi";
-    else if (notification.notificationType === "TRANSACTION")
-      return "/pregledTransakcija";
+    else if (notification.notificationType === notificationType.TRANSACTION) {
+      if (notification.notificationStatus === notificationStatus.ERROR) return '/notifikacije';
+      else return "/pregledTransakcija"
+    }
     else if (notification.notificationType === "ACCOUNT_BALANCE")
       return "/dodaniRacuni";
   };
@@ -166,16 +173,18 @@ function HomePage() {
             <List
               itemLayout="horizontal"
               dataSource={notifications}
-              renderItem={(item) => (
+              renderItem={(notification) => (
                 <List.Item
                   actions={[
                     <Link
                       onClick={() => {
-                        handleNotification(item);
+                        handleNotification(notification);
+                        if (notification.notificationType == notificationType.TRANSACTION && notification.notificationStatus == notificationStatus.ERROR)
+                          showFailedTransaction(notification);
                       }}
                       to={{
-                        pathname: checkPath(item),
-                        notification: item,
+                        pathname: checkPath(notification),
+                        notification: notification,
                       }}
                     >
                       See more
@@ -186,11 +195,11 @@ function HomePage() {
                     avatar={
                       <Avatar
                         style={{ backgroundColor: "white" }}
-                        icon={checkType(item)}
+                        icon={checkType(notification)}
                       />
                     }
-                    title={item.notificationDateAndTime}
-                    description={item.message}
+                    title={notification.notificationDateAndTime}
+                    description={notification.message}
                   />
                 </List.Item>
               )}
