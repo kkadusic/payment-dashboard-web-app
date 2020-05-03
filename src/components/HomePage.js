@@ -68,7 +68,6 @@ function HomePage() {
     // },
   ]);
   const [count, setCount] = useState(0);
-  const history = useHistory();
 
   const getUnreadNotifications = () => {
     axios
@@ -132,7 +131,11 @@ function HomePage() {
   };
 
   const checkPath = (notification) => {
-    if (notification.notificationType === "MONEY_TRANSFER") return "/transferi";
+    if (
+      notification.notificationType === "INFO" &&
+      notification.notificationType === "MONEY_TRANSFER"
+    )
+      return "/transferi";
     else if (notification.notificationType === "TRANSACTION")
       return "/pregledTransakcija";
     else if (notification.notificationType === "ACCOUNT_BALANCE")
@@ -170,7 +173,10 @@ function HomePage() {
                       onClick={() => {
                         handleNotification(item);
                       }}
-                      to={checkPath(item)}
+                      to={{
+                        pathname: checkPath(item),
+                        notification: item,
+                      }}
                     >
                       See more
                     </Link>,
