@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
@@ -40,6 +46,7 @@ import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
 import axios from "axios";
 import { getToken } from "../utilities/Common";
+import Transferi from "./Transferi";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -61,9 +68,25 @@ function HomePage() {
     // },
   ]);
   const [count, setCount] = useState(0);
+  const history = useHistory();
+
+  const getUnreadNotifications = () => {
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/notifications/unread", {
+        headers: {
+          Authorization: "Bearer " + getToken(),
+        },
+      })
+      .then((res) => {
+        setNotifications(res.data);
+        setCount(res.data.length);
+        console.log(notifications);
+      })
+      .catch((err) => console.log(err));
+  };
 
   useEffect(() => {
-    //getUnreadNotifications();
+    getUnreadNotifications();
     const socket = new SockJS(SERVER_URL);
     stompClient = Stomp.over(socket);
     stompClient.connect(
@@ -74,8 +97,8 @@ function HomePage() {
           (msg) => {
             console.log("OVDEEE");
             const data = JSON.parse(msg.body);
-            setCount(count + 1);
-            setNotifications([...data]);
+            setCount((count) => count + 1);
+            setNotifications((oldArray) => [...oldArray, data]);
             console.log({ response: data, count: count });
           }
         );
@@ -84,43 +107,19 @@ function HomePage() {
     );
   }, []);
 
-  const getUnreadNotifications = async () => {
-    let res = await axios.get(
-      "https://payment-server-si.herokuapp.com/api/notifications/unread",
-      {
-        headers: {
-          Authorization: "Bearer " + getToken(),
-        },
-      }
-    );
-    setNotifications(res.data);
-    setCount(res.data.length);
-    console.log(notifications);
-  };
-
-  const handleTransfer = (transfer) => {
-    console.log(transfer);
+  const handleNotification = (notification) => {
     axios
       .get(
         "https://payment-server-si.herokuapp.com/api/notifications/specific/" +
-          transfer.notificationId,
+          notification.notificationId,
         {
           headers: { Authorization: "Bearer " + getToken() },
         }
       )
       .then(() => {
         getUnreadNotifications();
-        console.log("preusmjeri");
       })
       .catch((err) => console.log(err));
-  };
-
-  const handleTransaction = (transaction) => {
-    console.log(transaction);
-  };
-
-  const handleAccount = (account) => {
-    console.log(account);
   };
 
   const checkType = (notification) => {
@@ -130,6 +129,14 @@ function HomePage() {
       return <WarningTwoTone twoToneColor="#f0a800" />;
     else if (notification.notificationStatus === "ERROR")
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
+  };
+
+  const checkPath = (notification) => {
+    if (notification.notificationType === "MONEY_TRANSFER") return "/transferi";
+    else if (notification.notificationType === "TRANSACTION")
+      return "/pregledTransakcija";
+    else if (notification.notificationType === "ACCOUNT_BALANCE")
+      return "/dodaniRacuni";
   };
 
   const content = () => {
@@ -161,14 +168,9 @@ function HomePage() {
                   actions={[
                     <Link
                       onClick={() => {
-                        if (item.notificationType === "MONEY_TRANSFER")
-                          handleTransfer(item);
-                        else if (item.notificationType === "TRANSACTION")
-                          handleTransaction(item);
-                        else if (item.notificationType === "ACCOUNT_BALANCE")
-                          handleAccount(item);
+                        handleNotification(item);
                       }}
-                      to="/notifikacije"
+                      to={checkPath(item)}
                     >
                       See more
                     </Link>,
@@ -380,6 +382,7 @@ function HomePage() {
                 <Route path="/pocetna" component={Home} />
                 <Route path="/logout" component={Logout} />
                 <Route path="/prijava" component={Prijava} />
+                <Route path="/transferi" component={Transferi} />
               </Switch>
             </Content>
           </Layout>
