@@ -5,6 +5,7 @@ import Highlighter from "react-highlight-words";
 import {SearchOutlined} from "@ant-design/icons";
 import {getToken} from "../utilities/Common";
 import axios from "axios";
+import "../css/NotificationRow.css";
 
 class BankAccTable extends Component {
     state = {
@@ -31,6 +32,7 @@ class BankAccTable extends Component {
                 response.data.forEach(account => {
                     accounts.push({
                         key: ++this.state.key,
+                        id: account.id,
                         accountOwner: account.accountOwner,
                         bankName: account.bankName,
                         expiryDate: account.expiryDate.substr(0, 10),
@@ -38,7 +40,6 @@ class BankAccTable extends Component {
                     });
                 });
                 this.setState({data: accounts}, () => {
-                    console.log(this.state.data);
                 });
             })
             .catch(err => console.log(err));
@@ -168,7 +169,21 @@ class BankAccTable extends Component {
             }
         ];
 
-        return <Table columns={columns} dataSource={this.state.data}/>;
+        return <Table columns={columns}
+                      dataSource={this.state.data}
+                      rowClassName={(record, index) => {
+                          if (this.props.location.notification != null &&
+                              record.id === this.props.location.notification.subjectId) {
+                              if (this.props.location.notification.notificationStatus === "INFO") {
+                                  return 'table-row-notification-info';
+                              } else if (this.props.location.notification.notificationStatus === "WARNING") {
+                                  return 'table-row-notification-warning';
+                              } else {
+                                  return 'table-row-notification-error';
+                              }
+                          }
+                      }}
+        />;
     }
 }
 
