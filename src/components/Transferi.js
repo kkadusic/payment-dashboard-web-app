@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getToken, getNotification, getTransfer } from "../utilities/Common";
-import { Table, Tag, Select } from "antd";
+import { Table, Tag, Select, Button } from "antd";
+import { Link } from "react-router-dom";
 import "antd/dist/antd.css";
 import "../css/Transferi.css";
 
 function Transferi() {
   const [transfers, setTransfers] = useState([]);
   const [accounts, setAccounts] = useState([]);
-  const [defaultAccount, setDefaultAccount] = useState(
-    getTransfer().sourceCardNumber
-  );
+  const [defaultAccount, setDefaultAccount] = useState({});
   // const [selectedRowKeys, setSelectedRowKeys] = useState([
   //   getNotification().subjectId,
   // ]);
@@ -41,10 +40,18 @@ function Transferi() {
     setAccounts([...response.data]);
   };
 
+  const getAccountId = (cardNumber, accounts) => {
+    accounts.forEach((account) => {
+      if (account.cardNumber === cardNumber) {
+        console.log(account.id);
+        getTransfers(account.id);
+        return account.id;
+      }
+    });
+  };
+
   useEffect(() => {
-    console.log(getTransfer().sourceCardNumber);
     getBankAccounts();
-    // setDefaultAccount(getTransfer().sourceCardNumber);
   }, []);
 
   const columns = [
@@ -76,24 +83,29 @@ function Transferi() {
   ];
 
   const handleAccChange = (value) => {
+    console.log("promjena");
     getTransfers(value.key);
   };
 
   return (
     <div>
-      <Select
-        labelInValue
-        placeholder="Select bank account"
-        style={{ width: 200 }}
-        onChange={handleAccChange}
-        defaultValue={defaultAccount}
-      >
-        {accounts.map((title) => (
-          <Select.Option key={title.id} value={title.id}>
-            {title.cardNumber}
-          </Select.Option>
-        ))}
-      </Select>
+      <div style={{ display: "inline-block" }}>
+        <p style={{ float: "left", marginRight: "10px", color: "#030852" }}>
+          Money is transfered from account:{" "}
+        </p>
+        <Select
+          labelInValue
+          placeholder="Select bank account"
+          style={{ width: 200 }}
+          onChange={handleAccChange}
+        >
+          {accounts.map((title) => (
+            <Select.Option key={title.id} value={title.id}>
+              {title.cardNumber}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
       <br></br>
       <br></br>
       <Table
@@ -102,7 +114,7 @@ function Transferi() {
         rowKey="id"
         rowClassName={(record, index) => {
           const notification = getNotification();
-          if (notification != null && record.key === notification.subjectId) {
+          if (notification != null && record.id === notification.subjectId) {
             if (notification.notificationStatus === "INFO") return "tr-info";
             else if (notification.notificationStatus === "WARNING")
               return "tr-warning";
@@ -110,6 +122,9 @@ function Transferi() {
           }
         }}
       />
+      {/* <Button style={{ background: "#030852", color: "white", margin: "10px" }}>
+        <Link to="/notifikacije">See all notifications</Link>
+      </Button> */}
     </div>
   );
 }
