@@ -369,7 +369,15 @@ function HomePage() {
 
               <Menu.Item key="logout">
                 <LogoutOutlined />
-                <Link to="/logout">Log out</Link>
+                <Link
+                  // to="/logout"
+                  to={{
+                    pathname: "/logout",
+                    stompClient: stompClient,
+                  }}
+                >
+                  Log out
+                </Link>
               </Menu.Item>
             </Menu>
           </Sider>
