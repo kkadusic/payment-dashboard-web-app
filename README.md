@@ -7,7 +7,7 @@
 <a href="https://github.com/ahajradino1" target="_blank"><img width="100px" height="100px" src="https://github.com/ahajradino1.png"></a>
 <a href="https://github.com/kkadusic" target="_blank"><img width="100px" height="100px" src="https://github.com/kkadusic.png"></a>
 <a href="https://github.com/AmilaFejzic" target="_blank"><img width="100px" height="100px" src="https://github.com/AmilaFejzic.png"></a>
-<a href="https://github.com/epita1" target="_blank"><img width="100px" height="100px" src="https://github.com/epita1.png"></a>
+<a href="https://github.com/emirpita" target="_blank"><img width="100px" height="100px" src="https://github.com/emirpita.png"></a>
 <a href="https://github.com/nermin97" target="_blank"><img width="100px" height="100px" src="https://github.com/nermin97.png"></a>
 <a href="https://github.com/crahic1" target="_blank"><img width="100px" height="100px" src="https://github.com/crahic1.png"></a>
 
