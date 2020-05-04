@@ -39,9 +39,11 @@ class PregledTransakcija extends Component {
   };
 
   load = (response) => {
+    //sort transactions
     const transactions = [];
     let suma = 0;
-    response.data.forEach((transaction) => {
+    let data = response.data.sort((a, b) => {return new Date(b.date) - new Date(a.date) })
+    data.forEach((transaction) => {
       transactions.push({
         key: transaction.transactionId,
         cardNumber: transaction.cardNumber,
@@ -184,9 +186,11 @@ class PregledTransakcija extends Component {
         </Button>
         <Button
           onClick={() => {
-            dataIndex !== "service"
+            /*dataIndex !== "service"
               ? this.handleReset(clearFilters)
-              : this.getTransactions();
+              : this.getTransactions();*/
+            if (dataIndex === "service") this.getTransactions();
+            this.handleReset(clearFilters);
           }}
           size="small"
           style={{ width: 90 }}
@@ -471,6 +475,12 @@ class PregledTransakcija extends Component {
 
     const columns = [
       {
+        title: "Transaction ID",
+        dataIndex: "key",
+        key: "key",
+        width: "18%",
+      },
+      {
         title: "Card number",
         dataIndex: "cardNumber",
         key: "cardNumber",
@@ -491,27 +501,17 @@ class PregledTransakcija extends Component {
         ...this.getColumnSearchProps("merchantName"),
       },
       {
-        title: "Transaction ID",
-        dataIndex: "key",
-        key: "key",
-        width: "25%",
-        render: (tags) => (
-          <span>
-            {tags.map((tag) => {
-              return (
-                <Tag color={"geekblue"} key={tag}>
-                  {tag}
-                </Tag>
-              );
-            })}
-          </span>
-        ),
+        title: "Service",
+        dataIndex: "service",
+        key: "service",
+        ellipsis: true,
         ...this.getColumnSearchProps("service"),
       },
       {
         title: "Date and time",
         dataIndex: "date",
         key: "date",
+        width: "18%",
         sorter: (a, b) => {
           return a.date.localeCompare(b.date);
         },
@@ -538,9 +538,20 @@ class PregledTransakcija extends Component {
         expandable={{
           expandedRowRender: (record) => this.expandedRowRender(record),
         }}
+        rowClassName={(item, index) => {
+          if (this.props.location.notification != null && item.key === this.props.location.notification.subjectId) {
+            if (this.props.location.notification.notificationStatus === "INFO" ) {
+              return 'notificiation-info';
+            } else if (this.props.location.notification.notificationStatus === "WARNING" &&
+                 this.props.location.notification.message === "You have made a payment above 500.0") {
+                   return 'notification-warning'
+                 }
+          }
+        }}
         expandedRowKeys={this.state.expandedKeys}
         onChange={(pagination, filter, sorter, currentTable) => {
           let suma = 0;
+          console.log(currentTable.currentDataSource);
           currentTable.currentDataSource.forEach((red) => {
             suma += red.totalPrice;
           });
@@ -559,6 +570,7 @@ class PregledTransakcija extends Component {
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td id="totalSum">
                   {<Text strong>{pageSum.toFixed(3)} KM</Text>}
                 </td>
@@ -567,6 +579,7 @@ class PregledTransakcija extends Component {
               <tr>
                 <td></td>
                 <th>Grand total</th>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

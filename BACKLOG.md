@@ -307,3 +307,109 @@ Korisnik Payment Dashboard web aplikacije mora imati mogućnost pregleda merchan
 - Dodati mogućnost prikaza rezultata za sve postojeće bankovne račune na jednom dijagramu
 - Uraditi push koda
 - Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i uspješnoj transakciji na koju se ista odnosi
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije da je izvršeno plaćanje aplikacijom PayApp
+
+## Task
+
+- Omogućiti preusmjeravanje na komponentu sa prikazom svih uspješnjih transakcija
+- Označiti plavom bojom red tabele u kojem se nalazi odgovarajuća transakcija
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i transakciji sa iznosom iznad 500 KM na koju se ista odnosi
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije da je izvršena transakcija sa iznosom iznad 500 KM
+
+## Task
+
+- Omogućiti preusmjeravanje na komponentu sa prikazom svih uspješnjih transakcija
+- Označiti žutom bojom red tabele u kojem se nalazi odgovarajuća transakcija
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i neuspješnoj transakciji na koju se ista odnosi
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije o neuspjelom plaćanju na PayApp
+
+## Task
+
+- Kreirati Modal sa prikazom detalja o notifikaciji i transakciji koja nije uspjela
+- Omogućiti prikaz kreiranog Modala
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i bankovnom računu sa kojeg su plaćene transakcije u iznosu većem od 1000 KM u tekućem mjesecu
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije da je dostigao limit mjesečnih troškova (1000 KM)
+
+## Task
+
+- Omogućiti preusmjeravanje na komponentu sa prikazom svih bankovnih računa
+- Označiti žutom bojom red tabele u kojem se nalazi odgovarajući bankovni račun
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i bankovnom računu na kojem su resursi ispod 5 KM
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije o stanju računa - na primjer da će nakon transakcije stanje na računu biti manje od donje granice (5 KM)
+
+## Task
+
+- Omogućiti preusmjeravanje na komponentu sa prikazom svih bankovnih računa
+- Označiti žutom bojom red tabele u kojem se nalazi odgovarajući bankovni račun
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i neuspješnom transferu novca na koji se ista odnosi
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije da je transfer novca sa nekog od njegovih računa neuspješan
+
+## Task
+
+- Kreirati Modal sa prikazom detalja o notifikaciji i transakciji koja nije uspjela
+- Omogućiti prikaz kreiranog Modala
+- Uraditi push koda
+- Napraviti pull request
+
+# Feature
+
+Prikaz detalja o notifikaciji i uspješnom transferu novca na koji se ista odnosi
+
+## Item
+
+Korisnik Payment Dashboard web aplikacije treba imati mogućnost primanja i pregleda notifikacije da je izvršen transfer novca sa nekog od njegovih računa
+
+## Task
+
+- Kreirati tabelu sa prikazom svih uspješnih transfera novca
+- Omogućiti preusmjeravanje na komponentu sa prikazom svih uspješnih transfera
+- Označiti plavom bojom red tabele u kojem se nalazi odgovarajući transfer
+- Uraditi push koda
+- Napraviti pull request

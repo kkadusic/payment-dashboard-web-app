@@ -1,4 +1,8 @@
 // Set user and token to local storage
+import {Modal} from "antd";
+import React from "react";
+import axios from "axios";
+
 export const saveUserToken = (token, tokenType) => {
   localStorage.setItem("token", token);
   localStorage.setItem("tokenType", tokenType);
@@ -20,4 +24,20 @@ export const getToken = () => {
 
 export const getUser = () => {
   return localStorage.getItem("userData");
+};
+
+export const saveNotification = (notification) => {
+  localStorage.setItem("notification", JSON.stringify(notification));
+};
+
+export const getNotification = () => {
+  return JSON.parse(localStorage.getItem("notification"));
+};
+
+export const saveTransfer = (transfer) => {
+  localStorage.setItem("transfer", JSON.stringify(transfer));
+};
+
+export const getTransfer = () => {
+  return JSON.parse(localStorage.getItem("transfer"));
 };
