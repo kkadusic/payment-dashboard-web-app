@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 import { getUser } from "../utilities/Common";
+import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
 
 import { Layout, Menu, Avatar, Badge, Popover, Empty, List } from "antd";
@@ -37,42 +44,118 @@ import TransakcijeBankovni from "./transactions/TransakcijeBankovni";
 import Notifikacije from "./Notifikacije";
 import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
+import axios from "axios";
+import { getToken } from "../utilities/Common";
+import Transferi from "./Transferi";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
-const SERVER_URL = " ";
+const SERVER_URL = "https://payment-server-si.herokuapp.com/websocket";
 let stompClient;
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
-  const [response, setResponse] = useState("");
   const [notifications, setNotifications] = useState([
-    {
-      notificationId: "jsjsjsjsjssiij",
-      subjectId: "idTransakcije",
-      message: "poruka",
-      notificationStatus: "INFO",
-      notificationType: "TRANSACTION",
-    },
+      // {
+      //     message: "poruka",
+      //     notificationDateAndTime: "2020-05-03T13:38:43.568Z",
+      //     notificationId: "id1",
+      //     notificationStatus: "INFO",
+      //     notificationType: "ACCOUNT_BALANCE",
+      //     read: true,
+      //     subjectId: 1
+      // },
+      // {
+      //     message: "poruka",
+      //     notificationDateAndTime: "2020-06-03T13:38:43.568Z",
+      //     notificationId: "id2",
+      //     notificationStatus: "ERROR",
+      //     notificationType: "ACCOUNT_BALANCE",
+      //     read: true,
+      //     subjectId: 2
+      // },
+      // {
+      //     message: "poruka",
+      //     notificationDateAndTime: "2020-07-03T13:38:43.568Z",
+      //     notificationId: "id3",
+      //     notificationStatus: "WARNING",
+      //     notificationType: "ACCOUNT_BALANCE",
+      //     read: true,
+      //     subjectId: 3
+      // },
+      // {
+      //     message: "poruka33",
+      //     notificationDateAndTime: "2020-08-03T13:38:43.568Z",
+      //     notificationId: "id4",
+      //     notificationStatus: "ERROR",
+      //     notificationType: "MONEY_TRANSFER",
+      //     read: true,
+      //     subjectId: 4
+      // },
+      // {
+      //     message: "poruka",
+      //     notificationDateAndTime: "2020-05-03T13:38:43.568Z",
+      //     notificationId: "id1",
+      //     notificationStatus: "WARNING",
+      //     notificationType: "TRANSACTION",
+      //     read: true,
+      //     subjectId: 1
+      // }
   ]);
   const [count, setCount] = useState(0);
 
-  // useEffect(() => {
-  //   const socket = new SockJS(SERVER_URL);
-  //   stompClient = Stomp.over(socket);
-  //   stompClient.connect(
-  //     {},
-  //     () => {
-  //       stompClient.subscribe("/topic/news", (msg) => {
-  //         const data = JSON.parse(msg.body);
-  //         setResponse((res) => [data, ...res]);
-  //         setCount(count + 1);
-  //       });
-  //     },
-  //     (err) => console.log(err)
-  //   );
-  // }, []);
+  const getUnreadNotifications = () => {
+    axios
+      .get("https://payment-server-si.herokuapp.com/api/notifications/unread", {
+        headers: {
+          Authorization: "Bearer " + getToken(),
+        },
+      })
+      .then((res) => {
+        setNotifications(res.data);
+        setCount(notifications.length);
+        console.log(notifications);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getUnreadNotifications();
+    const socket = new SockJS(SERVER_URL);
+    stompClient = Stomp.over(socket);
+    stompClient.connect(
+      {},
+      () => {
+        stompClient.subscribe(
+          "/queue/reply" + JSON.parse(getUser()).username,
+          (msg) => {
+            console.log("OVDEEE");
+            const data = JSON.parse(msg.body);
+            setCount((count) => count + 1);
+            setNotifications((oldArray) => [...oldArray, data]);
+            console.log({ response: data, count: count });
+          }
+        );
+      },
+      (err) => console.log(err)
+    );
+  }, []);
+
+  const handleNotification = (notification) => {
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/notifications/specific/" +
+          notification.notificationId,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then(() => {
+        getUnreadNotifications();
+      })
+      .catch((err) => console.log(err));
+  };
 
   const checkType = (notification) => {
     if (notification.notificationStatus === "INFO")
@@ -83,32 +166,72 @@ function HomePage() {
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
+  const checkPath = (notification) => {
+    if (
+      notification.notificationType === "INFO" &&
+      notification.notificationType === "MONEY_TRANSFER"
+    )
+      return "/transferi";
+    else if (notification.notificationType === "TRANSACTION")
+      return "/pregledTransakcija";
+    else if (notification.notificationType === "ACCOUNT_BALANCE")
+      return "/pregledRacuna";
+  };
+
   const content = () => {
     return (
       <div>
-        <p style={{ color: "#030852" }}>See all notifications</p>
+        <Link to="/notifikacije" style={{ color: "#030852" }}>
+          See all notifications
+        </Link>
 
         {notifications.length === 0 ? (
           <Empty description="No new notifications"></Empty>
         ) : (
-          <List
-            itemLayout="horizontal"
-            dataSource={notifications}
-            renderItem={(notification) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      style={{ backgroundColor: "white" }}
-                      icon={checkType(notification)}
-                    />
-                  }
-                  title={notification.notificationType}
-                  description={notification.message}
-                />
-              </List.Item>
-            )}
-          />
+          <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            useWindow={false}
+            loadMore={() => {}}
+            style={{
+              overflow: "auto",
+              padding: "8px 24px",
+              height: "300px",
+            }}
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={notifications}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Link
+                      onClick={() => {
+                        handleNotification(item);
+                      }}
+                      to={{
+                        pathname: checkPath(item),
+                        notification: item,
+                      }}
+                    >
+                      See more
+                    </Link>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        style={{ backgroundColor: "white" }}
+                        icon={checkType(item)}
+                      />
+                    }
+                    title={item.notificationDateAndTime}
+                    description={item.message}
+                  />
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
         )}
       </div>
     );
@@ -134,7 +257,7 @@ function HomePage() {
             </Avatar>
             <Popover
               placement="bottomLeft"
-              title="New notification"
+              title="New notifications"
               content={content}
               trigger="click"
             >
@@ -301,6 +424,7 @@ function HomePage() {
                 <Route path="/pocetna" component={Home} />
                 <Route path="/logout" component={Logout} />
                 <Route path="/prijava" component={Prijava} />
+                <Route path="/transferi" component={Transferi} />
               </Switch>
             </Content>
           </Layout>

@@ -1,0 +1,11 @@
+.table-row-notification-info {
+    background-color: #cae9f8;
+}
+
+.table-row-notification-warning {
+    background-color: #f5e0b7;
+}
+
+.table-row-notification-error {
+    background-color: #f3cccc;
+}
