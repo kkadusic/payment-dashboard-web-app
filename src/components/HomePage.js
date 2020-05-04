@@ -113,7 +113,7 @@ function HomePage() {
         },
       })
       .then((res) => {
-        //setNotifications(res.data);
+        setNotifications(res.data);
         setCount(notifications.length);
         console.log(notifications);
       })
