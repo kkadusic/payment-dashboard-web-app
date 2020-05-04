@@ -8,6 +8,11 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
+import {
+  notificationStatus,
+  notificationType,
+  showFailedTransaction,
+} from "../utilities/notificationHandlers";
 import { showFailedTransfer } from "./NeuspjesniTransferi";
 
 function Notifikacije() {
@@ -50,11 +55,11 @@ function Notifikacije() {
   useEffect(getNotifications, []);
 
   const checkType = (notification) => {
-    if (notification.notificationStatus === "INFO")
+    if (notification.notificationStatus === notificationStatus.INFO)
       return <InfoCircleTwoTone twoToneColor="#41bdf2" />;
-    else if (notification.notificationStatus === "WARNING")
+    else if (notification.notificationStatus === notificationStatus.WARNING)
       return <WarningTwoTone twoToneColor="#f0a800" />;
-    else if (notification.notificationStatus === "ERROR")
+    else if (notification.notificationStatus === notificationStatus.ERROR)
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
@@ -69,9 +74,13 @@ function Notifikacije() {
       notification.notificationType === "MONEY_TRANSFER"
     )
       return "/notifikacije";
-    else if (notification.notificationType === "TRANSACTION")
-      return "/pregledTransakcija";
-    else if (notification.notificationType === "ACCOUNT_BALANCE")
+    else if (notification.notificationType === notificationType.TRANSACTION) {
+      if (notification.notificationStatus === notificationStatus.ERROR)
+        return "/notifikacije";
+      else return "/pregledTransakcija";
+    } else if (
+      notification.notificationType === notificationType.ACCOUNT_BALANCE
+    )
       return "/pregledRacuna";
   };
 
@@ -114,7 +123,13 @@ function Notifikacije() {
                       transferDetails(notification.subjectId);
                       if (notification.notificationStatus === "ERROR")
                         showFailedTransfer(notification);
-                    }
+                    } else if (
+                      notification.notificationType ==
+                        notificationType.TRANSACTION &&
+                      notification.notificationStatus ==
+                        notificationStatus.ERROR
+                    )
+                      showFailedTransaction(notification);
                   }}
                   to={{
                     pathname: checkPath(notification),

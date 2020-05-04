@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
+import {
+  notificationStatus,
+  notificationType,
+  showFailedTransaction,
+} from "../utilities/notificationHandlers";
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
 
@@ -44,6 +49,8 @@ import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 import Transferi from "./Transferi";
 import { showFailedTransfer } from "./NeuspjesniTransferi";
 
+const ReachableContext = React.createContext();
+const UnreachableContext = React.createContext();
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -118,11 +125,11 @@ function HomePage() {
   };
 
   const checkType = (notification) => {
-    if (notification.notificationStatus === "INFO")
+    if (notification.notificationStatus === notificationStatus.INFO)
       return <InfoCircleTwoTone twoToneColor="#41bdf2" />;
-    else if (notification.notificationStatus === "WARNING")
+    else if (notification.notificationStatus === notificationStatus.WARNING)
       return <WarningTwoTone twoToneColor="#f0a800" />;
-    else if (notification.notificationStatus === "ERROR")
+    else if (notification.notificationStatus === notificationStatus.ERROR)
       return <CloseCircleTwoTone twoToneColor="#f00000" />;
   };
 
@@ -137,9 +144,11 @@ function HomePage() {
       notification.notificationType === "MONEY_TRANSFER"
     )
       return "/notifikacije";
-    else if (notification.notificationType === "TRANSACTION")
-      return "/pregledTransakcija";
-    else if (notification.notificationType === "ACCOUNT_BALANCE")
+    else if (notification.notificationType === "TRANSACTION") {
+      if (notification.notificationStatus === notificationStatus.ERROR)
+        return "/notifikacije";
+      else return "/pregledTransakcija";
+    } else if (notification.notificationType === "ACCOUNT_BALANCE")
       return "/pregledRacuna";
   };
 
@@ -185,22 +194,30 @@ function HomePage() {
             <List
               itemLayout="horizontal"
               dataSource={notifications}
-              renderItem={(item) => (
+              renderItem={(notification) => (
                 <List.Item
                   actions={[
                     <Link
                       onClick={() => {
-                        handleNotification(item);
-                        saveNotification(item);
-                        if (item.notificationType === "MONEY_TRANSFER") {
-                          transferDetails(item.subjectId);
-                          if (item.notificationStatus === "ERROR")
-                            showFailedTransfer(item);
+                        handleNotification(notification);
+                        if (
+                          notification.notificationType ==
+                            notificationType.TRANSACTION &&
+                          notification.notificationStatus ==
+                            notificationStatus.ERROR
+                        )
+                          showFailedTransaction(notification);
+                        else if (
+                          notification.notificationType === "MONEY_TRANSFER"
+                        ) {
+                          transferDetails(notification.subjectId);
+                          if (notification.notificationStatus === "ERROR")
+                            showFailedTransfer(notification);
                         }
                       }}
                       to={{
-                        pathname: checkPath(item),
-                        notification: item,
+                        pathname: checkPath(notification),
+                        notification: notification,
                       }}
                     >
                       See more
@@ -211,11 +228,11 @@ function HomePage() {
                     avatar={
                       <Avatar
                         style={{ backgroundColor: "white" }}
-                        icon={checkType(item)}
+                        icon={checkType(notification)}
                       />
                     }
-                    title={item.notificationDateAndTime}
-                    description={item.message}
+                    title={notification.notificationDateAndTime}
+                    description={notification.message}
                   />
                 </List.Item>
               )}
