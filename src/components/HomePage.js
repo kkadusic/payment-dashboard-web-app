@@ -9,6 +9,7 @@ import {
 } from "../utilities/notificationHandlers";
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
+import notificationSound from "../audio/notification-sound.mp3";
 
 import { Layout, Menu, Avatar, Badge, Popover, Empty, List } from "antd";
 import {
@@ -57,6 +58,7 @@ const { Header, Content, Sider, Footer } = Layout;
 
 const SERVER_URL = "https://payment-server-si.herokuapp.com/websocket";
 let stompClient;
+let audio = new Audio(notificationSound);
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
@@ -88,6 +90,7 @@ function HomePage() {
         stompClient.subscribe(
           "/queue/reply/" + JSON.parse(getUser()).username,
           (msg) => {
+            audio.play();
             const data = JSON.parse(msg.body);
             setCount((count) => count + 1);
             setNotifications((oldArray) => [...oldArray, data]);
