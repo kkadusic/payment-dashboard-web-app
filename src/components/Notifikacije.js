@@ -14,10 +14,7 @@ import {
   showFailedTransaction,
   showCanceledTransaction,
 } from "../utilities/notificationHandlers";
-import {
-  showFailedTransfer,
-  showSucceededTransfer,
-} from "./NeuspjesniTransferi";
+import { showFailedTransfer, showSucceededTransfer } from "./HandleTransfer";
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([]);

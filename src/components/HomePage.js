@@ -49,10 +49,7 @@ import * as Stomp from "stompjs";
 import axios from "axios";
 import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 import Transferi from "./Transferi";
-import {
-  showFailedTransfer,
-  showSucceededTransfer,
-} from "./NeuspjesniTransferi";
+import { showFailedTransfer, showSucceededTransfer } from "./HandleTransfer";
 
 const ReachableContext = React.createContext();
 const UnreachableContext = React.createContext();
