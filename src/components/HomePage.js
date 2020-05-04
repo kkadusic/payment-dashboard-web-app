@@ -189,7 +189,7 @@ function HomePage() {
           >
             <List
               itemLayout="horizontal"
-              dataSource={notifications}
+              dataSource={notifications.reverse()}
               renderItem={(notification) => (
                 <List.Item
                   actions={[
