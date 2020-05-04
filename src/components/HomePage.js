@@ -49,7 +49,7 @@ import * as Stomp from "stompjs";
 import axios from "axios";
 import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 import Transferi from "./Transferi";
-import { showFailedTransfer } from "./NeuspjesniTransferi";
+import { showFailedTransfer, showSucceededTransfer } from "./HandleTransfer";
 
 const ReachableContext = React.createContext();
 const UnreachableContext = React.createContext();
@@ -127,15 +127,7 @@ function HomePage() {
   };
 
   const checkPath = (notification) => {
-    if (
-      notification.notificationStatus === "INFO" &&
-      notification.notificationType === "MONEY_TRANSFER"
-    )
-      return "/transferi";
-    else if (
-      notification.notificationStatus === "ERROR" &&
-      notification.notificationType === "MONEY_TRANSFER"
-    )
+    if (notification.notificationType === "MONEY_TRANSFER")
       return "/notifikacije";
     else if (notification.notificationType === "TRANSACTION") {
       if (
@@ -216,6 +208,8 @@ function HomePage() {
                           transferDetails(notification.subjectId);
                           if (notification.notificationStatus === "ERROR")
                             showFailedTransfer(notification);
+                          else if (notification.notificationStatus === "INFO")
+                            showSucceededTransfer(notification);
                         }
                       }}
                       to={{

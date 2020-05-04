@@ -78,6 +78,18 @@ export const showFailedTransfer = async (notification) => {
   });
 };
 
+export const showSucceededTransfer = async (notification) => {
+  const transfer = await transferDetails(notification.subjectId);
+  Modal.success({
+    keyboard: true,
+    mask: true,
+    maskClosable: true,
+    width: "500px",
+    title: notification.notificationType,
+    content: getCustomCollapse(notification, transfer),
+  });
+};
+
 const transferDetails = (id) => {
   return axios
     .get(
