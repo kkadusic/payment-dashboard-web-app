@@ -9,3 +9,29 @@
 .tr-error {
   background-color: #efc4c4;
 }
+
+.failed-transfer,
+.failed-transfer tr {
+  border: 1px solid #030852;
+  color: #030852;
+}
+
+.failed-transfer {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.failed-transfer td {
+  border: 1px solid #030852;
+
+  padding: 10px;
+}
+
+.failed-transfer th {
+  color: white;
+  background: #030852;
+}
+
+.first-col {
+  text-align: left;
+}

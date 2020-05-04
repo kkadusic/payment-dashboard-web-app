@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
+import { showFailedTransfer } from "./NeuspjesniTransferi";
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([
@@ -63,6 +64,11 @@ function Notifikacije() {
       notification.notificationType === "MONEY_TRANSFER"
     )
       return "/transferi";
+    else if (
+      notification.notificationStatus === "ERROR" &&
+      notification.notificationType === "MONEY_TRANSFER"
+    )
+      return "/notifikacije";
     else if (notification.notificationType === "TRANSACTION")
       return "/pregledTransakcija";
     else if (notification.notificationType === "ACCOUNT_BALANCE")
@@ -104,8 +110,11 @@ function Notifikacije() {
                 <Link
                   onClick={() => {
                     saveNotification(notification);
-                    if (notification.notificationType === "MONEY_TRANSFER")
+                    if (notification.notificationType === "MONEY_TRANSFER") {
                       transferDetails(notification.subjectId);
+                      if (notification.notificationStatus === "ERROR")
+                        showFailedTransfer(notification);
+                    }
                   }}
                   to={{
                     pathname: checkPath(notification),

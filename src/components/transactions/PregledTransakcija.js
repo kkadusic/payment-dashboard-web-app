@@ -39,9 +39,11 @@ class PregledTransakcija extends Component {
   };
 
   load = (response) => {
+    //sort transactions
     const transactions = [];
     let suma = 0;
-    response.data.forEach((transaction) => {
+    let data = response.data.sort((a, b) => {return new Date(b.date) - new Date(a.date) })
+    data.forEach((transaction) => {
       transactions.push({
         key: transaction.transactionId,
         cardNumber: transaction.cardNumber,
@@ -535,6 +537,16 @@ class PregledTransakcija extends Component {
         onExpand={(expanded, render) => this.onTableRowExpand(expanded, render)}
         expandable={{
           expandedRowRender: (record) => this.expandedRowRender(record),
+        }}
+        rowClassName={(item, index) => {
+          if (this.props.location.notification != null && item.key === this.props.location.notification.subjectId) {
+            if (this.props.location.notification.notificationStatus === "INFO" ) {
+              return 'notificiation-info';
+            } else if (this.props.location.notification.notificationStatus === "WARNING" &&
+                 this.props.location.notification.message === "You have made a payment above 500.0") {
+                   return 'notification-warning'
+                 }
+          }
         }}
         expandedRowKeys={this.state.expandedKeys}
         onChange={(pagination, filter, sorter, currentTable) => {

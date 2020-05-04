@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { getUser } from "../utilities/Common";
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
@@ -21,6 +15,7 @@ import {
   InfoCircleTwoTone,
   WarningTwoTone,
   CloseCircleTwoTone,
+  SwapOutlined,
 } from "@ant-design/icons";
 
 import Home from "./Home";
@@ -45,8 +40,9 @@ import Notifikacije from "./Notifikacije";
 import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
 import axios from "axios";
-import { getToken } from "../utilities/Common";
+import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 import Transferi from "./Transferi";
+import { showFailedTransfer } from "./NeuspjesniTransferi";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -57,51 +53,15 @@ let stompClient;
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
   const [notifications, setNotifications] = useState([
-      // {
-      //     message: "poruka",
-      //     notificationDateAndTime: "2020-05-03T13:38:43.568Z",
-      //     notificationId: "id1",
-      //     notificationStatus: "INFO",
-      //     notificationType: "ACCOUNT_BALANCE",
-      //     read: true,
-      //     subjectId: 1
-      // },
-      // {
-      //     message: "poruka",
-      //     notificationDateAndTime: "2020-06-03T13:38:43.568Z",
-      //     notificationId: "id2",
-      //     notificationStatus: "ERROR",
-      //     notificationType: "ACCOUNT_BALANCE",
-      //     read: true,
-      //     subjectId: 2
-      // },
-      // {
-      //     message: "poruka",
-      //     notificationDateAndTime: "2020-07-03T13:38:43.568Z",
-      //     notificationId: "id3",
-      //     notificationStatus: "WARNING",
-      //     notificationType: "ACCOUNT_BALANCE",
-      //     read: true,
-      //     subjectId: 3
-      // },
-      // {
-      //     message: "poruka33",
-      //     notificationDateAndTime: "2020-08-03T13:38:43.568Z",
-      //     notificationId: "id4",
-      //     notificationStatus: "ERROR",
-      //     notificationType: "MONEY_TRANSFER",
-      //     read: true,
-      //     subjectId: 4
-      // },
-      // {
-      //     message: "poruka",
-      //     notificationDateAndTime: "2020-05-03T13:38:43.568Z",
-      //     notificationId: "id1",
-      //     notificationStatus: "WARNING",
-      //     notificationType: "TRANSACTION",
-      //     read: true,
-      //     subjectId: 1
-      // }
+    // {
+    //   notificationId: "9e9bdf6a-4534-45e8-9a01-cd9e418920d3",
+    //   subjectId: "0ccb3fde-7990-11ea-bc55-0242ac130003",
+    //   message: "Could not proceed with transfer due to insufficient funds!!",
+    //   notificationStatus: "INFO",
+    //   notificationType: "TRANSACTION",
+    //   notificationDateAndTime: "03.05.2020 01:02:44",
+    //   read: false,
+    // },
   ]);
   const [count, setCount] = useState(0);
 
@@ -128,7 +88,7 @@ function HomePage() {
       {},
       () => {
         stompClient.subscribe(
-          "/queue/reply" + JSON.parse(getUser()).username,
+          "/queue/reply/" + JSON.parse(getUser()).username,
           (msg) => {
             console.log("OVDEEE");
             const data = JSON.parse(msg.body);
@@ -168,14 +128,37 @@ function HomePage() {
 
   const checkPath = (notification) => {
     if (
-      notification.notificationType === "INFO" &&
+      notification.notificationStatus === "INFO" &&
       notification.notificationType === "MONEY_TRANSFER"
     )
       return "/transferi";
+    else if (
+      notification.notificationStatus === "ERROR" &&
+      notification.notificationType === "MONEY_TRANSFER"
+    )
+      return "/notifikacije";
     else if (notification.notificationType === "TRANSACTION")
       return "/pregledTransakcija";
     else if (notification.notificationType === "ACCOUNT_BALANCE")
       return "/pregledRacuna";
+  };
+
+  const transferDetails = (id) => {
+    axios
+      .get(
+        "https://payment-server-si.herokuapp.com/api/accounts/moneyTransfer/" +
+          id,
+        {
+          headers: { Authorization: "Bearer " + getToken() },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        saveTransfer(response.data.transfers[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const content = () => {
@@ -196,7 +179,7 @@ function HomePage() {
             style={{
               overflow: "auto",
               padding: "8px 24px",
-              height: "300px",
+              height: "150px",
             }}
           >
             <List
@@ -208,6 +191,12 @@ function HomePage() {
                     <Link
                       onClick={() => {
                         handleNotification(item);
+                        saveNotification(item);
+                        if (item.notificationType === "MONEY_TRANSFER") {
+                          transferDetails(item.subjectId);
+                          if (item.notificationStatus === "ERROR")
+                            showFailedTransfer(item);
+                        }
                       }}
                       to={{
                         pathname: checkPath(item),
@@ -347,6 +336,11 @@ function HomePage() {
                   <Link to="/dodavanjeRacuna"> Add new account</Link>
                 </Menu.Item>
               </SubMenu>
+
+              <Menu.Item key="transferi">
+                <SwapOutlined />
+                <Link to="/transferi">Transfers</Link>
+              </Menu.Item>
 
               <Menu.Item key="notifikacije">
                 <NotificationOutlined />
