@@ -72,7 +72,7 @@ function HomePage() {
       })
       .then((res) => {
         setNotifications(res.data);
-        setCount(notifications.length);
+        setCount(res.data.length);
         console.log(notifications);
       })
       .catch((err) => console.log(err));
@@ -193,6 +193,7 @@ function HomePage() {
                     <Link
                       onClick={() => {
                         handleNotification(notification);
+                        saveNotification(notification);
                         if (
                           notification.notificationType ==
                             notificationType.TRANSACTION &&

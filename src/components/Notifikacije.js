@@ -17,29 +17,7 @@ import {
 import { showFailedTransfer } from "./NeuspjesniTransferi";
 
 function Notifikacije() {
-  const [notifications, setNotifications] = useState([
-    // {
-    //   notificationId: "jsjsjsjsjssiij",
-    //   subjectId: "idTransakcije",
-    //   message: "poruka",
-    //   notificationStatus: "INFO",
-    //   notificationType: "TRANSACTION",
-    // },
-    // {
-    //   notificationId: "jsjsjsjsjssiij",
-    //   subjectId: "idTransakcije",
-    //   message: "poruka",
-    //   notificationStatus: "ERROR",
-    //   notificationType: "TRANSACTION",
-    // },
-    // {
-    //   notificationId: "jsjsjsjsjssiij",
-    //   subjectId: "idTransakcije",
-    //   message: "poruka",
-    //   notificationStatus: "WARNING",
-    //   notificationType: "TRANSACTION",
-    // },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const getNotifications = () => {
     axios
