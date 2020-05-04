@@ -46,3 +46,7 @@ thead
   .ant-table-filter-trigger-container:hover {
   background: #030852;
 }
+
+.notificiation-info {
+  background-color: #cae9f8;
+}

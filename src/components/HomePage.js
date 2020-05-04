@@ -55,12 +55,12 @@ function HomePage() {
   const [notifications, setNotifications] = useState([
     // {
     //   notificationId: "9e9bdf6a-4534-45e8-9a01-cd9e418920d3",
-    //   subjectId: "1f246ef0-537f-4d8b-8fa0-1b1cd09dcb71",
+    //   subjectId: "0ccb3fde-7990-11ea-bc55-0242ac130003",
     //   message: "Could not proceed with transfer due to insufficient funds!!",
-    //   notificationStatus: "ERROR",
-    //   notificationType: "MONEY_TRANSFER",
+    //   notificationStatus: "INFO",
+    //   notificationType: "TRANSACTION",
     //   notificationDateAndTime: "03.05.2020 01:02:44",
-    //   read: true,
+    //   read: false,
     // },
   ]);
   const [count, setCount] = useState(0);
