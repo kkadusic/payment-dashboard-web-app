@@ -5,6 +5,7 @@ import {
   notificationStatus,
   notificationType,
   showFailedTransaction,
+  showCanceledTransaction,
 } from "../utilities/notificationHandlers";
 import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
@@ -59,17 +60,7 @@ let stompClient;
 
 function HomePage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("pocetna");
-  const [notifications, setNotifications] = useState([
-    // {
-    //   notificationId: "9e9bdf6a-4534-45e8-9a01-cd9e418920d3",
-    //   subjectId: "0ccb3fde-7990-11ea-bc55-0242ac130003",
-    //   message: "Could not proceed with transfer due to insufficient funds!!",
-    //   notificationStatus: "INFO",
-    //   notificationType: "TRANSACTION",
-    //   notificationDateAndTime: "03.05.2020 01:02:44",
-    //   read: false,
-    // },
-  ]);
+  const [notifications, setNotifications] = useState([]);
   const [count, setCount] = useState(0);
 
   const getUnreadNotifications = () => {
@@ -97,7 +88,6 @@ function HomePage() {
         stompClient.subscribe(
           "/queue/reply/" + JSON.parse(getUser()).username,
           (msg) => {
-            console.log("OVDEEE");
             const data = JSON.parse(msg.body);
             setCount((count) => count + 1);
             setNotifications((oldArray) => [...oldArray, data]);
@@ -145,7 +135,10 @@ function HomePage() {
     )
       return "/notifikacije";
     else if (notification.notificationType === "TRANSACTION") {
-      if (notification.notificationStatus === notificationStatus.ERROR)
+      if (
+        notification.notificationStatus === notificationStatus.ERROR ||
+        notification.message === "The transaction was canceled successfully!"
+      )
         return "/notifikacije";
       else return "/pregledTransakcija";
     } else if (notification.notificationType === "ACCOUNT_BALANCE")
@@ -207,6 +200,12 @@ function HomePage() {
                             notificationStatus.ERROR
                         )
                           showFailedTransaction(notification);
+                        else if (
+                          notification.notificationType === "TRANSACTION" &&
+                          notification.message ===
+                            "The transaction was canceled successfully!"
+                        )
+                          showCanceledTransaction(notification);
                         else if (
                           notification.notificationType === "MONEY_TRANSFER"
                         ) {

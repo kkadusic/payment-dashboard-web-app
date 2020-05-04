@@ -12,6 +12,7 @@ import {
   notificationStatus,
   notificationType,
   showFailedTransaction,
+  showCanceledTransaction,
 } from "../utilities/notificationHandlers";
 import { showFailedTransfer } from "./NeuspjesniTransferi";
 
@@ -75,7 +76,10 @@ function Notifikacije() {
     )
       return "/notifikacije";
     else if (notification.notificationType === notificationType.TRANSACTION) {
-      if (notification.notificationStatus === notificationStatus.ERROR)
+      if (
+        notification.notificationStatus === notificationStatus.ERROR ||
+        notification.message === "The transaction was canceled successfully!"
+      )
         return "/notifikacije";
       else return "/pregledTransakcija";
     } else if (
@@ -130,6 +134,12 @@ function Notifikacije() {
                         notificationStatus.ERROR
                     )
                       showFailedTransaction(notification);
+                    else if (
+                      notification.notificationType === "TRANSACTION" &&
+                      notification.message ===
+                        "The transaction was canceled successfully!"
+                    )
+                      showCanceledTransaction(notification);
                   }}
                   to={{
                     pathname: checkPath(notification),
