@@ -19,14 +19,17 @@ import { showFailedTransfer } from "./NeuspjesniTransferi";
 function Notifikacije() {
   const [notifications, setNotifications] = useState([]);
 
+  const compare = (a, b) => {
+    return b.notificationDateAndTime.localeCompare(a.notificationDateAndTime);
+  };
+
   const getNotifications = () => {
     axios
       .get("https://payment-server-si.herokuapp.com/api/notifications/all", {
         headers: { Authorization: "Bearer " + getToken() },
       })
       .then((res) => {
-        console.log(res.data);
-        setNotifications([...res.data]);
+        setNotifications([...res.data.sort(compare)]);
       })
       .catch((err) => console.log(err));
   };
@@ -94,7 +97,7 @@ function Notifikacije() {
       ) : (
         <List
           itemLayout="horizontal"
-          dataSource={notifications.reverse()}
+          dataSource={notifications}
           renderItem={(notification) => (
             <List.Item
               actions={[
@@ -126,16 +129,6 @@ function Notifikacije() {
                 >
                   See more
                 </Link>,
-                // <Link
-                //   onClick={() => {
-                //     saveNotification(notification);
-                //     if (notification.notificationType === "MONEY_TRANSFER")
-                //       transferDetails(notification.subjectId);
-                //   }}
-                //   to={checkPath(notification)}
-                // >
-                //   See more
-                // </Link>,
               ]}
             >
               <List.Item.Meta

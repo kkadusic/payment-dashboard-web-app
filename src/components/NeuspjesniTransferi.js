@@ -89,59 +89,8 @@ const transferDetails = (id) => {
     )
     .then((response) => {
       return response.data.transfers[0];
-      // console.log(response);
-      // saveTransfer(response.data.transfers[0]);
     })
     .catch((error) => {
       console.log(error);
     });
 };
-
-// return (
-// <div style={{ textAlign: "center" }}>
-//   <table className="failed-transfer">
-//     <thead>
-//       <tr rowSpan="2">
-//         <th colSpan="2">Failed transfer details</th>
-//       </tr>
-//     </thead>
-//     <tbody>
-//       <tr>
-//         <td className="first-col">Transfer id</td>
-//         <td>{getTransfer().id}</td>
-//       </tr>
-//       <tr>
-//         <td className="first-col">Transfered from</td>
-//         <td>{checkSrcAccount()}</td>
-//       </tr>
-//       <tr>
-//         <td className="first-col">Transfered to</td>
-//         <td>{checkDestAccount()}</td>
-//       </tr>
-//       <tr>
-//         <td className="first-col">Transfer date and time</td>
-//         <td>{getTransfer().transferDateAndTime}</td>
-//       </tr>
-//       <tr>
-//         <td className="first-col">Transfered amount</td>
-//         <td>{getTransfer().amount} KM</td>
-//       </tr>
-//       <tr>
-//         <td className="first-col">Payment status</td>
-//         <td>{getTransfer().paymentStatus}</td>
-//       </tr>
-//     </tbody>
-//   </table>
-//   <Button
-//     style={{
-//       background: "#030852",
-//       color: "white",
-//       marginLeft: "auto",
-//       marginRight: "auto",
-//       marginTop: "20px",
-//     }}
-//   >
-//     <Link to="/notifikacije">See all notifications</Link>
-//   </Button>
-// </div>
-//);
