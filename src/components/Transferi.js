@@ -117,6 +117,7 @@ function Transferi(props) {
           placeholder="Select bank account"
           style={{ width: 200 }}
           onChange={handleAccChange}
+          //    defaultValue={accounts[0].cardNumber}
         >
           {accounts.map((title) => (
             <Select.Option key={title.id} value={title.id}>

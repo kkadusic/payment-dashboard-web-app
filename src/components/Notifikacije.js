@@ -14,7 +14,10 @@ import {
   showFailedTransaction,
   showCanceledTransaction,
 } from "../utilities/notificationHandlers";
-import { showFailedTransfer } from "./NeuspjesniTransferi";
+import {
+  showFailedTransfer,
+  showSucceededTransfer,
+} from "./NeuspjesniTransferi";
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([]);
@@ -46,15 +49,7 @@ function Notifikacije() {
   };
 
   const checkPath = (notification) => {
-    if (
-      notification.notificationStatus === "INFO" &&
-      notification.notificationType === "MONEY_TRANSFER"
-    )
-      return "/transferi";
-    else if (
-      notification.notificationStatus === "ERROR" &&
-      notification.notificationType === "MONEY_TRANSFER"
-    )
+    if (notification.notificationType === "MONEY_TRANSFER")
       return "/notifikacije";
     else if (notification.notificationType === notificationType.TRANSACTION) {
       if (
@@ -108,6 +103,8 @@ function Notifikacije() {
                       transferDetails(notification.subjectId);
                       if (notification.notificationStatus === "ERROR")
                         showFailedTransfer(notification);
+                      else if (notification.notificationStatus === "INFO")
+                        showSucceededTransfer(notification);
                     } else if (
                       notification.notificationType ==
                         notificationType.TRANSACTION &&
