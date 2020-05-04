@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { getToken, getNotification, getTransfer } from "../utilities/Common";
-import { Table, Tag, Select, Button } from "antd";
-import { Link } from "react-router-dom";
+import { getToken } from "../utilities/Common";
+import { Table, Tag, Select, message } from "antd";
 import "antd/dist/antd.css";
 import "../css/Transferi.css";
 
-function Transferi() {
+function Transferi(props) {
   const [transfers, setTransfers] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  const [transfer, setTransfer] = useState();
   const [defaultAccount, setDefaultAccount] = useState({});
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([
-  //   getNotification().subjectId,
-  // ]);
 
   const getTransfers = (id) => {
     axios
@@ -41,6 +38,8 @@ function Transferi() {
   };
 
   const getAccountId = (cardNumber, accounts) => {
+    console.log(cardNumber);
+    console.log(accounts);
     accounts.forEach((account) => {
       if (account.cardNumber === cardNumber) {
         console.log(account.id);
@@ -50,8 +49,28 @@ function Transferi() {
     });
   };
 
+  const transferDetails = async (id) => {
+    let response = await axios.get(
+      "https://payment-server-si.herokuapp.com/api/accounts/moneyTransfer/" +
+        id,
+      {
+        headers: { Authorization: "Bearer " + getToken() },
+      }
+    );
+    success(response.data.transfers[0]);
+  };
+
+  const success = (transfer) => {
+    message.success(
+      "Please select bank account with card number: " +
+        transfer.sourceCardNumber
+    );
+  };
+
   useEffect(() => {
     getBankAccounts();
+    if (props.location.hasOwnProperty("notification"))
+      transferDetails(props.location.notification.subjectId);
   }, []);
 
   const columns = [
@@ -63,7 +82,7 @@ function Transferi() {
     {
       title: "Money transfered to",
       dataIndex: "destCardNumber",
-      key: "age",
+      key: "destCardNumber",
     },
     {
       title: "Date",
@@ -113,18 +132,17 @@ function Transferi() {
         columns={columns}
         rowKey="id"
         rowClassName={(record, index) => {
-          const notification = getNotification();
-          if (notification != null && record.id === notification.subjectId) {
-            if (notification.notificationStatus === "INFO") return "tr-info";
-            else if (notification.notificationStatus === "WARNING")
-              return "tr-warning";
-            else return "tr-error";
+          if (props.location.hasOwnProperty("notification")) {
+            const notification = props.location.notification;
+            if (notification != null && record.id === notification.subjectId) {
+              if (notification.notificationStatus === "INFO") return "tr-info";
+              else if (notification.notificationStatus === "WARNING")
+                return "tr-warning";
+              else return "tr-error";
+            }
           }
         }}
       />
-      {/* <Button style={{ background: "#030852", color: "white", margin: "10px" }}>
-        <Link to="/notifikacije">See all notifications</Link>
-      </Button> */}
     </div>
   );
 }
