@@ -12,16 +12,24 @@ import {
   notificationStatus,
   notificationType,
   showFailedTransaction,
-  showCanceledTransaction,
+  showCanceledTransaction, notificationsTypeArray, notificationStatusArray,
 } from "../utilities/notificationHandlers";
 import { showFailedTransfer } from "./NeuspjesniTransferi";
+
+import {EditableTagGroup} from './EditableTagComponent/EditableTagComponent'
 
 const { Search } = Input;
 
 function Notifikacije() {
   const [notifications, setNotifications] = useState([]);
   const [filteredNotifications, setFilteredNotifications] = useState([]);
-  let search = ''
+
+  const [search, setSearch] = useState({
+    status: '',
+    type: '',
+    filterWords: [],
+    value: ''
+  })
 
   const getNotifications = () => {
     axios
@@ -89,71 +97,52 @@ function Notifikacije() {
       });
   };
 
-  const filterNotifications = (searchValue) => {
-
-  }
-
-  let filterWords;
-  let hasType, hasStatus, type, status;
-  let searchValues = [];
-  let searchMessage = '';
-
   const setSearchParams = () => {
-    filterWords = search.split(' ');
-    hasType = 0;
-    hasStatus = 0;
-    type = '';
-    status = '';
-    searchValues = [];
-    for (let word of filterWords) {
-      if (word === notificationType.TRANSACTION
-          || word === notificationType.MONEY_TRANSFER
-          || word === notificationType.ACCOUNT_BALANCE){
-        hasType++;
-        type = word;
-        console.log('type: ' + type);
-      } else if (word === notificationStatus.INFO
-          || word === notificationStatus.WARNING
-          || word === notificationStatus.ERROR) {
-        hasStatus++;
-        status = word;
-        console.log('status: ' + status);
-      } else searchValues.push(word);
-      console.log(searchValues);
+    // replace mutliple blanks with one
+    search.filterWords = search.value.replace(/\s\s+/g, ' ').split(' ');
+    search.searchValues = [];
+    for (let word of search.filterWords) {
+
+      search.searchValues.push(word.trim());
+      console.log(search.searchValues);
     }
-    if (hasType > 1) searchMessage += ' You have inputed more then one notification type';
-    else if (hasStatus > 1) searchMessage += ' You have inputed more then one notification status';
-    else searchMessage = '';
   }
 
-  const refreshFIlteredNotifications = () => {
+  const sendTagsFromComponent = (typeTag) => {
+    search.type = typeTag
+    filterNotifications();
+    console.log(typeTag);
+  }
+
+  const sendStatusFromComponent = (statusTag) => {
+    search.status = statusTag;
+    filterNotifications();
+    console.log(statusTag);
+  }
+
+  const filterNotifications = () => {
     setFilteredNotifications(notifications.filter(
         item => {
-          if (status !== '' && !(item.notificationStatus === status)) {
+          if (search.status !== '' && !(item.notificationStatus === search.status)) {
             return false;
           }
-          if (type !== '' && !(item.notificationType === type)) {
+          if (search.type !== '' && !(item.notificationType === search.type)) {
             return false;
           }
-          for (let word of searchValues) {
+          for (let word of search.filterWords) {
             if (!item.message.toLowerCase().includes(word.toLowerCase())) {
               return false;
             }
           }
           return true;
         }));
-    console.log(filteredNotifications);
   }
 
   const onSearch = (value) => {
-    search = value;
+    search.value = value;
     console.log('value: ' + search);
     setSearchParams();
-    if (searchMessage !== '') {
-      message.warning(searchMessage);
-      return;
-    }
-    refreshFIlteredNotifications();
+    filterNotifications();
     const list = document.getElementById('notification-list');
     list.dataSource = filteredNotifications;
   }
@@ -167,9 +156,19 @@ function Notifikacije() {
         <Empty description="No notifications"></Empty>
       ) : (
           <div>
+            <EditableTagGroup
+                sendTypeFromCompoent={sendTagsFromComponent}
+                sendStatusFromComponent={sendStatusFromComponent}
+                selectOptions={
+                  {
+                    notificationsTypeArray: notificationsTypeArray,
+                    notificationsStatusArray: notificationStatusArray
+                  }
+                }
+            />
             <Search
-                placeholder={'Find notification'}
-                enterButton={'Search'}
+                placeholder={'Find notification by message'}
+                enterButton={'Filter'}
                 size={'large'}
                 onSearch={onSearch}
             />
