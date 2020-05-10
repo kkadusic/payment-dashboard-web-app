@@ -22,19 +22,19 @@ function Home() {
       <Carousel autoplay>
         <div>
           <h3>Manage payment options</h3>
-          <img src={slika1}></img>
+          <img src={slika1} alt="slika"></img>
         </div>
         <div>
           <h3>Control your expenses</h3>
-          <img src={slika2}></img>
+          <img src={slika2} alt="slika"></img>
         </div>
         <div>
           <h3>Find out what products do you spend most money on</h3>
-          <img src={slika3}></img>
+          <img src={slika3} alt="slika"></img>
         </div>
         <div>
           <h3>Connect with your PayApp</h3>
-          <img src={slika4}></img>
+          <img src={slika4} alt="slika"></img>
         </div>
       </Carousel>
     </div>

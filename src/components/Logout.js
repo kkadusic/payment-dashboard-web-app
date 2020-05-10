@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { LogoutOutlined } from "@ant-design/icons";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 import { logoutUser } from "../utilities/Common";
 import { useHistory } from "react-router-dom";
 

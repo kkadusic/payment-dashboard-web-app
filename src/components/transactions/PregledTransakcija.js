@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import {
   Table,
@@ -17,7 +16,6 @@ import { SearchOutlined, FilterFilled } from "@ant-design/icons";
 import { getToken } from "../../utilities/Common";
 import axios from "axios";
 import moment from "moment";
-import uuid from "react-uuid";
 import "../../css/Transactions.css";
 
 import numeral from "numeral";
@@ -42,7 +40,9 @@ class PregledTransakcija extends Component {
     //sort transactions
     const transactions = [];
     let suma = 0;
-    let data = response.data.sort((a, b) => {return new Date(b.date) - new Date(a.date) })
+    let data = response.data.sort((a, b) => {
+      return new Date(b.date) - new Date(a.date);
+    });
     data.forEach((transaction) => {
       transactions.push({
         key: transaction.transactionId,
@@ -539,13 +539,22 @@ class PregledTransakcija extends Component {
           expandedRowRender: (record) => this.expandedRowRender(record),
         }}
         rowClassName={(item, index) => {
-          if (this.props.location.notification != null && item.key === this.props.location.notification.subjectId) {
-            if (this.props.location.notification.notificationStatus === "INFO" ) {
-              return 'notificiation-info';
-            } else if (this.props.location.notification.notificationStatus === "WARNING" &&
-                 this.props.location.notification.message === "You have made a payment above 500.0") {
-                   return 'notification-warning'
-                 }
+          if (
+            this.props.location.notification != null &&
+            item.key === this.props.location.notification.subjectId
+          ) {
+            if (
+              this.props.location.notification.notificationStatus === "INFO"
+            ) {
+              return "notificiation-info";
+            } else if (
+              this.props.location.notification.notificationStatus ===
+                "WARNING" &&
+              this.props.location.notification.message ===
+                "You have made a payment above 500.0"
+            ) {
+              return "notification-warning";
+            }
           }
         }}
         expandedRowKeys={this.state.expandedKeys}

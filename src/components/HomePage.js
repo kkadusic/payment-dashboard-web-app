@@ -51,8 +51,6 @@ import { getToken, saveNotification, saveTransfer } from "../utilities/Common";
 import Transferi from "./Transferi";
 import { showFailedTransfer, showSucceededTransfer } from "./HandleTransfer";
 
-const ReachableContext = React.createContext();
-const UnreachableContext = React.createContext();
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -190,9 +188,9 @@ function HomePage() {
                         handleNotification(notification);
                         saveNotification(notification);
                         if (
-                          notification.notificationType ==
+                          notification.notificationType ===
                             notificationType.TRANSACTION &&
-                          notification.notificationStatus ==
+                          notification.notificationStatus ===
                             notificationStatus.ERROR
                         )
                           showFailedTransaction(notification);

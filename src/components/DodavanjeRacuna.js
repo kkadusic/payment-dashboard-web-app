@@ -25,11 +25,12 @@ function DodavanjeRacuna() {
       accountOwner: accOwner.value,
       //  bankName: values.bankName,
       bankName: "bank",
-      expiryDate: "25.03.2023",
-      // "01." +
-      // ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
-      // "." +
-      // values.expiryDate._d.getFullYear(),
+      expiryDate:
+        "01." +
+        ("0" + (values.expiryDate._d.getMonth() + 1)).slice(-2) +
+        "." +
+        values.expiryDate._d.getFullYear(),
+      // "25.03.2023",
       cvc: values.cvc,
       cardNumber: values.cardNumber,
     };
@@ -50,66 +51,78 @@ function DodavanjeRacuna() {
   };
 
   return (
-    <div>
+    <div className="dodavanje-racuna">
       <h1>Add new bank account</h1>
-      <div className="container">
-        <Form name="add-account" className="accForm" onFinish={onFinish}>
-          <Form.Item label="Card number" colon="false">
-            <Form.Item
-              name="cardNumber"
-              rules={[
-                { required: true, message: "Card number is required" },
-                { len: 16, message: "Card number must have 16 digits" },
-                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
-              ]}
-            >
-              <Input style={{ width: 200 }} placeholder="Enter card number" />
-            </Form.Item>
+      <Form name="add-account" className="accForm" onFinish={onFinish}>
+        <Form.Item label="Card number" colon="false">
+          <Form.Item
+            name="cardNumber"
+            rules={[
+              { required: true, message: "Card number is required" },
+              { len: 16, message: "Card number must have 16 digits" },
+              { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
+            ]}
+          >
+            <Input
+              style={{ width: 200, border: "1px solid #030852" }}
+              placeholder="Enter card number"
+            />
           </Form.Item>
+        </Form.Item>
 
-          <Form.Item colon="false" label="Expiration date">
-            <Form.Item name="expiryDate">
-              <Input readOnly style={{ width: 150 }} placeholder="2023-03-25" />
-              {}
-            </Form.Item>
+        <Form.Item colon="false" label="Expiration date">
+          <Form.Item
+            name="expiryDate"
+            rules={[{ required: true, message: "Date is required" }]}
+          >
+            <DatePicker
+              picker="month"
+              style={{ width: 150 }}
+              placeholder="Pick a date"
+              bordered={true}
+            />
           </Form.Item>
+        </Form.Item>
 
-          <Form.Item colon="false" label="CVC">
-            <Form.Item
-              name="cvc"
-              rules={[
-                { required: true, message: "CVC is required" },
-                { len: 3, message: "Card number must have 3 digits" },
-                { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
-              ]}
-            >
-              <Input style={{ width: 150 }} placeholder="Enter CVC" />
-            </Form.Item>
+        <Form.Item colon="false" label="CVC">
+          <Form.Item
+            name="cvc"
+            rules={[
+              { required: true, message: "CVC is required" },
+              { len: 3, message: "Card number must have 3 digits" },
+              { message: "Only numbers can be entered", pattern: /^[0-9]+$/ },
+            ]}
+          >
+            <Input
+              style={{ width: 150, border: "1px solid #030852" }}
+              placeholder="Enter CVC"
+            />
           </Form.Item>
+        </Form.Item>
 
-          <Form.Item colon="false" label="Cardholder name: ">
-            <Form.Item name="imeVlasnika">
-              <Input
-                readOnly
-                style={{ width: 200 }}
-                defaultValue={accOwner.value}
-                placeholder={accOwner.value}
-                suffix={
-                  <Tooltip title="You must be account owner">
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                }
-              ></Input>
-            </Form.Item>
+        <Form.Item colon="false" label="Cardholder name: ">
+          <Form.Item name="imeVlasnika">
+            <Input
+              readOnly
+              style={{ width: 200, border: "1px solid #030852" }}
+              defaultValue={accOwner.value}
+              placeholder={accOwner.value}
+              suffix={
+                <Tooltip title="You must be account owner">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              }
+            ></Input>
           </Form.Item>
+        </Form.Item>
 
-          <Form.Item>
-            <Button className="dodajRacun" type="primary" htmlType="submit">
-              Add account
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
+        <Form.Item>
+          <Button className="dodajRacun" type="primary" htmlType="submit">
+            Add account
+          </Button>
+        </Form.Item>
+      </Form>
+
       <div className="imgContainer">
         <img src={kartice} alt="kartice"></img>
       </div>

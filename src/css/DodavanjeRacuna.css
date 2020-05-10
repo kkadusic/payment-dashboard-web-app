@@ -3,35 +3,38 @@ label {
   display: inline-block;
 }
 
-.dodajRacun {
+.dodavanje-racuna {
+  display: block;
+  overflow: auto;
+}
+
+.dodavanje-racuna .accForm {
+  padding: 20px;
+  float: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dodavanje-racuna .accForm .dodajRacun {
   background: #030852;
   border-color: #030852;
   display: block;
   margin: 0 auto;
 }
 
-.accForm {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.container {
-  padding: 20px;
-  float: left;
-}
-h1 {
+.dodavanje-racuna h1 {
   color: #030852;
   padding: 10px 0;
   font-size: large;
 }
 
-.imgContainer {
-  text-align: right;
+.dodavanje-racuna .imgContainer {
+  float: right;
   margin-top: 20vh;
   margin-right: 10vw;
 }
 
-.imgContainer img {
+.dodavanje-racuna .imgContainer img {
   transform: scale(1.5);
 }
 

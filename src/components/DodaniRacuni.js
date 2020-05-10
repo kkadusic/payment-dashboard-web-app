@@ -35,7 +35,7 @@ const loadData = (setAccounts) => {
     });
 };
 
-function DodaniRacuni() {
+function DodaniRacuni(props) {
   const history = useHistory();
   const [accounts, setAccounts] = useState({
     data: null,
@@ -76,6 +76,12 @@ function DodaniRacuni() {
   useEffect(() => {
     if (accounts.data === null) loadData(setAccounts);
   }, [setAccounts]);
+
+  useEffect(() => {
+    if (props.location.reload === true) {
+      reload();
+    }
+  }, [props.location]);
 
   return (
     <div>
