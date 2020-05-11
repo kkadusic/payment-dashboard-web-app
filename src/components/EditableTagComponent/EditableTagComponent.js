@@ -33,7 +33,6 @@ export class EditableTagGroup extends React.Component {
 
     showInput = () => {
         this.setState({ inputVisible: true }, () => this.input.focus());
-
     };
 
     handleInputConfirm = (value) => {
@@ -140,37 +139,23 @@ export class EditableTagGroup extends React.Component {
                     );
                 })}
                 {inputVisible && (
-                    // <Input
-                    //     ref={this.saveInputRef}
-                    //     type="text"
-                    //     size="small"
-                    //     className="tag-input"
-                    //     value={inputValue}
-                    //     onChange={this.handleInputChange}
-                    //     onBlur={this.handleInputConfirm}
-                    //     onPressEnter={this.handleInputConfirm}
-                    //     suffix={
-                    //         <Tooltip style={{maxWidth: '300px'}} title={this.getTitle()}>
-                    //             <InfoCircleOutlined style={{ color: 'blue' }} />
-                    //         </Tooltip>
-                    //     }
-                    // />
                     <Select
                         ref={this.saveInputRef}
                         size={'small'}
                         className={'tag-input'}
                         placeholder={'Type/Status'}
                         onChange={this.handleInputConfirm}
+                        autoFocus={true}
                     >
                         <OptGroup label={'Notification Type'}>
-                            <Option value={'TRANSACTION'}>{'TRANSACTION'}</Option>
-                            <Option value={'MONEY_TRANSFER'}>{'MONEY_TRANSFER'}</Option>
-                            <Option value={'ACCOUNT_BALANCE'}>{'ACCOUNT_BALANCE'}</Option>
+                            {this.props.selectOptions.notificationsTypeArray.map(type => (
+                                <Option value={type}>{type}</Option>
+                            ))}
                         </OptGroup>
                         <OptGroup label={'Notification Status'}>
-                            <Option value={'INFO'}>{'INFO'}</Option>
-                            <Option value={'WARNING'}>{'WARNING'}</Option>
-                            <Option value={'ERROR'}>{'ERROR'}</Option>
+                            {this.props.selectOptions.notificationsStatusArray.map(status => (
+                                <Option value={status}>{status}</Option>
+                            ))}
                         </OptGroup>
                     </Select>
                 )}
