@@ -6,7 +6,8 @@
     user-select: none;
 }
 .tag-input {
-    width: 100px;
+    width: 170px;
+    margin-bottom: 5px;
     margin-right: 8px;
     vertical-align: top;
 }

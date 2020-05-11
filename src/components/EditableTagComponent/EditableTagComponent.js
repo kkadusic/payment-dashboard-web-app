@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import {Tag, Input, Tooltip, Select, Popconfirm, message, Button} from 'antd';
+import {Tag, Input, Tooltip, Select, message, Button} from 'antd';
 import {CloseCircleOutlined, PlusOutlined} from '@ant-design/icons';
 
 import './EditableTagCompoenent.css'
@@ -11,6 +11,8 @@ import SelectOutlined from "@ant-design/icons/lib/icons/SelectOutlined";
 import MoneyCollectOutlined from "@ant-design/icons/lib/icons/MoneyCollectOutlined";
 import TransactionOutlined from "@ant-design/icons/lib/icons/TransactionOutlined";
 import AccountBookOutlined from "@ant-design/icons/lib/icons/AccountBookOutlined";
+
+const { Option, OptGroup } = Select;
 
 export class EditableTagGroup extends React.Component {
     state = {
@@ -25,7 +27,6 @@ export class EditableTagGroup extends React.Component {
         const tags = this.state.tags.filter(tag => tag !== removedTag);
         this.setState({ tags });
         const inputValueIsType = this.props.selectOptions.notificationsTypeArray.includes(removedTag);
-        const inputValueIsStatus = this.props.selectOptions.notificationsStatusArray.includes(removedTag);
         if (inputValueIsType) this.props.sendTypeFromCompoent('');
         else this.props.sendStatusFromComponent('');
     };
@@ -35,11 +36,8 @@ export class EditableTagGroup extends React.Component {
 
     };
 
-    handleInputChange = e => {
-        this.setState({ inputValue: e.target.value });
-    };
-
-    handleInputConfirm = () => {
+    handleInputConfirm = (value) => {
+        this.state.inputValue = value;
         let { inputValue } = this.state;
         let { tags } = this.state;
         inputValue = inputValue.trim();
@@ -88,11 +86,6 @@ export class EditableTagGroup extends React.Component {
     };
 
     saveInputRef = input => (this.input = input);
-
-    getTitle = () => {
-        return 'NOTIFICATION TYPES: money transfer, transaction or account balance' +
-            'NOTIFICATION STATUSES: info, warning, error'
-    }
 
     getTagColor = (tag) => {
         if (this.props.selectOptions.notificationsTypeArray.includes(tag)) {
@@ -147,21 +140,39 @@ export class EditableTagGroup extends React.Component {
                     );
                 })}
                 {inputVisible && (
-                    <Input
+                    // <Input
+                    //     ref={this.saveInputRef}
+                    //     type="text"
+                    //     size="small"
+                    //     className="tag-input"
+                    //     value={inputValue}
+                    //     onChange={this.handleInputChange}
+                    //     onBlur={this.handleInputConfirm}
+                    //     onPressEnter={this.handleInputConfirm}
+                    //     suffix={
+                    //         <Tooltip style={{maxWidth: '300px'}} title={this.getTitle()}>
+                    //             <InfoCircleOutlined style={{ color: 'blue' }} />
+                    //         </Tooltip>
+                    //     }
+                    // />
+                    <Select
                         ref={this.saveInputRef}
-                        type="text"
-                        size="small"
-                        className="tag-input"
-                        value={inputValue}
-                        onChange={this.handleInputChange}
-                        onBlur={this.handleInputConfirm}
-                        onPressEnter={this.handleInputConfirm}
-                        suffix={
-                            <Tooltip style={{maxWidth: '300px'}} title={this.getTitle()}>
-                                <InfoCircleOutlined style={{ color: 'blue' }} />
-                            </Tooltip>
-                        }
-                    />
+                        size={'small'}
+                        className={'tag-input'}
+                        placeholder={'Type/Status'}
+                        onChange={this.handleInputConfirm}
+                    >
+                        <OptGroup label={'Notification Type'}>
+                            <Option value={'TRANSACTION'}>{'TRANSACTION'}</Option>
+                            <Option value={'MONEY_TRANSFER'}>{'MONEY_TRANSFER'}</Option>
+                            <Option value={'ACCOUNT_BALANCE'}>{'ACCOUNT_BALANCE'}</Option>
+                        </OptGroup>
+                        <OptGroup label={'Notification Status'}>
+                            <Option value={'INFO'}>{'INFO'}</Option>
+                            <Option value={'WARNING'}>{'WARNING'}</Option>
+                            <Option value={'ERROR'}>{'ERROR'}</Option>
+                        </OptGroup>
+                    </Select>
                 )}
                 {!inputVisible && (
                     <Tag
