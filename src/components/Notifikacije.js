@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Empty, List, Divider } from "antd";
+import { Avatar, Empty, List, Divider, Input, message } from "antd";
 import {
   InfoCircleTwoTone,
   WarningTwoTone,
@@ -13,11 +13,25 @@ import {
   notificationType,
   showFailedTransaction,
   showCanceledTransaction,
+  notificationsTypeArray,
+  notificationStatusArray,
 } from "../utilities/notificationHandlers";
 import { showFailedTransfer, showSucceededTransfer } from "./HandleTransfer";
 
+import { EditableTagGroup } from "./EditableTagComponent/EditableTagComponent";
+
+const { Search } = Input;
+
 function Notifikacije() {
   const [notifications, setNotifications] = useState([]);
+  const [filteredNotifications, setFilteredNotifications] = useState([]);
+
+  const [search, setSearch] = useState({
+    status: "",
+    type: "",
+    filterWords: [],
+    value: "",
+  });
 
   const compare = (a, b) => {
     return b.notificationDateAndTime.localeCompare(a.notificationDateAndTime);
@@ -30,6 +44,7 @@ function Notifikacije() {
       })
       .then((res) => {
         setNotifications([...res.data.sort(compare)]);
+        setFilteredNotifications([...res.data]);
       })
       .catch((err) => console.log(err));
   };
@@ -79,6 +94,59 @@ function Notifikacije() {
       });
   };
 
+  const setSearchParams = () => {
+    // replace mutliple blanks with one
+    search.filterWords = search.value.replace(/\s\s+/g, " ").split(" ");
+    search.searchValues = [];
+    for (let word of search.filterWords) {
+      search.searchValues.push(word.trim());
+      console.log(search.searchValues);
+    }
+  };
+
+  const sendTagsFromComponent = (typeTag) => {
+    search.type = typeTag;
+    filterNotifications();
+    console.log(typeTag);
+  };
+
+  const sendStatusFromComponent = (statusTag) => {
+    search.status = statusTag;
+    filterNotifications();
+    console.log(statusTag);
+  };
+
+  const filterNotifications = () => {
+    setFilteredNotifications(
+      notifications.filter((item) => {
+        if (
+          search.status !== "" &&
+          !(item.notificationStatus === search.status)
+        ) {
+          return false;
+        }
+        if (search.type !== "" && !(item.notificationType === search.type)) {
+          return false;
+        }
+        for (let word of search.filterWords) {
+          if (!item.message.toLowerCase().includes(word.toLowerCase())) {
+            return false;
+          }
+        }
+        return true;
+      })
+    );
+  };
+
+  const onSearch = (value) => {
+    search.value = value;
+    console.log("value: " + search);
+    setSearchParams();
+    filterNotifications();
+    const list = document.getElementById("notification-list");
+    list.dataSource = filteredNotifications;
+  };
+
   return (
     <div>
       <Divider>
@@ -87,57 +155,75 @@ function Notifikacije() {
       {notifications.length === 0 ? (
         <Empty description="No notifications"></Empty>
       ) : (
-        <List
-          itemLayout="horizontal"
-          dataSource={notifications}
-          renderItem={(notification) => (
-            <List.Item
-              actions={[
-                <Link
-                  onClick={() => {
-                    saveNotification(notification);
-                    if (notification.notificationType === "MONEY_TRANSFER") {
-                      transferDetails(notification.subjectId);
-                      if (notification.notificationStatus === "ERROR")
-                        showFailedTransfer(notification);
-                      else if (notification.notificationStatus === "INFO")
-                        showSucceededTransfer(notification);
-                    } else if (
-                      notification.notificationType ==
-                        notificationType.TRANSACTION &&
-                      notification.notificationStatus ==
-                        notificationStatus.ERROR
-                    )
-                      showFailedTransaction(notification);
-                    else if (
-                      notification.notificationType === "TRANSACTION" &&
-                      notification.message ===
-                        "The transaction was canceled successfully!"
-                    )
-                      showCanceledTransaction(notification);
-                  }}
-                  to={{
-                    pathname: checkPath(notification),
-                    notification: notification,
-                  }}
-                >
-                  See more
-                </Link>,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    style={{ backgroundColor: "white" }}
-                    icon={checkType(notification)}
-                  />
-                }
-                title={notification.notificationDateAndTime}
-                description={notification.message}
-              />
-            </List.Item>
-          )}
-        />
+        <div>
+          <EditableTagGroup
+            sendTypeFromCompoent={sendTagsFromComponent}
+            sendStatusFromComponent={sendStatusFromComponent}
+            selectOptions={{
+              notificationsTypeArray: notificationsTypeArray,
+              notificationsStatusArray: notificationStatusArray,
+            }}
+          />
+          <br />
+          <Search
+            placeholder={"Find notification by message"}
+            enterButton={"Filter"}
+            size={"large"}
+            onSearch={onSearch}
+          />
+          <List
+            id={"notification-list"}
+            itemLayout="horizontal"
+            dataSource={filteredNotifications}
+            renderItem={(notification) => (
+              <List.Item
+                actions={[
+                  <Link
+                    onClick={() => {
+                      saveNotification(notification);
+                      if (notification.notificationType === "MONEY_TRANSFER") {
+                        transferDetails(notification.subjectId);
+                        if (notification.notificationStatus === "ERROR")
+                          showFailedTransfer(notification);
+                        else if (notification.notificationStatus === "INFO")
+                          showSucceededTransfer(notification);
+                      } else if (
+                        notification.notificationType ==
+                          notificationType.TRANSACTION &&
+                        notification.notificationStatus ==
+                          notificationStatus.ERROR
+                      )
+                        showFailedTransaction(notification);
+                      else if (
+                        notification.notificationType === "TRANSACTION" &&
+                        notification.message ===
+                          "The transaction was canceled successfully!"
+                      )
+                        showCanceledTransaction(notification);
+                    }}
+                    to={{
+                      pathname: checkPath(notification),
+                      notification: notification,
+                    }}
+                  >
+                    See more
+                  </Link>,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      style={{ backgroundColor: "white" }}
+                      icon={checkType(notification)}
+                    />
+                  }
+                  title={notification.notificationDateAndTime}
+                  description={notification.message}
+                />
+              </List.Item>
+            )}
+          />
+        </div>
       )}
     </div>
   );

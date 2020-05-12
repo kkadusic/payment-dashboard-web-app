@@ -16,6 +16,9 @@ export const notificationStatus = {
   ERROR: "ERROR",
 };
 
+export const notificationsTypeArray = ['TRANSACTION', 'MONEY_TRANSFER', 'ACCOUNT_BALANCE'];
+export const notificationStatusArray = ['INFO', 'WARNING', 'ERROR'];
+
 const h4Style = {
   color: "blue",
 };
