@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Divider, DatePicker, Select, Modal, Empty, Button, Space } from "antd";
+import { Divider, DatePicker, Select, Space } from "antd";
 import moment from "moment";
-import { Bar, Line, Pie, Doughnut, Polar, Scatter } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import axios from "axios";
 import { getToken } from "../../utilities/Common";
-//import "chart.piecelabel.js";
 import "chartjs-plugin-piechart-outlabels";
-//import "chartjs-plugin-labels";
 import "../../css/TransakcijeMerchant.css";
 
 const { RangePicker } = DatePicker;
@@ -16,8 +14,6 @@ function TransakcijeMerchant() {
   const [chartData, setChartData] = useState({});
   const [transactions, setTransactions] = useState([]);
   const [accounts, setAccounts] = useState([]);
-  //const accounts = [];
-  //const [merchants, setMerchants] = useState([]);
   const [selectedAcc, setSelectedAcc] = useState("all");
   const [chosenDate, setChosenDate] = useState({});
 
@@ -53,17 +49,6 @@ function TransakcijeMerchant() {
     setAccounts([...response.data]);
   };
 
-  const getMerchants = async () => {
-    let response = await axios.get(
-      "https://payment-server-si.herokuapp.com/api/merchants/all",
-      {
-        headers: { Authorization: "Bearer " + getToken() },
-      }
-    );
-    // setMerchants([...response.data]);
-    console.log(merchants);
-  };
-
   const getTransactionsByDate = (startDate, endDate) => {
     let data = {
       startDate: startDate,
@@ -80,7 +65,6 @@ function TransakcijeMerchant() {
         }
       )
       .then((response) => {
-        console.log(response.data);
         setTransactions(response.data);
       })
       .catch((err) => {
@@ -91,10 +75,6 @@ function TransakcijeMerchant() {
   useEffect(() => {
     handleAccChange(selectedAcc);
   }, [transactions]);
-
-  const isEmpty = (object) => {
-    return JSON.stringify(object) === "{}";
-  };
 
   const generateColor = () => {
     return "#" + Math.random().toString(16).substr(-6);
@@ -126,7 +106,6 @@ function TransakcijeMerchant() {
         },
       ],
     });
-    console.log(merchantPrice);
   };
 
   const sortArray = (array) => {
@@ -172,7 +151,6 @@ function TransakcijeMerchant() {
   };
 
   const onDateOk = (value) => {
-    console.log(value);
     if (value !== undefined && value[0] !== null && value[1] !== null)
       setChosenDate(
         {

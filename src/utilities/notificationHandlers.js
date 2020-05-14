@@ -1,4 +1,4 @@
-import { Collapse, Divider, List, Modal } from "antd";
+import { Collapse, Modal } from "antd";
 import axios from "axios";
 import React from "react";
 import { getToken } from "./Common";
@@ -15,6 +15,9 @@ export const notificationStatus = {
   WARNING: "WARNING",
   ERROR: "ERROR",
 };
+
+export const notificationsTypeArray = ['TRANSACTION', 'MONEY_TRANSFER', 'ACCOUNT_BALANCE'];
+export const notificationStatusArray = ['INFO', 'WARNING', 'ERROR'];
 
 const h4Style = {
   color: "blue",

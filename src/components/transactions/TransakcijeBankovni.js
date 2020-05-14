@@ -55,14 +55,14 @@ function TransakcijeBankovni() {
       },
       title: {
         display: true,
-        text: 'Spendings by bank account'
+        text: "Spendings by bank account",
       },
       tooltips: {
         callbacks: {
           label: function (tooltipItem, data) {
             return (
               data["labels"][tooltipItem["index"]] +
-              "\nSpent: " +
+              "\n Spent: " +
               data["datasets"][0]["data"][tooltipItem["index"]] +
               " KM"
             );
@@ -79,10 +79,11 @@ function TransakcijeBankovni() {
 
   const fetchAllData = () => {
     return axios
-        .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
-          headers: { Authorization: "Bearer " + getToken() },
-        }).catch(err => console.log(err));
-  }
+      .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
+        headers: { Authorization: "Bearer " + getToken() },
+      })
+      .catch((err) => console.log(err));
+  };
 
   const fetchDataForTimeRange = () => {
     return axios
@@ -101,32 +102,39 @@ function TransakcijeBankovni() {
   };
 
   const go = () => {
-    if ((interval.startDate == null || interval.startDate === "")  //If range picker is empty
-        && (interval.endDate == null || interval.endDate === "")) {
-      fetchAllData().then((response) => {
-        if (!(response.status === 200 || response.statusText === 'OK')) {
-          console.log(response);
-          return [];
-        }
-        return response.data;
-      }).then(loadData);
-    } else if ((interval.startDate == null || interval.startDate === "")  //If range picker is empty
-        || (interval.endDate == null || interval.endDate === "")){
-        message.error('You can not pick only one date!')
-        loadData([]);
-        return;
-    }else if (rangeDiffOk()) {
+    if (
+      (interval.startDate == null || interval.startDate === "") && //If range picker is empty
+      (interval.endDate == null || interval.endDate === "")
+    ) {
+      fetchAllData()
+        .then((response) => {
+          if (!(response.status === 200 || response.statusText === "OK")) {
+            console.log(response);
+            return [];
+          }
+          return response.data;
+        })
+        .then(loadData);
+    } else if (
+      interval.startDate == null ||
+      interval.startDate === "" || //If range picker is empty
+      interval.endDate == null ||
+      interval.endDate === ""
+    ) {
+      message.error("You can not pick only one date!");
+      loadData([]);
+      return;
+    } else if (rangeDiffOk()) {
       fetchDataForTimeRange()
-          .then((response) => {
-            if (!(response.status === 200 || response.statusText === "OK")) {
-              console.log(response);
-              return [];
-            }
-            return response.data;
-          })
-          .then(loadData);
+        .then((response) => {
+          if (!(response.status === 200 || response.statusText === "OK")) {
+            console.log(response);
+            return [];
+          }
+          return response.data;
+        })
+        .then(loadData);
     }
-
   };
 
   const loadData = (transactions) => {
