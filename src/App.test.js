@@ -1,12 +1,8 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import App from "./App";
-
-// test('renders learn react link', () => {
-//   const { getByText } = render(<App />);
-//   const linkElement = getByText(/learn react/i);
-//   expect(linkElement).toBeInTheDocument();
-// });
+import Prijava from "./components/Prijava.js";
+import DodavanjeRacuna from "./components/DodavanjeRacuna";
 
 test("initial test", () => {
   expect(true).toBeTruthy();
