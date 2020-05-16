@@ -11,7 +11,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import "antd/dist/antd.css";
 import notificationSound from "../audio/notification-sound.mp3";
 
-import { Layout, Menu, Avatar, Badge, Popover, Empty, List } from "antd";
+import { Layout, Menu, Avatar, Badge, Popover, Empty, List, Button } from "antd";
 import {
   UserOutlined,
   CreditCardOutlined,
@@ -23,7 +23,11 @@ import {
   WarningTwoTone,
   CloseCircleTwoTone,
   SwapOutlined,
+  DownloadOutlined
 } from "@ant-design/icons";
+
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
 import Home from "./Home";
 import Prijava from "./Prijava";
@@ -99,6 +103,41 @@ function HomePage() {
       (err) => console.log(err)
     );
   }, []);
+
+  const generateReport = () => {
+    axios
+        .get("https://payment-server-si.herokuapp.com/api/transactions/all", {
+          headers: { Authorization: "Bearer " + getToken() },
+        })
+        .then((response) => {
+          let transactionsForReport = [];
+          let index = 1;
+          response.data.forEach((transaction) => {
+            let date = transaction.date.substr(8, 2) + "." +
+                transaction.date.substr(5, 2) + "." +
+                transaction.date.substr(0, 4) + ".";
+            let services = transaction.service.replace(/, /g, "\n• ");
+            let transactionArray = Object.values({
+              index: index++ + ".",
+              cardNumber: transaction.cardNumber,
+              merchant: transaction.merchantName,
+              date: date + " " + transaction.date.substr(11, 5) + "h",
+              value: transaction.totalPrice + " KM",
+              service: "• " + services
+            });
+            transactionsForReport.push(transactionArray);
+          });
+
+          const doc = new jsPDF();
+          doc.autoTable({
+            head: [['', 'Card number', 'Merchant', 'Date', 'Value', 'Service']],
+            body: transactionsForReport
+          })
+          doc.save('MyTransactions.pdf');
+        })
+        .catch((err) => console.log(err));
+  };
+
 
   const handleNotification = (notification) => {
     axios
@@ -327,6 +366,9 @@ function HomePage() {
                 </Menu.Item>
                 <Menu.Item key="transakcijeBankovni">
                   <Link to="/transakcijeBankovni"> Spent by bank account</Link>
+                </Menu.Item>
+                <Menu.Item key="transakcijeIzvjestaj">
+                  <Button onClick={generateReport}>PDF report<DownloadOutlined/></Button>
                 </Menu.Item>
               </SubMenu>
               <SubMenu

@@ -19,6 +19,8 @@
     "chartjs-plugin-piechart-outlabels": "^0.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-15": "^1.4.1",
+    "jspdf": "^1.5.3",
+    "jspdf-autotable": "^3.5.3",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "moment": "^2.24.0",
