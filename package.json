@@ -47,6 +47,7 @@
     "build": "react-scripts build",
     "test": "set CI=true && react-scripts test",
     "test_linux": "CI=true react-scripts test",
+    "test_selenium": "./node_modules/.bin/mocha SeleniumTests.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
