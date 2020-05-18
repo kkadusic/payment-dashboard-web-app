@@ -5,18 +5,18 @@ import { render } from "@testing-library/react";
 import Enzyme, { shallow } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 import RegistrationForm from "./components/registration/RegistrationForm";
+import Prijava from "./components/Prijava";
 
 Enzyme.configure({ adapter: new Adapter() });
 
 test("component should render without crashing", () => {
   const div = document.createElement("div");
   ReactDOM.render(<PregledTransakcija />, div);
-  ReactDOM.unmountComponentAtNode(div);
 });
 
 test("component should contain table (for transactions)", () => {
-  const transactions = render(<PregledTransakcija></PregledTransakcija>);
-  expect(transactions.container.querySelector("table")).not.toBeNull();
+  const transactions = shallow(<PregledTransakcija></PregledTransakcija>);
+  expect(transactions.find("Table")).toHaveLength(1);
 });
 
 test("registration form should have two password fields", () => {
