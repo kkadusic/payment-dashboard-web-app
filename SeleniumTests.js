@@ -109,7 +109,7 @@ describe("user is logged in", function () {
       });
   });
 
-  it("adding bank account", (done) => {
+  it("redirect to all notifications", (done) => {
     driver = new Builder().forBrowser("chrome").build();
     driver
       .get("https://payment-dashboard.herokuapp.com/")
@@ -117,52 +117,24 @@ describe("user is logged in", function () {
       .then(() => driver.findElement(By.id("password")).sendKeys("ajsa123"))
       .then(() => driver.findElement(By.tagName("button")).click())
       .then(() =>
-        driver.wait(
-          until.elementLocated(
-            By.xpath(
-              "//div[@id='root']/section/section/aside/div/ul/li[4]/div/span"
-            )
-          ),
-          15000
-        )
+        driver.wait(until.elementLocated(By.css(".ant-scroll-number")), 15000)
       )
+      .then(() => driver.findElement(By.css(".ant-scroll-number")).click())
       .then(() =>
         driver
           .findElement(
-            By.xpath(
-              "//div[@id='root']/section/section/aside/div/ul/li[4]/div/span"
-            )
+            By.xpath("//a[contains(text(),'See all notifications')]")
           )
           .click()
       )
       .then(() =>
-        driver.wait(
-          until.elementLocated(By.xpath("//ul[@id='sub2$Menu']/li[3]/a")),
-          15000
-        )
-      )
-      .then(() => {
-        driver
-          .findElement(By.xpath("//ul[@id='sub2$Menu']/li[3]/a"))
-          .click()
-          .then(() => {
-            driver
-              .findElement(By.css("#add-account_cardNumber"))
-              .sendKeys("123456789123456");
-          })
-          .then(() =>
-            driver
-              .findElement(
-                By.xpath(
-                  "//form[@id='add-account']/div[2]/div[2]/div/div/div/div/div/div/div"
-                )
-              )
-              .sendKeys(new Date(2020, 1, 1))
-          )
-          .then(() =>
-            driver.findElement(By.css("#add-account_cvc")).sendKeys("123")
-          )
-          .then(() => () => driver.findElement(By.tagName("button")).click());
-      });
+        driver.getCurrentUrl().then((url) => {
+          assert.equal(
+            url,
+            "https://payment-dashboard.herokuapp.com/notifikacije"
+          );
+          done();
+        })
+      );
   });
 });
