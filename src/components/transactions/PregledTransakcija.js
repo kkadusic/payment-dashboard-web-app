@@ -39,7 +39,6 @@ class PregledTransakcija extends Component {
   load = (response) => {
     //sort transactions
     const transactions = [];
-    let suma = 0;
     let data = response.data.sort((a, b) => {
       return new Date(b.date) - new Date(a.date);
     });
@@ -53,9 +52,8 @@ class PregledTransakcija extends Component {
           transaction.date.substr(0, 10) + " " + transaction.date.substr(11, 8),
         service: transaction.service,
       });
-      suma += transaction.totalPrice;
     });
-    this.setState({ data: transactions, total: suma }, () => {
+    this.setState({ data: transactions}, () => {
       console.log(this.state.data);
     });
   };
@@ -73,12 +71,14 @@ class PregledTransakcija extends Component {
         this.load(response);
         // za potrebe slidera: slider ide od najmanje do najvece cijene u transakcijama
         let maxP = 0;
+        let suma=0;
         for (let i = 0; i < this.state.data.length; i++) {
           if (parseFloat(this.state.data[i].totalPrice) > maxP) {
             maxP = parseFloat(this.state.data[i].totalPrice);
           }
+          suma+= this.state.data[i].totalPrice;
         }
-        this.setState({ maxPrice: maxP }, () => {
+        this.setState({ maxPrice: maxP, total: suma }, () => {
           console.log(this.state.maxPrice);
         });
 
@@ -91,6 +91,7 @@ class PregledTransakcija extends Component {
         this.setState({ minPrice: minP }, () => {
           console.log(this.state.minPrice);
         });
+
       })
       .catch((err) => console.log(err));
   }
@@ -558,14 +559,6 @@ class PregledTransakcija extends Component {
           }
         }}
         expandedRowKeys={this.state.expandedKeys}
-        onChange={(pagination, filter, sorter, currentTable) => {
-          let suma = 0;
-          console.log(currentTable.currentDataSource);
-          currentTable.currentDataSource.forEach((red) => {
-            suma += red.totalPrice;
-          });
-          this.setState({ ...this.state, total: suma });
-        }}
         summary={(pageData) => {
           let pageSum = 0;
           pageData.forEach((row) => {
