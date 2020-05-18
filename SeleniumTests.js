@@ -108,6 +108,11 @@ describe("user is logged in", function () {
         done();
       });
   });
+});
+
+describe("notifications", function () {
+  this, this.timeout(50000);
+  let driver;
 
   it("redirect to all notifications", (done) => {
     driver = new Builder().forBrowser("chrome").build();
@@ -120,13 +125,18 @@ describe("user is logged in", function () {
         driver.wait(until.elementLocated(By.css(".ant-scroll-number")), 15000)
       )
       .then(() => driver.findElement(By.css(".ant-scroll-number")).click())
+      .then(() => driver.wait(until.elementLocated(By.xpath("//div/a")), 15000))
       .then(() =>
         driver
-          .findElement(
-            By.xpath("//a[contains(text(),'See all notifications')]")
+          .findElement(By.xpath("//div/a"))
+          .then(
+            (element) =>
+              driver
+                .actions()
+                .move({ duration: 5000, origin: element, x: 0, y: 0 }).perform
           )
-          .click()
       )
+      .then(() => driver.findElement(By.xpath("//div/a")).click())
       .then(() =>
         driver.getCurrentUrl().then((url) => {
           assert.equal(
