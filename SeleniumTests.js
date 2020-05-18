@@ -111,7 +111,7 @@ describe("user is logged in", function () {
 });
 
 describe("notifications", function () {
-  this, this.timeout(50000);
+  this.timeout(50000);
   let driver;
 
   it("redirect to all notifications", (done) => {
