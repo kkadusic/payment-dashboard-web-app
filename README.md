@@ -3,6 +3,8 @@
 ## About Payment Dashboard Web Application
 Payment Dashboard is web application developed using React. GUI is mainly created using Ant Design components. This app is one of twelve apps that are part of group project that allows users to buy different services (such as market products and restaurant reservations), to pay for bought services in different ways (using mobile app or in person) and to control their spendings. All of the features that this app provides are available in file: [FEATURES](https://github.com/ahajradino1/payment-dashboard-webapp/blob/master/BACKLOG.md).
 
+Application is available on the following link: [Payment Dashboard](https://payment-dashboard.herokuapp.com/).
+
 ### Team members:
 
 <a href="https://github.com/ahajradino1" target="_blank"><img width="100px" height="100px" src="https://github.com/ahajradino1.png"></a>
